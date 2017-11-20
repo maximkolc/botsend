@@ -1,0 +1,42 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="title">ххххх</h3>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Общая информации о моих насторйках</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Количество задач</th>
+                                        <th>Количество каналов</th>
+                                        <th>Количество источников</th>
+                                        <th>количество ботов</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{num_tasks}}</td>
+                                        <td>{{num_chanels}}</td>
+                                        <td>{{num_source}}</td>
+                                        <td>{{num_bots}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

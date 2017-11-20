@@ -1,0 +1,75 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="title">Список моих задач</h3>
+</div>
+
+    {% if task_list %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Описание</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Имя задачи</th>
+                                            <th>Канал публикации</th>
+                                            <th>Имя публикующего бота</th>
+                                            <th>Время публикации</th>
+                                            <th>Источник публикаций</th>
+                                            <th>Наличие реакций</th>
+                                            <th>Наличие ссылок</th>
+                                            <th>Количество публикаций за раз</th>
+                                            <th>Типы контента для публикации</th>
+                                            <th>Подпись к публикации</th>
+                                            <th>Переодичность публикации</th>
+                                            <th>Время следующей публикации</th>
+                                            
+                                         </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for task in task_list %}
+                                    <tr>
+                                        <td>{{task.id}}</td>
+                                        <td>{{task.taskname}}</td>
+                                        <td>{{task.chanelforpublic}}</td>
+                                        <td>{{task.bottoken.botname}}</td>
+                                        <td>{{task.momentforwork}}</td>
+                                        <td>{{task.sourcefordownload}}</td>
+                                        <td>{{task.reactioan}}</td>
+                                        <td>{{task.url}}</td>
+                                        <td>{{task.numfileforpub}}</td>
+                                        <td>{{task.filetypesforload}}</td>
+                                        <td>{{task.caption}}</td>
+                                        <td>{{task.peripd_pub}}</td>
+                                        <td>{{task.time_run}}</td>
+                                        <td>{{task.time_period}}</td>
+                                        
+                                        <td> <a href="{% url 'task_update' task.id %}"  class="btn btn-primary">Изменить</a>   </td>
+                                        <td> <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">Удалить</a>   </td>
+                                    </tr>                                 
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="{% url 'task_create' %}" class="btn btn-success">Добавить задание</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+      <p>Пока нет ни одной задачи в работе </p>
+      <a href="{% url 'task_create' %}" class="btn btn-success">Добавить задание</a>
+    {% endif %}       
+{% endblock %}

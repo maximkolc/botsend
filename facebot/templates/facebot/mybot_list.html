@@ -1,0 +1,53 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="title">Список моих ботов</h3>
+</div>
+
+    {% if mybot_list %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Все о ботах</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            
+                                            <th>Имя </th>
+                                            <th>TOKEN</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for mybot in mybot_list %}
+                                    <tr>
+                                        <td>{{mybot.botname}}</td>
+                                        <td>{{mybot.bottoken}}</td>
+                                        <td> <a href="{% url 'mybot_update' mybot.id %}"  class="btn btn-primary">Изменить</a>   </td>
+                                        <td> <a href="{% url 'mybot_delete' mybot.id %}" class="btn btn-danger">Удалить</a>   </td>
+                                    </tr>
+                                    </tr>                                 
+                                    {% endfor %}
+                                    
+                                    </tbody>
+                                </table>
+                                <a href="{% url 'mybot_create' %}" class="btn btn-success">Создать новго</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+      <p>Пока нет ни одного бота в работе</p>
+      <a href="{% url 'mybot_create' %}" class="btn btn-success">Создать новго</a>
+    {% endif %}       
+{% endblock %}
