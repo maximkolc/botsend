@@ -64,7 +64,7 @@ class PeriodListView(generic.ListView):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        exclude = ['time_run','time_period']
+        exclude = ['time_run','time_period', 'url']
         fields = '__all__'
         widgets = {
             'momentforwork': widgets.AdminTimeWidget()
