@@ -122,10 +122,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 # REDIS related settings 
-h ='redis-12717.c15.us-east-1-4.ec2.cloud.redislabs.com:12717'
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
-#BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-BROKER_URL = 'redis://' + h + '/0'
+BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600} 
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
