@@ -4,7 +4,7 @@ from django.db.models import signals
 from django.utils import timezone
 from crontab import CronTab
 import logging
-logging.basicConfig(filename="/home/maxim/sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 logging.info("Informational message")
 logging.error("An error has happened!")
 # Create your models here.
