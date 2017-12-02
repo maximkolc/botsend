@@ -27,7 +27,9 @@ class Command(BaseCommand):
             filetypes.append(ft.ftype)
         logging.info('Количество файлов для загрузки:'+ str(mytask.numfileforpub))
         logging.info(filetypes)
-        helper = YandexHelp(token = "AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo")
+        dt = 'AQAAAAAiLO4jAASpE4hjRA8whkHXq9L0eQgRAKs'
+        mt = 'AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo'
+        helper = YandexHelp(token = dt)
         logging.info(helper)
         listfile = helper.getListFle(folder,filetypes,numsfile=mytask.numfileforpub)
         logging.info('файлы для загрузки '+' '.join(listfile))

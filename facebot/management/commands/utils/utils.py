@@ -12,6 +12,7 @@ import re
 from .src.YandexDiskException import YandexDiskException
 from .src.YandexDiskRestClient import YandexDiskRestClient
 from .src.YandexDiskRestClient import Directory
+import random
 
 #token = "AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo"
 
@@ -28,6 +29,7 @@ class YandexHelp:
             new_list.append(key.name)  
         ftypes_r = ''+'|'.join(filetypes) #filetypes - список!!!!!!
         new_list = re.findall(r'\w+.(?:'+ftypes_r+')',''+' '.join(new_list))
+        random.shuffle(new_list)
         for i in range(numsfile):
             list_for_load.append(new_list[i])
         return list_for_load

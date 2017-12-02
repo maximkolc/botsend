@@ -1,9 +1,5 @@
 from django.db import models
 from django.urls import reverse #Used to generate URLs by reversing the URL patterns
-from datetime import datetime
-from datetime import timedelta
-from datetime import time
-from facebot.tasks import send_mess
 from django.db.models import signals
 from django.utils import timezone
 from crontab import CronTab
@@ -35,8 +31,8 @@ class Task(models.Model):
     catalog = models.ForeignKey('Folders', on_delete=models.SET_NULL, null=True, help_text ='Каталог на диске')
     reactioan = models.CharField('Наличие реакций',max_length=3,choices=REACTION,default='yes')
     numfileforpub = models.IntegerField('Количесто публикуемых файлов')
-    caption = models.CharField('Подпись',max_length=120)
-    url = models.ManyToManyField('Urls', help_text="Исрользовать ссылки",null=True)
+    caption = models.CharField('Подпись',max_length=120, blank=True)
+    url = models.ManyToManyField('Urls', help_text="Исрользовать ссылки",null=True, blank=True)
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
@@ -205,11 +201,13 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):
-            logging.info(instance.id)
+            logging.info("Изменение существующей задачи "+ str(instance.id))
+            my_cron.remove(job)
+            job = my_cron.new(command='/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '+str(instance.task.id), comment=str(instance.id))
             job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
             my_cron.write()
             flag = False
-            logging.info("Выполняется при совпадении, изменили флаг"+ str(flag))
+            logging.info("запись успешно изменена")
     if flag:
         job = my_cron.new(command='/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '+str(instance.task.id), comment=str(instance.id))
         job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)

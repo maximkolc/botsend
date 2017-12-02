@@ -163,10 +163,7 @@ class FoldersDelete(DeleteView):
     success_url = reverse_lazy('folders')
 
 #Period
-'''class CustomAdminSplitDateTime(AdminSplitDateTime):
-    def __init__(self, attrs=None):
-        widgets = [widgets.AdminDateWidget, widgets.AdminTimeWidget(attrs=None, format='%I:%M %p')]
-        forms.MultiWidget.__init__(self, widgets, attrs)'''
+
 
 class PeriodForm(forms.ModelForm):
     def clean_days(self):
