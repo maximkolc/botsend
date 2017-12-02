@@ -7,7 +7,7 @@ import time
 import facebot.models 
 from django.utils import timezone
 from  urllib.request import urlopen 
-from .utils.utils import YandexHelp
+#from .utils.utils import YandexHelp
 @app.task
 def send_mess(id_task):
     mytask = facebot.models.Task.objects.get(id=id_task)

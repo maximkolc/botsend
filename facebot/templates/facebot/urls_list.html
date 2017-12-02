@@ -1,0 +1,52 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="title">Список моих каталогов</h3>
+</div>
+
+    {% if urls_list %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Мои url</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Имя </th>
+                                            <th>url</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for url in urls_list %}
+                                    <tr>
+                                        <td>{{url.id}}</td>
+                                        <td>{{url.urlname}}</td>
+                                        <td>{{url.url}}</td>
+                                        <td> <a href="{% url 'urls_update' url.id %}" class="btn btn-primary">Изменить</a>   </td>
+                                        <td> <a href="{% url 'urls_delete' url.id %}" class="btn btn-danger">Удалить</a>   </td>
+                                    </tr>                                 
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="{% url 'urls_create' %}" class="btn btn-success">Добавить url</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+      <p>Пока нет ни одного url</p>
+      <a href="{% url 'urls_create' %}" class="btn btn-success">Добавить url</a>
+    {% endif %}       
+{% endblock %}

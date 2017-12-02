@@ -18,7 +18,7 @@ from .src.YandexDiskRestClient import Directory
 class YandexHelp:
     def __init__(self,token):
         self.token = token
-        self.client = YandexDiskRestClient(token)
+        self.client = YandexDiskRestClient(self.token)
         
     def getListFle(self, folder,filetypes,numsfile):
         list = self.client.get_content_of_folder(folder).get_children()  
@@ -26,9 +26,9 @@ class YandexHelp:
         list_for_load=[]
         for key in list:
             new_list.append(key.name)  
-        ftypes_r = ''+'|'.join(['gif']) #filetypes - список!!!!!!
+        ftypes_r = ''+'|'.join(filetypes) #filetypes - список!!!!!!
         new_list = re.findall(r'\w+.(?:'+ftypes_r+')',''+' '.join(new_list))
-        for i in range(1):
+        for i in range(numsfile):
             list_for_load.append(new_list[i])
         return list_for_load
 
@@ -38,7 +38,7 @@ class YandexHelp:
             link = self.client.get_download_link_to_file('/'+folder+'/'+filename)
             links.append(link['href'])
         return links
-        
+    
         
 
 

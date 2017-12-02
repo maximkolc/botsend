@@ -14,7 +14,7 @@ import requests
 #from .forms import RenewTaskForm
 
 # Create your views here.
-from .models import Task, Chanels, SourcesData, Urls, MyBot, Folders, Period
+from .models import Task, Chanels, SourcesData, Urls, MyBot, Folders, Period,Shedule
 from django.views import generic
 
 def index(request):
@@ -61,31 +61,30 @@ class FoldersListView(generic.ListView):
 class PeriodListView(generic.ListView):
     model = Period
 
+class SheduleListView(generic.ListView):
+    model = Shedule
+
+class UrlsListView(generic.ListView):
+    model = Urls
+
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        exclude = ['time_run','time_period', 'url']
+        #exclude = ['time_run','time_period','momentforwork','peripd_pub']
         fields = '__all__'
         widgets = {
-            'momentforwork': widgets.AdminTimeWidget()
+            #'momentforwork': widgets.AdminTimeWidget()
+            'url': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
+            'filetypesforload': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'})
+
+
         }
 
 class TaskCreate(CreateView):
     form_class = TaskForm
     model = Task
     success_url = reverse_lazy('tasks')
-'''
-class TaskCreate(CreateView):
-    model = Task
-    fields = '__all__'
-    initial={'momentforwork':'12/10/2016',}
-    widgets = {
-            'momentforwork': forms.SplitDateTimeWidget()
-        }
-    success_url = reverse_lazy('tasks')
-'''
-
-
 
 class TaskUpdate(UpdateView):
     form_class = TaskForm
@@ -210,3 +209,35 @@ class PeriodUpdate(UpdateView):
 class PeriodDelete(DeleteView):
     model = Period
     success_url = reverse_lazy('periods')
+
+#--------------------------------------
+class SheduleCreate(CreateView):
+    model = Shedule
+    fields = '__all__'
+    initial={'minute':'*','hour':'*', 'day':'*','month':'*','dayofmount':'*'}
+    success_url = reverse_lazy('shedules')
+
+class SheduleUpdate(UpdateView):
+    model = Shedule
+    fields = '__all__'
+    success_url = reverse_lazy('shedules')
+   
+
+class SheduleDelete(DeleteView):
+    model = Shedule
+    success_url = reverse_lazy('shedules')
+#----------------------------------------
+
+class UrlsCreate(CreateView):
+    model = Urls
+    fields = '__all__'
+    success_url = reverse_lazy('urls')
+
+class UrlsUpdate(UpdateView):
+    model = Urls
+    fields = '__all__'
+    success_url = reverse_lazy('urls')
+   
+class UrlsDelete(DeleteView):
+    model = Urls
+    success_url = reverse_lazy('urls')

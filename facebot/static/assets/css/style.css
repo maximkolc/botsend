@@ -1181,6 +1181,12 @@ animationProgress {from{
 	background-color: #eee;
 	padding-bottom: 1px;
 }
+#id_filetypesforload li {
+	list-style-type: none;
+}
+#id_url li {
+	list-style-type: none;
+}
 .nav.nav-tabs.profile-tabs > li > a {
 	border: none;
 	margin-right: 0;

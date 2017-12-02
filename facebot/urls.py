@@ -11,6 +11,9 @@ urlpatterns = [
     url(r'^sources/$', views.SourcesDataListView.as_view(), name='sources'),
     url(r'^folders/$', views.FoldersListView.as_view(), name='folders'),
     url(r'^periods/$', views.PeriodListView.as_view(), name='periods'),
+    url(r'^shedules/$', views.SheduleListView.as_view(), name='shedules'),
+    url(r'^urls/$', views.UrlsListView.as_view(), name='urlss'),
+
 ]
 
 urlpatterns += [  
@@ -47,4 +50,14 @@ urlpatterns += [
     url(r'^periods/create/$', views.PeriodCreate.as_view(), name='periods_create'),
     url(r'^periods/(?P<pk>\d+)/update/$', views.PeriodUpdate.as_view(), name='periods_update'),
     url(r'^periods/(?P<pk>\d+)/delete/$', views.PeriodDelete.as_view(), name='periods_delete'),
+]
+urlpatterns += [  
+    url(r'^shedule/create/$', views.SheduleCreate.as_view(), name='shedule_create'),
+    url(r'^shedule/(?P<pk>\d+)/update/$', views.SheduleUpdate.as_view(), name='shedule_update'),
+    url(r'^shedule/(?P<pk>\d+)/delete/$', views.SheduleDelete.as_view(), name='shedule_delete'),
+]
+urlpatterns += [  
+    url(r'^urls/create/$', views.UrlsCreate.as_view(), name='urls_create'),
+    url(r'^urls/(?P<pk>\d+)/update/$', views.UrlsUpdate.as_view(), name='urls_update'),
+    url(r'^urls/(?P<pk>\d+)/delete/$', views.UrlsDelete.as_view(), name='urls_delete'),
 ]
