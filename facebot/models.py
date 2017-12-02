@@ -26,7 +26,6 @@ class Task(models.Model):
     taskname = models.CharField('Имя задачи',max_length=25, unique = True)
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     sourcefordownload = models.ForeignKey('SourcesData', help_text="Источник данных для задачи" ,on_delete=models.SET_NULL, null=True)
-    #filetypesforload = models.CharField('Тип ресурсов',max_length=3,choices=FILE_TYPES, default= 'GIF')
     filetypesforload = models.ManyToManyField('FileTypeChoices',null=True)
     catalog = models.ForeignKey('Folders', on_delete=models.SET_NULL, null=True, help_text ='Каталог на диске')
     reactioan = models.CharField('Наличие реакций',max_length=3,choices=REACTION,default='yes')
