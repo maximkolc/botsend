@@ -196,19 +196,21 @@ class Shedule(models.Model):
         return
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
+    com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
+    com2 = 'python3  ~/botsend/manage.py crontask '
     my_cron = CronTab(user='maxim')
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):
             logging.info("Изменение существующей задачи "+ str(instance.id))
             my_cron.remove(job)
-            job = my_cron.new(command='/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '+str(instance.task.id), comment=str(instance.id))
+            job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
             job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
             my_cron.write()
             flag = False
             logging.info("запись успешно изменена")
     if flag:
-        job = my_cron.new(command='/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '+str(instance.task.id), comment=str(instance.id))
+        job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
         job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
         my_cron.write()
 

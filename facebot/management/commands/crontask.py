@@ -8,7 +8,7 @@ from .utils.utils import YandexHelp
 from .utils.getkeyboard import *
 import requests
 import logging
-logging.basicConfig(filename="/home/maxim/sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 logging.info("Informational message CRONTASK.PY")
 logging.error("An error has happened! CRONTASK.PY")
 
