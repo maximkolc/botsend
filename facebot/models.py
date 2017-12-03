@@ -86,10 +86,11 @@ class Chanels(models.Model):
         return #reverse('chanel-detail', args=[str(self.id)])
 
 class SourcesData(models.Model):
-    sourcename = models.CharField('Имя',max_length=25, unique = True, help_text = 'Произвольное имя источника')
-    password = models.CharField('Пароль', max_length=120, help_text = 'Пароль от яндекс диска')
-    login  = models.CharField('Логин',max_length=120, help_text = 'Логин от яндекс диска')
-    urls = models.CharField('Сервер',max_length=120, help_text = 'Адрес WebDav сервера')
+    sourcename = models.CharField('Имя',max_length=25, unique = True, help_text = 'Произвольное имя источника', null = True)
+    token = models.CharField('Токен',max_length=50, unique = True, help_text = 'отладочный токен ядиска', null = True) 
+    #password = models.CharField('Пароль', max_length=120, help_text = 'Пароль от яндекс диска')
+    #login  = models.CharField('Логин',max_length=120, help_text = 'Логин от яндекс диска')
+    #urls = models.CharField('Сервер',max_length=120, help_text = 'Адрес WebDav сервера')
 
     def __str__(self):
         """

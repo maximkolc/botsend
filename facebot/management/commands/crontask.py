@@ -27,8 +27,9 @@ class Command(BaseCommand):
             filetypes.append(ft.ftype)
         logging.info('Количество файлов для загрузки:'+ str(mytask.numfileforpub))
         logging.info('типы загружаемых файлов '+' '.join(filetypes))
-        dt = 'AQAAAAAiLO4jAASpE4hjRA8whkHXq9L0eQgRAKs'
-        mt = 'AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo'
+        #dt = 'AQAAAAAiLO4jAASpE4hjRA8whkHXq9L0eQgRAKs'
+        #mt = 'AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo'
+        dt = mytask.sourcefordownload.token
         helper = YandexHelp(token = dt)
         #-----------
         helper.get_disk_metadata()

@@ -21,9 +21,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Имя </th>
-                                            <th>Логин</th>
-                                            <th>Пароль</th>
-                                            <th>Адрес сервера</th>
+                                            <th>Токен</th>
                                             
                                         </tr>
                                     </thead>
@@ -32,9 +30,8 @@
                                     <tr>
                                         <td>{{sources.id}}</td>
                                         <td>{{sources.sourcename}}</td>
-                                        <td>{{sources.login}}</td>
-                                        <td>{{sources.password}}</td>
-                                        <td>{{sources.urls}}</td>
+                                        <td>{{sources.token}}</td>
+                                         
                                         <td> <a href="{% url 'sources_update' sources.id %}"  class="btn btn-primary">Изменить</a>   </td>
                                         <td> <a href="{% url 'sources_delete' sources.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 
