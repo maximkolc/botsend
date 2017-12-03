@@ -48,7 +48,11 @@
                                         </td>
                                         
                                         <td>{{task.numfileforpub}}</td>
-                                        <td>{{task.filetypesforload}}</td>
+                                        <td>
+                                            {% for ft in task.filetypesforload.all%}
+                                            {{ft.ftype}} <br>
+                                            {% endfor %}
+                                        </td>
                                         <td>{{task.caption}}</td>
                                         
                                         <td> <a href="{% url 'task_update' task.id %}"  class="btn btn-primary">Изменить</a>   </td>
