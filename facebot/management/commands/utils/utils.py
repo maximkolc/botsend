@@ -34,14 +34,42 @@ class YandexHelp:
             list_for_load.append(new_list[i])
         return list_for_load
 
+    def getListFle2(self, folder,filetypes,numsfile):
+        list = self.client.get_content_of_folder(folder).get_children()  
+        new_list = []
+        list_for_load=[]
+        for key in list:
+            ext = key.name.split('.')[1]
+            if ext in filetypes:
+                new_list.append(key.name)  
+        random.shuffle(new_list)
+        for i in range(numsfile):
+            list_for_load.append(new_list[i])
+        return list_for_load
+
     def getLinkFile(self, folder, list_for_load):
         links = []
         for filename in list_for_load:
+            print (filename)
             link = self.client.get_download_link_to_file('/'+folder+'/'+filename)
             links.append(link['href'])
         return links
     
-        
+    def get_disk_metadata(self):
+        try:
+           disk = self.client.get_disk_metadata()
+           print("total space of disk = " + str(disk.total_space))
+           print("used spase of disk = " + str(disk.used_space))
+        except YandexDiskException as exp:
+            print(exp)
+            sys.exit(1)
+    def get_list_of_all_files(self):
+        try:
+            files = self.client.get_list_of_all_files()
+            print("There are " + str(len(files)) + " files in this Yandex.Disk")
+        except YandexDiskException as exp:
+            print(exp)
+            sys.exit(1)
 
 
 

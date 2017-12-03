@@ -26,14 +26,19 @@ class Command(BaseCommand):
         for ft in mytask.filetypesforload.all():
             filetypes.append(ft.ftype)
         logging.info('Количество файлов для загрузки:'+ str(mytask.numfileforpub))
-        logging.info(filetypes)
+        logging.info('типы загружаемых файлов '+' '.join(filetypes))
         dt = 'AQAAAAAiLO4jAASpE4hjRA8whkHXq9L0eQgRAKs'
         mt = 'AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo'
         helper = YandexHelp(token = dt)
-        logging.info(helper)
-        listfile = helper.getListFle(folder,filetypes,numsfile=mytask.numfileforpub)
+        #-----------
+        helper.get_disk_metadata()
+        helper.get_list_of_all_files()
+        #-----------
+        logging.info('catalog '+folder)
+        listfile = helper.getListFle2(folder,filetypes,numsfile=mytask.numfileforpub)
         logging.info('файлы для загрузки '+' '.join(listfile))
         links = helper.getLinkFile(folder, listfile)
+        logging.info('links: '+' '.join(links))
         tb = telebot.TeleBot(mytask.bottoken.bottoken)
         logging.info('бот создан')
         chanel = mytask.chanelforpublic.chanelname
