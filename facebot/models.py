@@ -198,7 +198,7 @@ class Shedule(models.Model):
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
-    my_cron = CronTab(user='maxim')
+    my_cron = CronTab(user='gash_ne')
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):
@@ -215,7 +215,7 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
         my_cron.write()
 
 def task_del_cron(sender, instance, signal, *args, **kwargs):
-    my_cron = CronTab(user='maxim')
+    my_cron = CronTab(user='gash_ne')
     for job in my_cron:
         logging.info("Зашли в удаление")
         logging.info(instance.id)
