@@ -46,6 +46,15 @@ class YandexHelp:
         for i in range(numsfile):
             list_for_load.append(new_list[i])
         return list_for_load
+    
+    def remove_folder_or_file(self,folder, listfiles):
+        try:
+            for filename in listfiles:
+                self.client.remove_folder_or_file('/'+folder+'/'+filename)
+                print("The file " + filename + " was successfully removed.")
+        except YandexDiskException as exp:
+            print(exp)
+            sys.exit(1)
 
     def getLinkFile(self, folder, list_for_load):
         links = []

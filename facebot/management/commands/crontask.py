@@ -74,5 +74,5 @@ class Command(BaseCommand):
                 else:
                     logging.info('txt')
                     tb.send_message(chanel, file,caption = mytask.caption,parse_mode='Markdown',timeout=15)
-            
+        helper.remove_folder_or_file(folder,listfile)    
        
