@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -10,13 +10,75 @@ from django import forms
 from .forms import EditTaskForm
 from django.contrib.admin import widgets 
 import requests
-
+from django.views.generic.edit import FormView
+from django.contrib.auth.forms import UserCreationForm
 #from .forms import RenewTaskForm
-
+# Опять же, спасибо django за готовую форму аутентификации.
+from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
 from .models import Task, Chanels, SourcesData, Urls, MyBot, Folders, Period,Shedule
 from django.views import generic
+from django.contrib.auth import logout
+from django.views.generic.base import View
+from django.contrib.auth.decorators import login_required
+import os
 
+# Функция для установки сессионного ключа.
+# По нему django будет определять, выполнил ли вход пользователь.
+from django.contrib.auth import login
+
+class LoginFormView(FormView):
+    form_class = AuthenticationForm
+
+    # Аналогично регистрации, только используем шаблон аутентификации.
+    template_name = "login.html"
+
+    # В случае успеха перенаправим на главную.
+    success_url = "/"
+
+    def form_valid(self, form):
+        # Получаем объект пользователя на основе введённых в форму данных.
+        self.user = form.get_user()
+
+        # Выполняем аутентификацию пользователя.
+        login(self.request, self.user)
+        return super(LoginFormView, self).form_valid(form)
+
+class RegisterFormView(FormView):
+    form_class = UserCreationForm
+
+    # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
+    # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
+    success_url = "/login/"
+
+    # Шаблон, который будет использоваться при отображении представления.
+    template_name = "register.html"
+
+    def form_valid(self, form):
+        # Создаём пользователя, если данные в форму были введены корректно.
+        form.save()
+
+        # Вызываем метод базового класса
+        return super(RegisterFormView, self).form_valid(form)
+
+class LogoutView(View):
+    def get(self, request):
+        # Выполняем выход для пользователя, запросившего данное представление.
+        logout(request)
+
+        # После чего, перенаправляем пользователя на главную страницу.
+        return HttpResponseRedirect('index')
+
+#@login_required(login_url='login/')
+def hello(Response, name='World'):
+    return HttpResponse("Hello %s!" %name)
+    
+def test_run(requests,id_task):
+    com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
+    com2 = 'python3  ~/botsend/manage.py crontask '
+    os.system(com1+id_task)
+    return HttpResponseRedirect(reverse('tasks'))
+    
 def index(request):
     """
     Функция отображения для домашней страницы сайта.

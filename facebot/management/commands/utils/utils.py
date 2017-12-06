@@ -13,6 +13,7 @@ from .src.YandexDiskException import YandexDiskException
 from .src.YandexDiskRestClient import YandexDiskRestClient
 from .src.YandexDiskRestClient import Directory
 import random
+import logging
 
 #token = "AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo"
 
@@ -34,14 +35,22 @@ class YandexHelp:
             list_for_load.append(new_list[i])
         return list_for_load
 
-    def getListFle2(self, folder,filetypes,numsfile):
+    def getListFle2(self, folder,filetypes,numsfile,log):
+        logger = logging.getLogger("run_task")
+        #logger.setLevel(logging.INFO)
+        #fh = logging.FileHandler("logs/"+file_name_log)
+        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        #fh.setFormatter(formatter)
+        #logger.addHandler(fh)
         list = self.client.get_content_of_folder(folder).get_children()  
+        logger.info("Всего файлов в каталоге: - "+ str(len(list)))
         new_list = []
         list_for_load=[]
         for key in list:
             ext = key.name.split('.')[1]
             if ext in filetypes:
                 new_list.append(key.name)  
+        logger.info("Из них файлов удовлетворящюх требованиям: - "+ str(len(new_list)))
         random.shuffle(new_list)
         for i in range(numsfile):
             list_for_load.append(new_list[i])
@@ -66,19 +75,23 @@ class YandexHelp:
     
     def get_disk_metadata(self):
         try:
-           disk = self.client.get_disk_metadata()
-           print("total space of disk = " + str(disk.total_space))
-           print("used spase of disk = " + str(disk.used_space))
+            disk = self.client.get_disk_metadata()
+            result = "всего места на диске = " + str(disk.total_space)+"\n"
+            result = result+"занято места на диске = " + str(disk.used_space)
         except YandexDiskException as exp:
-            print(exp)
-            sys.exit(1)
+            result = str(exp)
+            #sys.exit(1)
+            return result
+        return result
     def get_list_of_all_files(self):
         try:
             files = self.client.get_list_of_all_files()
-            print("There are " + str(len(files)) + " files in this Yandex.Disk")
+            result = "There are " + str(len(files)) + " files in this Yandex.Disk"
         except YandexDiskException as exp:
-            print(exp)
-            sys.exit(1)
+            result = str(exp)
+            #sys.exit(1)
+            return result
+        return result
 
 
 

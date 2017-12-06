@@ -4,9 +4,15 @@ from django.db.models import signals
 from django.utils import timezone
 from crontab import CronTab
 import logging
-logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
-logging.info("Informational message")
-logging.error("An error has happened!")
+logger = logging.getLogger("model")
+logger.setLevel(logging.INFO)
+# create the logging file handler
+fh = logging.FileHandler("logs/models.log")
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+# add handler to logger object
+logger.addHandler(fh)
+
 # Create your models here.
 
 class Task(models.Model):
@@ -197,31 +203,33 @@ class Shedule(models.Model):
         return
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
+    #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
     my_cron = CronTab(user='gash_ne')
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):
-            logging.info("Изменение существующей задачи "+ str(instance.id))
+            logger.info("Изменение существующей задачи "+ str(instance.id))
             my_cron.remove(job)
             job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
             job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
             my_cron.write()
             flag = False
-            logging.info("запись успешно изменена")
+            logger.info("запись успешно изменена")
     if flag:
         job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
         job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
         my_cron.write()
 
 def task_del_cron(sender, instance, signal, *args, **kwargs):
+    #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
     my_cron = CronTab(user='gash_ne')
     for job in my_cron:
-        logging.info("Зашли в удаление")
-        logging.info(instance.id)
+        logger.info("Зашли в удаление")
+        logger.info(instance.id)
         if job.comment == str(instance.id):
-            logging.info("Нашли и удаляем")
+            logger.info("Нашли и удаляем")
             my_cron.remove(job)
             my_cron.write()
     

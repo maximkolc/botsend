@@ -57,6 +57,7 @@
                                         
                                         <td> <a href="{% url 'task_update' task.id %}"  class="btn btn-primary">Изменить</a>   </td>
                                         <td> <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">Удалить</a>   </td>
+                                        <td> <a href="{% url 'test_run' task.id %}" class="btn btn-primary">Тест</a>   </td>
                                     </tr>                                 
                                     {% endfor %}
                                     </tbody>

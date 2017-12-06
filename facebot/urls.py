@@ -13,13 +13,15 @@ urlpatterns = [
     url(r'^periods/$', views.PeriodListView.as_view(), name='periods'),
     url(r'^shedules/$', views.SheduleListView.as_view(), name='shedules'),
     url(r'^urls/$', views.UrlsListView.as_view(), name='urlss'),
-
+    url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
+    url(r'^(\w+)$', views.hello),
 ]
 
 urlpatterns += [  
     url(r'^tasks/create/$', views.TaskCreate.as_view(), name='task_create'),
     url(r'^tasks/(?P<pk>\d+)/update/$', views.TaskUpdate.as_view(), name='task_update'),
     url(r'^tasks/(?P<pk>\d+)/delete/$', views.TaskDelete.as_view(), name='task_delete'),
+    
 ]
 urlpatterns += [  
     url(r'^bots/create/$', views.MyBotCreate.as_view(), name='mybot_create'),
@@ -60,4 +62,9 @@ urlpatterns += [
     url(r'^urls/create/$', views.UrlsCreate.as_view(), name='urls_create'),
     url(r'^urls/(?P<pk>\d+)/update/$', views.UrlsUpdate.as_view(), name='urls_update'),
     url(r'^urls/(?P<pk>\d+)/delete/$', views.UrlsDelete.as_view(), name='urls_delete'),
+]
+urlpatterns +=[
+    url(r'^register/$', views.RegisterFormView.as_view()),
+    url(r'^login/$', views.LoginFormView.as_view()),
+    url(r'^logout/$', views.LogoutView.as_view()),
 ]
