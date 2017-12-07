@@ -79,7 +79,7 @@ def logs(requests):
         context={'list_logs':list_logs,'t':t},
     ) 
 def log_detail(requests, log_file):
-    input = open('/home/maxim/work/botsend/logs/'+log_file, 'r')
+    input = open('logs/'+log_file, 'r')
     res = input.readlines()
     return render(
         requests,
