@@ -89,7 +89,7 @@ def log_detail(requests, log_file):
 def test_run(requests,id_task):
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
-    os.system(com1+id_task)
+    os.system(com2+id_task)
     return HttpResponseRedirect(reverse('tasks'))
     
 def index(request):
