@@ -4,14 +4,7 @@ from django.db.models import signals
 from django.utils import timezone
 from crontab import CronTab
 import logging
-logger = logging.getLogger("model")
-logger.setLevel(logging.INFO)
-# create the logging file handler
-fh = logging.FileHandler("logs/models.log")
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-# add handler to logger object
-logger.addHandler(fh)
+
 
 # Create your models here.
 
@@ -204,6 +197,14 @@ class Shedule(models.Model):
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+    logger = logging.getLogger("model")
+    logger.setLevel(logging.INFO)
+    # create the logging file handler
+    fh = logging.FileHandler("logs/models.log")
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    # add handler to logger object
+    logger.addHandler(fh)
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
     my_cron = CronTab(user='gash_ne')
@@ -224,6 +225,14 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
 
 def task_del_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+    logger = logging.getLogger("model")
+    logger.setLevel(logging.INFO)
+    # create the logging file handler
+    fh = logging.FileHandler("logs/models.log")
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    # add handler to logger object
+    logger.addHandler(fh)
     my_cron = CronTab(user='gash_ne')
     for job in my_cron:
         logger.info("Зашли в удаление")
