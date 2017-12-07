@@ -14,7 +14,8 @@ urlpatterns = [
     url(r'^shedules/$', views.SheduleListView.as_view(), name='shedules'),
     url(r'^urls/$', views.UrlsListView.as_view(), name='urlss'),
     url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
-    url(r'^(\w+)$', views.hello),
+    url(r'^logs/$', views.logs),
+    url(r'^log_detail/(?P<log_file>.+)/$', views.log_detail, name='log_detail'),
 ]
 
 urlpatterns += [  

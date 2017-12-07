@@ -70,9 +70,22 @@ class LogoutView(View):
         return HttpResponseRedirect('index')
 
 #@login_required(login_url='login/')
-def hello(Response, name='World'):
-    return HttpResponse("Hello %s!" %name)
-    
+def logs(requests):
+    t =os.getcwd()
+    list_logs = os.listdir(path='logs')
+    return render(
+        requests,
+        'facebot/logos.html',
+        context={'list_logs':list_logs,'t':t},
+    ) 
+def log_detail(requests, log_file):
+    input = open('/home/maxim/work/botsend/logs/'+log_file, 'r')
+    res = input.readlines()
+    return render(
+        requests,
+        'facebot/log.html',
+        context={'res':res},
+    )       
 def test_run(requests,id_task):
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
