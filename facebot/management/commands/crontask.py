@@ -38,7 +38,7 @@ class Command(BaseCommand):
         logger.info('Типы загружаемых файлов '+' '.join(filetypes))
         dt = mytask.sourcefordownload.token
         test = 'AQAAAAAiLO4jAASpE0JmHehiVkahtwsJmy1J9fc'
-        helper = YandexHelp(token = test)
+        helper = YandexHelp(token = dt)
         #-----------
         logger.info("Данные о диске:\n "+ helper.get_disk_metadata())
         #helper.get_list_of_all_files()
