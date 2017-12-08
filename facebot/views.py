@@ -95,7 +95,7 @@ def test_run(requests,id_task):
     #res = os.system(com1+id_task)
     #my_file = open("logs/some.txt", "w")
     #my_file.write("res os.system "+str(res)+"\n")
-    #my_file.close()    
+    #my_file.close() 
     return HttpResponseRedirect(reverse('tasks'))
     
 def index(request):

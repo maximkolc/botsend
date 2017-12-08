@@ -1,9 +1,5 @@
 import json
 from telebot import types
-import logging
-logging.basicConfig(filename="/home/maxim/sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
-logging.info("Informational message CRONTASK.PY")
-logging.error("An error has happened! CRONTASK.PY")
 class MyKeyboard:
     def __init__(self, keys):
         self.keys = keys
@@ -27,10 +23,8 @@ class MyReplyKeyboard(MyKeyboard):
 class MyLinkKeyboard(MyKeyboard):
     def getKeyboard(self):
         keyboard= types.InlineKeyboardMarkup()
-        logging.info('всего ссылок '+ str(int(len(self.keys)/2)))
         for i in range(0,len(self.keys),2):
             btn_my= types.InlineKeyboardButton(text=self.keys[i], url=self.keys[i+1])
-            logging.info('полученные ссылки '+ 'text='+self.keys[i]+' url='+self.keys[i+1])
             keyboard.add(btn_my)
         return keyboard
 
