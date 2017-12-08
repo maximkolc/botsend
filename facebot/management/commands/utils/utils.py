@@ -13,7 +13,7 @@ from .src.YandexDiskException import YandexDiskException
 from .src.YandexDiskRestClient import YandexDiskRestClient
 from .src.YandexDiskRestClient import Directory
 import random
-import logging
+#import logging
 
 #token = "AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo"
 
@@ -36,21 +36,21 @@ class YandexHelp:
         return list_for_load
 
     def getListFle2(self, folder,filetypes,numsfile,log):
-        logger = logging.getLogger("run_task")
+        #logger = logging.getLogger("run_task")
         #logger.setLevel(logging.INFO)
         #fh = logging.FileHandler("logs/"+file_name_log)
         #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         #fh.setFormatter(formatter)
         #logger.addHandler(fh)
         list = self.client.get_content_of_folder(folder).get_children()  
-        logger.info("Всего файлов в каталоге: - "+ str(len(list)))
+        #logger.info("Всего файлов в каталоге: - "+ str(len(list)))
         new_list = []
         list_for_load=[]
         for key in list:
             ext = key.name.split('.')[1]
             if ext in filetypes:
                 new_list.append(key.name)  
-        logger.info("Из них файлов удовлетворящюх требованиям: - "+ str(len(new_list)))
+        #logger.info("Из них файлов удовлетворящюх требованиям: - "+ str(len(new_list)))
         random.shuffle(new_list)
         for i in range(numsfile):
             list_for_load.append(new_list[i])
