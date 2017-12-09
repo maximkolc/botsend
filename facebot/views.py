@@ -152,16 +152,28 @@ class UrlsListView(generic.ListView):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        #exclude = ['time_run','time_period','momentforwork','peripd_pub']
         fields = '__all__'
-        widgets = {
-            #'momentforwork': widgets.AdminTimeWidget()
-            'url': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
-            'filetypesforload': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'})
-
-
+        labels = {
+            'chanelforpublic': 'Канал куда публикуем',
+            'sourcefordownload': 'Яндекс диск',
+            'filetypesforload': 'Типы публикуемых файлов',
+            'catalog': 'Каталог на диске,',
+            'bottoken': 'Публикующий бот',
+            'url': 'Кнопки под публикацией'
         }
-
+        widgets = {
+            'url': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
+            'filetypesforload': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
+            'taskname': forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Введи имя'}),
+            'chanelforpublic': forms.Select(attrs={'class':'form-control'}),
+            'sourcefordownload': forms.Select(attrs={'class':'form-control'}),
+            'catalog': forms.Select(attrs={'class':'form-control'}),
+            'reactioan': forms.Select(attrs={'class':'form-control'}),
+            'numfileforpub': forms.NumberInput(attrs={'class':'form-control', 'min':1}),
+            'caption':forms.Textarea(attrs = {'class':'form-control', 'placeholder':'','cols': 80, 'rows': 4}),
+            'bottoken': forms.Select(attrs={'class':'form-control'}),
+             }
+             
 class TaskCreate(CreateView):
     form_class = TaskForm
     model = Task
@@ -215,7 +227,6 @@ class ChanelsDelete(DeleteView):
 class SourcesDataCreate(CreateView):
     model = SourcesData
     fields = '__all__'
-    initial={'urls':'https://webdav.yandex.ru',}
     success_url = reverse_lazy('sources')
 
 class SourcesDataUpdate(UpdateView):

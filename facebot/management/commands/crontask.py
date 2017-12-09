@@ -33,7 +33,9 @@ class Command(BaseCommand):
         logger.info("Каталог c файлами для "+mytask.taskname +": "+folder)
         filetypes = []
         for ft in mytask.filetypesforload.all():
-            filetypes.append(ft.ftype)
+            t = ft.ftype.split(',')
+            filetypes.extend(t)
+            print(filetypes)
         logger.info('Количество файлов для загрузки:'+ str(mytask.numfileforpub))
         logger.info('Типы загружаемых файлов '+' '.join(filetypes))
         dt = mytask.sourcefordownload.token

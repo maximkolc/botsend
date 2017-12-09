@@ -13,12 +13,76 @@
                 <div class="panel-body">
                        
                         
-                    <form action="" method="post">
+                    <form action="" method="post" class="form-horizontal" role="form">
                                 {% csrf_token %}
-                                <table>
-                                        {{ form.media }} 
-                                {{ form.as_table }}
-                                </table>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.taskname.label }} </label>
+                                    <div class="col-md-10">
+                                      {{ form.taskname }} 
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.chanelforpublic.label }}</label>
+                                    <div class="col-md-10">
+                                        {{ form.chanelforpublic }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.sourcefordownload.label }}</label>
+                                    <div class="col-md-10">
+                                        {{ form.sourcefordownload }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.filetypesforload.label }}</label>
+                                    <div class="col-md-10">
+                                        {{ form.filetypesforload }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ form.catalog.label }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.catalog }}
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ form.reactioan.label }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.reactioan }}
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ form.numfileforpub.label }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.numfileforpub }}
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ form.caption.label }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.caption }}
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ form.url.label }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.url }}
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ form.bottoken.label }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.bottoken }}
+                                        </div>
+                                </div>
+                                
+                                         
+                                <!--
+                                    <table>
+                                    form.as_table
+                                    </table>
+                                -->
+                                
                                 <input type="submit" value="Сохранить" />
                         </form>
                     </div>
