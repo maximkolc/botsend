@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
     url(r'^logs/$', views.logs),
     url(r'^log_detail/(?P<log_file>.+)/$', views.log_detail, name='log_detail'),
+    url(r'^tokens/$', views.gettoken, name='tokens'),
 ]
 
 urlpatterns += [  
@@ -41,6 +42,7 @@ urlpatterns += [
 ]
 urlpatterns += [  
     url(r'^sources/create/$', views.SourcesDataCreate.as_view(), name='sources_create'),
+    #url(r'^sources/add/$', views.add_token, name='add_token'),
     url(r'^sources/(?P<pk>\d+)/update/$', views.SourcesDataUpdate.as_view(), name='sources_update'),
     url(r'^sources/(?P<pk>\d+)/delete/$', views.SourcesDataDelete.as_view(), name='sources_delete'),
 ]

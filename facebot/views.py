@@ -26,7 +26,7 @@ import subprocess
 # Функция для установки сессионного ключа.
 # По нему django будет определять, выполнил ли вход пользователь.
 from django.contrib.auth import login
-
+import requests
 class LoginFormView(FormView):
     form_class = AuthenticationForm
 
@@ -114,9 +114,18 @@ def index(request):
         'index.html',
         context={'num_tasks':num_tasks,'num_chanels':num_chanels, 'num_source':num_source,'num_bots':num_bots},
     )
-def gettoken():
-    url = 'https://oauth.yandex.ru/authorize'
-    base_headers = {"response_type": "token","client_id": "55cd708ef7764279ace87970649d86d1"}
+def gettoken(request):
+    if request.method == 'GET':
+        return HttpResponse('result')
+'''def add_token(request):
+    YANDEX_APP_ID = '55cd708ef7764279ace87970649d86d1'
+    YANDEX_API_SECRET = '32a760043f5b49c4a9ea4c9fb98594a4'
+    YANDEX_OAUTH2_API_URL = 'https://oauth.yandex.ru/authorize?response_type=code'
+    
+    get_token_url = 'https://oauth.yandex.ru/authorize?response_type=code&client_id=55cd708ef7764279ace87970649d86d1'
+    r = requests.get(get_token_url)
+
+   '''
   
 
 class TaskListView(generic.ListView):

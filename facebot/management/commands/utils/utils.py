@@ -48,7 +48,7 @@ class YandexHelp:
         list_for_load=[]
         for key in list:
             ext = key.name.split('.')[1]
-            if ext in filetypes:
+            if ext.lower() in filetypes:
                 new_list.append(key.name)  
         #logger.info("Из них файлов удовлетворящюх требованиям: - "+ str(len(new_list)))
         random.shuffle(new_list)

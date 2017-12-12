@@ -88,5 +88,5 @@ class Command(BaseCommand):
                     tb.send_message(chanel, file.read(),caption = mytask.caption,parse_mode='Markdown',reply_markup = keyboard)
                 else:
                     tb.send_message(chanel, file,parse_mode='Markdown')
-        res = helper.remove_folder_or_file(folder,listfile)    
-        logger.info(''.join(res))
+        #res = helper.remove_folder_or_file(folder,listfile)    
+        #logger.info(''.join(res))
