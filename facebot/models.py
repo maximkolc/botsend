@@ -3,8 +3,29 @@ from django.urls import reverse #Used to generate URLs by reversing the URL patt
 from django.db.models import signals
 from django.utils import timezone
 from crontab import CronTab
+#------------для работы с пользователями------------------------
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+#---------------------------------------------------------------
 import logging
 
+#---------модель для профиля пользователя-----------------------
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    location = models.CharField(max_length=30, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+#----------------------------------------------------------------
 
 # Create your models here.
 
@@ -26,7 +47,8 @@ class Task(models.Model):
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     sourcefordownload = models.ForeignKey('SourcesData', help_text="Источник данных для задачи" ,on_delete=models.SET_NULL, null=True)
     filetypesforload = models.ManyToManyField('FileTypeChoices',null=True)
-    catalog = models.ForeignKey('Folders', on_delete=models.SET_NULL, null=True, help_text ='Каталог на диске')
+    #catalog = models.ForeignKey('Folders', on_delete=models.SET_NULL, null=True, help_text ='Каталог на диске')
+    catalog_ajax = models.CharField('Каталог на диске', max_length = 30, blank= True, null = True)
     reactioan = models.CharField('Наличие реакций',max_length=3,choices=REACTION,default='yes')
     numfileforpub = models.IntegerField('Количесто публикуемых файлов')
     caption = models.CharField('Подпись',max_length=120, blank=True)
@@ -86,7 +108,7 @@ class Chanels(models.Model):
 
 class SourcesData(models.Model):
     sourcename = models.CharField('Имя',max_length=25, unique = True, help_text = 'Произвольное имя источника', null = True)
-    token = models.CharField('Токен',max_length=50, unique = True, help_text = 'отладочный токен ядиска', null = True) 
+    token = models.CharField('Токен',max_length=50, help_text = 'отладочный токен ядиска', null = True) 
     #password = models.CharField('Пароль', max_length=120, help_text = 'Пароль от яндекс диска')
     #login  = models.CharField('Логин',max_length=120, help_text = 'Логин от яндекс диска')
     #urls = models.CharField('Сервер',max_length=120, help_text = 'Адрес WebDav сервера')
@@ -153,7 +175,7 @@ class MyBot(models.Model):
         """
         return #reverse('botname-detail', args=[str(self.id)])
 
-class Folders(models.Model):
+'''class Folders(models.Model):
     name = models.CharField('Имя',max_length=120, unique = True, help_text = 'Имя папки')
     description = models.CharField('Описание',max_length=120)
     def __str__(self):
@@ -168,7 +190,7 @@ class Folders(models.Model):
         Returns the url to access a particular book instance.
         """
         return
-
+'''
 class Period(models.Model):
     name = models.CharField('Имя',max_length=120, unique = True,null = True,  help_text = 'Уникальное имя')
     days = models.IntegerField('Дни', null = True, help_text = 'Количество дней')

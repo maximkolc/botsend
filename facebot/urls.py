@@ -9,7 +9,6 @@ urlpatterns = [
     url(r'^chanels/$', views.ChanelsListView.as_view(), name='chanels'),
     url(r'^bots/$', views.MyBotListView.as_view(), name='bots'),
     url(r'^sources/$', views.SourcesDataListView.as_view(), name='sources'),
-    url(r'^folders/$', views.FoldersListView.as_view(), name='folders'),
     url(r'^periods/$', views.PeriodListView.as_view(), name='periods'),
     url(r'^shedules/$', views.SheduleListView.as_view(), name='shedules'),
     url(r'^urls/$', views.UrlsListView.as_view(), name='urlss'),
@@ -17,6 +16,7 @@ urlpatterns = [
     url(r'^logs/$', views.logs),
     url(r'^log_detail/(?P<log_file>.+)/$', views.log_detail, name='log_detail'),
     url(r'^tokens/$', views.gettoken, name='tokens'),
+    url(r'^ajax/getfolder/(?P<pk>\d+)/$', views.getfolder, name='getfolder'),
 ]
 
 urlpatterns += [  
@@ -46,11 +46,7 @@ urlpatterns += [
     url(r'^sources/(?P<pk>\d+)/update/$', views.SourcesDataUpdate.as_view(), name='sources_update'),
     url(r'^sources/(?P<pk>\d+)/delete/$', views.SourcesDataDelete.as_view(), name='sources_delete'),
 ]
-urlpatterns += [  
-    url(r'^folders/create/$', views.FoldersCreate.as_view(), name='folders_create'),
-    url(r'^folders/(?P<pk>\d+)/update/$', views.FoldersUpdate.as_view(), name='folders_update'),
-    url(r'^folders/(?P<pk>\d+)/delete/$', views.FoldersDelete.as_view(), name='folders_delete'),
-]
+
 urlpatterns += [  
     url(r'^periods/create/$', views.PeriodCreate.as_view(), name='periods_create'),
     url(r'^periods/(?P<pk>\d+)/update/$', views.PeriodUpdate.as_view(), name='periods_update'),
@@ -67,7 +63,7 @@ urlpatterns += [
     url(r'^urls/(?P<pk>\d+)/delete/$', views.UrlsDelete.as_view(), name='urls_delete'),
 ]
 urlpatterns +=[
-    url(r'^register/$', views.RegisterFormView.as_view()),
-    url(r'^login/$', views.LoginFormView.as_view()),
-    url(r'^logout/$', views.LogoutView.as_view()),
+    url(r'^register/$', views.RegisterFormView.as_view(),name='register'),
+    url(r'^login/$', views.LoginFormView.as_view(), name = 'login' ),
+    url(r'^logout/$', views.LogoutView.as_view(), name = 'logout'),
 ]

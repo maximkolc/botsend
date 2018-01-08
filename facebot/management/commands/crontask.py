@@ -29,7 +29,7 @@ class Command(BaseCommand):
         # add handler to logger object
         logger.addHandler(fh)
         logger.info("Начало выполнение задачи - "+mytask.taskname)
-        folder = mytask.catalog.name
+        folder = mytask.catalog_ajax
         logger.info("Каталог c файлами для "+mytask.taskname +": "+folder)
         filetypes = []
         for ft in mytask.filetypesforload.all():

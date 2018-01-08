@@ -11,11 +11,10 @@
                     <h3 class="panel-title">Задание</h3>
                 </div>
                 <div class="panel-body">
-                       
-                        
+                    
                     <form action="" method="post" class="form-horizontal" role="form">
                                 {% csrf_token %}
-                                <div class="form-group">
+                                  <div class="form-group">
                                     <label class="col-md-2 control-label">{{ form.taskname.label }} </label>
                                     <div class="col-md-10">
                                       {{ form.taskname }} 
@@ -39,12 +38,13 @@
                                         {{ form.filetypesforload }}
                                     </div>
                                 </div>
+                               
                                 <div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.catalog.label }}</label>
-                                        <div class="col-md-10">
-                                            {{ form.catalog }}
-                                        </div>
-                                </div>
+                                    <label class="col-md-2 control-label">{{ form.catalog_ajax.label }}</label>
+                                    <div class="col-md-10">
+                                        {{ form.catalog_ajax }}
+                                    </div>
+                            </div>
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.reactioan.label }}</label>
                                         <div class="col-md-10">
@@ -93,7 +93,66 @@
             <!-- col -->
         </div>
         <!-- End row -->
-    
+        <script>
+                function getNumEnding(iNumber, aEndings)
+                {
+                    var sEnding, i;
+                    iNumber = iNumber % 100;
+                    if (iNumber>=11 && iNumber<=19) {
+                        sEnding=aEndings[2];
+                    }
+                    else {
+                        i = iNumber % 10;
+                        switch (i)
+                        {
+                            case (1): sEnding = aEndings[0]; break;
+                            case (2): sEnding = aEndings[1]; break;
+                            case (3): sEnding = aEndings[1]; break;
+                            case (4): sEnding = aEndings[1]; break;
+                            default: sEnding = aEndings[2];
+                        }
+                    }
+                    return sEnding;
+                }
+            $(document).ready( function(){
+                var cat = '{{form.catalog_ajax.value}}';
+                $.ajax({
+                    url: '/facebot/ajax/getfolder/'+$('#id_sourcefordownload').val()+'/',
+                    statusCode: {
+                        404: function() {$('#id_catalog_ajax').empty();}
+                      },
+                    success: function(data){
+                        $('#id_catalog_ajax').empty();
+                        for (key in data){
+                            var s = getNumEnding(data[key],['файл','файла','файлов'])
+                            $('#id_catalog_ajax').append('<option  value='+key+'>'+key+' ('+data[key]+' '+s+')'+ '</option>');
+                            $("#id_catalog_ajax option[value=" + cat + "]").attr('selected', 'selected');
+                        }
+                    }
+                  });
+            
+                $("#id_sourcefordownload").change(function (){
+                    $.ajax({
+                        url: '/facebot/ajax/getfolder/'+$(this).val()+'/',
+                        statusCode: {
+                            404: function() {$('#id_catalog_ajax').empty();}
+                          },
+                        success: function(data){
+                            $('#id_catalog_ajax').empty();
+                            for (key in data){
+                                var s = getNumEnding(data[key],['файл','файла','файлов'])
+                                $('#id_catalog_ajax').append('<option  value='+key+'>'+key+' ('+data[key]+' '+s+')'+ '</option>');
+                                $("#id_catalog_ajax option[value=" + cat + "]").attr('selected', 'selected');                                
+                            }
+                            
+                        }
+                      });
+                });
+            });
+        </script>
+       
+
+        
     
     
     {% endblock %}

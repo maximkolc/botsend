@@ -15,8 +15,7 @@ from django.contrib.auth.forms import UserCreationForm
 #from .forms import RenewTaskForm
 # Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
-# Create your views here.
-from .models import Task, Chanels, SourcesData, Urls, MyBot, Folders, Period,Shedule
+from .models import Task, Chanels, SourcesData, Urls, MyBot, Period,Shedule
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -46,7 +45,6 @@ class LoginFormView(FormView):
 
 class RegisterFormView(FormView):
     form_class = UserCreationForm
-
     # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
     # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
     success_url = "/login/"
@@ -69,8 +67,10 @@ class LogoutView(View):
         # После чего, перенаправляем пользователя на главную страницу.
         return HttpResponseRedirect('index')
 
-#@login_required(login_url='login/')
 def logs(requests):
+    '''
+    Функция для работы с логами просмотр списка логов и детали лога
+    '''
     t =os.getcwd()
     list_logs = os.listdir(path='logs')
     return render(
@@ -79,6 +79,9 @@ def logs(requests):
         context={'list_logs':list_logs,'t':t},
     ) 
 def log_detail(requests, log_file):
+    '''
+    Функция для работы с логами, детальный просмотр лога
+    '''
     input = open('logs/'+log_file, 'r')
     res = input.readlines()
     return render(
@@ -86,16 +89,15 @@ def log_detail(requests, log_file):
         'facebot/log.html',
         context={'res':res},
     )       
+
 def test_run(requests,id_task):
+    """
+    Функция отвечающая за запуск джаного задачи кнопкой в списке задач, для теста!
+    """
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
     from django.core import management
     management.call_command("crontask", id_task)
-    #res = subprocess.call(com1+id_task, shell=True)
-    #res = os.system(com1+id_task)
-    #my_file = open("logs/some.txt", "w")
-    #my_file.write("res os.system "+str(res)+"\n")
-    #my_file.close() 
     return HttpResponseRedirect(reverse('tasks'))
     
 def index(request):
@@ -114,18 +116,76 @@ def index(request):
         'index.html',
         context={'num_tasks':num_tasks,'num_chanels':num_chanels, 'num_source':num_source,'num_bots':num_bots},
     )
+
+def getfolder(request,pk):
+    '''
+    Функция отдающая в ответ список каталогов с количествов
+    файлов в них, на яндекс диске, ответ в формате json
+    '''
+    from django.core import serializers
+    import json
+    disk = get_object_or_404(SourcesData, id = pk)
+    #disk = SourcesData.objects.get(id=pk)
+    token  = disk.token
+    folder = []
+    base_url = "https://cloud-api.yandex.net:443/v1/disk"
+    url = base_url + "/resources"
+    base_headers = {
+            "Accept": "application/json",
+            "Authorization": "OAuth " + token,
+            "Host": "cloud-api.yandex.net"
+        }
+    payload = {'path': '/','fields':'_embedded.items.name, _embedded.items.type'}
+    r = requests.get(url, headers=base_headers, params=payload)
+    res = r.json()
+    folder = []
+    numsF =[]
+    for items in res['_embedded']['items']:
+        if items['type'] == 'dir' and items['name']!=' ':
+            folder.append(items['name'])
+            numsF.append(getNumsF(0, tok=token, folder = items['name']))
+    res = dict(zip(folder, numsF))
+    return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json")
+
+def getNumsF(n, **kwargs):
+    '''вспомогательная функция для функции получения списка списка каталоговы'''
+    sum =0
+    token = kwargs['tok']
+    fol = kwargs['folder']
+    base_headers = {
+    "Accept": "application/json",
+    "Authorization": "OAuth " + token,
+    "Host": "cloud-api.yandex.net"
+    }
+    base_url = "https://cloud-api.yandex.net:443/v1/disk"
+    url = base_url + "/resources"
+    payload = {'path': fol,'fields':'_embedded.items.name, _embedded.items.type','offset':n}
+    r = requests.get(url, headers=base_headers,params=payload)
+    nums = len(r.json()['_embedded']['items'])
+    if nums < 20:
+        return sum + nums
+    else:
+        k = payload['offset']+nums
+        #sum = nums
+        return nums + getNumsF(k, tok = token, folder = fol)
+
+
+
 def gettoken(request):
     if request.method == 'GET':
-        return HttpResponse('result')
-'''def add_token(request):
-    YANDEX_APP_ID = '55cd708ef7764279ace87970649d86d1'
-    YANDEX_API_SECRET = '32a760043f5b49c4a9ea4c9fb98594a4'
-    YANDEX_OAUTH2_API_URL = 'https://oauth.yandex.ru/authorize?response_type=code'
-    
-    get_token_url = 'https://oauth.yandex.ru/authorize?response_type=code&client_id=55cd708ef7764279ace87970649d86d1'
-    r = requests.get(get_token_url)
-
-   '''
+        pcode = request.GET['code']
+    base_headers = {
+        'Content-type': 'application/x-www-form-urlencoded',
+        
+        'Authorization':'basic OGM5NGFkOWQ5NzU3NGRmNDhmNzdjOTkxNGZlOWIyMGQ6NDk1NzkyYjhjYTA4NDM5NGE5OTljNGMyODg3ZTA5YmE='
+        }
+    payload = {'grant_type':'authorization_code','code': pcode}
+    url = 'https://oauth.yandex.ru/token'
+    r = requests.post(url, headers= base_headers,data={'grant_type':'authorization_code','code': pcode})
+    json_dict = r.json()
+    token_ya = json_dict['access_token']
+    request.session["token"] = token_ya
+    return HttpResponseRedirect(reverse('sources_create'))
   
 
 class TaskListView(generic.ListView):
@@ -145,9 +205,6 @@ class MyBotListView(generic.ListView):
 class SourcesDataListView(generic.ListView):
     model = SourcesData
 
-class FoldersListView(generic.ListView):
-    model = Folders
-
 class PeriodListView(generic.ListView):
     model = Period
 
@@ -166,9 +223,9 @@ class TaskForm(forms.ModelForm):
             'chanelforpublic': 'Канал куда публикуем',
             'sourcefordownload': 'Яндекс диск',
             'filetypesforload': 'Типы публикуемых файлов',
-            'catalog': 'Каталог на диске,',
             'bottoken': 'Публикующий бот',
-            'url': 'Кнопки под публикацией'
+            'url': 'Кнопки под публикацией',
+            'catalog_ajax': 'Каталог на диске'
         }
         widgets = {
             'url': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
@@ -176,7 +233,7 @@ class TaskForm(forms.ModelForm):
             'taskname': forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Введи имя'}),
             'chanelforpublic': forms.Select(attrs={'class':'form-control'}),
             'sourcefordownload': forms.Select(attrs={'class':'form-control'}),
-            'catalog': forms.Select(attrs={'class':'form-control'}),
+            'catalog_ajax': forms.Select(attrs={'class':'form-control'}),
             'reactioan': forms.Select(attrs={'class':'form-control'}),
             'numfileforpub': forms.NumberInput(attrs={'class':'form-control', 'min':1}),
             'caption':forms.Textarea(attrs = {'class':'form-control', 'placeholder':'','cols': 80, 'rows': 4}),
@@ -233,14 +290,44 @@ class ChanelsDelete(DeleteView):
     success_url = reverse_lazy('chanels')
 
 #SourcesData
+class SourceForm(forms.ModelForm):
+    class Meta:
+        model = SourcesData
+        fields = '__all__'
+        #labels = {}
+        #token = self.request.session["token"]
+        widgets = {
+            'sourcename': forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Введи имя'}),
+            'token': forms.TextInput(attrs = {'class':'form-control'}),
+            }
+             
 class SourcesDataCreate(CreateView):
+    form_class = SourceForm
+    def get_initial(self):
+        # Get the initial dictionary from the superclass method
+        initial = super(SourcesDataCreate, self).get_initial()
+        # Copy the dictionary so we don't accidentally change a mutable dict
+        initial = initial.copy()
+        if "token" in self.request.session:
+            initial['token'] = self.request.session['token']
+            del self.request.session['token']
+
+        # etc...
+        return initial
+
+    '''def get_context_data(self, **kwargs):
+        """Use this to add extra context."""
+        context = super(SourcesDataCreate, self).get_context_data(**kwargs)
+        context['message'] = "111111"
+        return context'''
+
+
     model = SourcesData
-    fields = '__all__'
     success_url = reverse_lazy('sources')
 
 class SourcesDataUpdate(UpdateView):
+    form_class = SourceForm
     model = SourcesData
-    fields = '__all__'
     success_url = reverse_lazy('sources')
     #fields = ['first_name','last_name','date_of_birth','date_of_death']
 
@@ -248,20 +335,6 @@ class SourcesDataDelete(DeleteView):
     model = SourcesData
     success_url = reverse_lazy('sources')
 
-#Folders
-class FoldersCreate(CreateView):
-    model = Folders
-    fields = '__all__'
-    success_url = reverse_lazy('folders')
-
-class FoldersUpdate(UpdateView):
-    model = Folders
-    fields = '__all__'
-    success_url = reverse_lazy('folders')
-
-class FoldersDelete(DeleteView):
-    model = Folders
-    success_url = reverse_lazy('folders')
 
 #Period
 

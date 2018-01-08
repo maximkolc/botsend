@@ -1,5 +1,7 @@
 $(document).ready( function(){
-	
+    
+     
+
 	new subMenu();
 	
 	$("aside.left-panel:not(.collapsed)").niceScroll({
