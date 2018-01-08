@@ -175,22 +175,7 @@ class MyBot(models.Model):
         """
         return #reverse('botname-detail', args=[str(self.id)])
 
-'''class Folders(models.Model):
-    name = models.CharField('Имя',max_length=120, unique = True, help_text = 'Имя папки')
-    description = models.CharField('Описание',max_length=120)
-    def __str__(self):
-        """
-        String for representing the Model object.
-        """
-        return self.name
-    
-    
-    def get_absolute_url(self):
-        """
-        Returns the url to access a particular book instance.
-        """
-        return
-'''
+
 class Period(models.Model):
     name = models.CharField('Имя',max_length=120, unique = True,null = True,  help_text = 'Уникальное имя')
     days = models.IntegerField('Дни', null = True, help_text = 'Количество дней')
