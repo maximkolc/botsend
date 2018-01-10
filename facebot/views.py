@@ -22,18 +22,20 @@ from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
 import os
 import subprocess
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Функция для установки сессионного ключа.
 # По нему django будет определять, выполнил ли вход пользователь.
 from django.contrib.auth import login
 import requests
+from django.contrib.auth.models import User
+
 class LoginFormView(FormView):
     form_class = AuthenticationForm
-
     # Аналогично регистрации, только используем шаблон аутентификации.
     template_name = "login.html"
 
     # В случае успеха перенаправим на главную.
-    success_url = "/"
+    success_url = reverse_lazy("index")
 
     def form_valid(self, form):
         # Получаем объект пользователя на основе введённых в форму данных.
@@ -47,7 +49,7 @@ class RegisterFormView(FormView):
     form_class = UserCreationForm
     # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
     # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
-    success_url = "/login/"
+    success_url = reverse_lazy("login")
 
     # Шаблон, который будет использоваться при отображении представления.
     template_name = "register.html"
@@ -55,7 +57,6 @@ class RegisterFormView(FormView):
     def form_valid(self, form):
         # Создаём пользователя, если данные в форму были введены корректно.
         form.save()
-
         # Вызываем метод базового класса
         return super(RegisterFormView, self).form_valid(form)
 
@@ -65,7 +66,7 @@ class LogoutView(View):
         logout(request)
 
         # После чего, перенаправляем пользователя на главную страницу.
-        return HttpResponseRedirect('index')
+        return HttpResponseRedirect(reverse('login'))
 
 def logs(requests):
     '''
@@ -98,24 +99,32 @@ def test_run(requests,id_task):
     com2 = 'python3  ~/botsend/manage.py crontask '
     from django.core import management
     management.call_command("crontask", id_task)
+    '''
+    отправка email письма!!!
+    from django.core.mail import send_mail
+    from django.conf import settings
+    send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['maximkolc@gmail.com'])
+    '''
     return HttpResponseRedirect(reverse('tasks'))
-    
+
 def index(request):
     """
     Функция отображения для домашней страницы сайта.
     """
-    # Генерация "количеств" некоторых главных объектов
-    num_tasks=Task.objects.all().count() #количество задач
-    num_chanels=Chanels.objects.all().count() #количество канала
-    num_source = SourcesData.objects.all().count() #количество источников
-    num_bots = MyBot.objects.all().count() #количество ботов
-    # Отрисовка HTML-шаблона index.html с данными внутри 
-    # переменной контекста context
-    return render(
-        request,
-        'index.html',
-        context={'num_tasks':num_tasks,'num_chanels':num_chanels, 'num_source':num_source,'num_bots':num_bots},
-    )
+    if request.user.is_authenticated():
+        # Генерация "количеств" некоторых главных объектов
+        num_tasks=Task.objects.all().count() #количество задач
+        num_chanels=Chanels.objects.all().count() #количество канала
+        num_source = SourcesData.objects.all().count() #количество источников
+        num_bots = MyBot.objects.all().count() #количество ботов
+        # Отрисовка HTML-шаблона index.html с данными внутри 
+        # переменной контекста context
+        return render(
+            request,
+            'index.html',
+            context={'num_tasks':num_tasks,'num_chanels':num_chanels, 'num_source':num_source,'num_bots':num_bots},)
+    else:
+        return HttpResponseRedirect(reverse('login'))
 
 def getfolder(request,pk):
     '''
@@ -188,31 +197,54 @@ def gettoken(request):
     return HttpResponseRedirect(reverse('sources_create'))
   
 
-class TaskListView(generic.ListView):
-    model = Task
+class TaskListView(LoginRequiredMixin,generic.ListView):
+    #model = Task
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return Task.objects.filter(created_by=self.request.user)
     
-class TaskDetailView(generic.DetailView):
+class TaskDetailView(LoginRequiredMixin,generic.DetailView):
     model = Task
 
-class ChanelsListView(generic.ListView):
-    model = Chanels
+class ChanelsListView(LoginRequiredMixin,generic.ListView):
+    #model = Chanels
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return Chanels.objects.filter(created_by=self.request.user)
    
 
-class MyBotListView(generic.ListView):
-    model = MyBot
-     
+class MyBotListView(LoginRequiredMixin,generic.ListView):
+    #model = MyBot
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return MyBot.objects.filter(created_by=self.request.user) 
 
-class SourcesDataListView(generic.ListView):
-    model = SourcesData
+class SourcesDataListView(LoginRequiredMixin,generic.ListView):
+    #model = SourcesData
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return SourcesData.objects.filter(created_by=self.request.user)
 
-class PeriodListView(generic.ListView):
+class PeriodListView(LoginRequiredMixin,generic.ListView):
     model = Period
 
-class SheduleListView(generic.ListView):
-    model = Shedule
+class SheduleListView(LoginRequiredMixin,generic.ListView):
+    #model = Shedule
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return Shedule.objects.filter(created_by=self.request.user)
 
-class UrlsListView(generic.ListView):
-    model = Urls
+class UrlsListView(LoginRequiredMixin,generic.ListView):
+    #model = Urls
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return Urls.objects.filter(created_by=self.request.user)
 
 
 class TaskForm(forms.ModelForm):
@@ -275,9 +307,23 @@ class MyBotDelete(DeleteView):
 
 class ChanelsCreate(CreateView):
     model = Chanels
-    fields = '__all__'
-    #initial={'momentforwork':'12/10/2016',}
+    fields = ['chanelname','description']
     success_url = reverse_lazy('chanels')
+    def form_valid(self, form):
+        # Мы используем ModelForm, а его метод save() возвращает инстанс
+        # модели, связанный с формой. Аргумент commit=False говорит о том, что
+        # записывать модель в базу рановато.
+        instance = form.save(commit=False)
+
+        # Теперь, когда у нас есть несохранённая модель, можно ей чего-нибудь
+        # накрутить. Например, заполнить внешний ключ на auth.User. У нас же
+        # блог, а не анонимный имижборд, правда?
+        instance.created_by = self.request.user
+
+        # А теперь можно сохранить в базу
+        instance.save() 
+
+        return HttpResponseRedirect(reverse('chanels'))
 
 class ChanelsUpdate(UpdateView):
     model = Chanels

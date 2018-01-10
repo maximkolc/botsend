@@ -56,7 +56,7 @@
 		<ul class="list-inline navbar-right top-menu top-right-menu">
 			<!-- User Menu Dropdown -->
 				<li class="dropdown text-center">
-					<a data-toggle="dropdown" class="dropdown-toggle" href="#"> <img alt="" src="{% static 'assets/img/avatar-2.jpg' %}" class="img-circle profile-img thumb-sm"> <span class="username">Ray Shannon </span> <span class="caret"></span> </a>
+					<a data-toggle="dropdown" class="dropdown-toggle" href="#"> <span class="username">{{ user.username}} </span> <span class="caret"></span> </a>
 					<ul class="dropdown-menu extended pro-menu fadeInUp animated" tabindex="5003" style="overflow: hidden; outline: none;">
 						<li>
 							<a href="profile.html"><i class="fa fa-briefcase"></i>Профиль</a>
@@ -65,7 +65,7 @@
 							<a href="#"><i class="fa fa-cog"></i> Настройки</a>
 						</li>
 						<li>
-							<a href="#"><i class="fa fa-sign-out"></i>Выйти</a>
+							<a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Выйти</a>
 						</li>
 					</ul>
 				</li>
@@ -83,6 +83,7 @@
 			<nav class="navigation">
 				<ul class="list-unstyled">
 					<li>
+						
                         <a href="{% url 'index' %}"><i class="ion-home"></i> 
                             <span class="nav-label">Главная</span></a>
 					</li>

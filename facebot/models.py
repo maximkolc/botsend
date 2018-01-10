@@ -56,6 +56,7 @@ class Task(models.Model):
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     class Meta:
         ordering = ["chanelforpublic"]
     def __str__(self):
@@ -93,6 +94,7 @@ def task_save(sender, instance, signal, *args, **kwargs):
 class Chanels(models.Model):
     chanelname = models.CharField(max_length=25, unique = True, help_text = 'Имя канала')
     description = models.CharField(max_length=120, help_text = 'Описание')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         """
         String for representing the Model object.
@@ -112,6 +114,7 @@ class SourcesData(models.Model):
     #password = models.CharField('Пароль', max_length=120, help_text = 'Пароль от яндекс диска')
     #login  = models.CharField('Логин',max_length=120, help_text = 'Логин от яндекс диска')
     #urls = models.CharField('Сервер',max_length=120, help_text = 'Адрес WebDav сервера')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         """
@@ -129,6 +132,7 @@ class SourcesData(models.Model):
 class Urls(models.Model):
     urlname = models.CharField(max_length=120, unique = True, help_text = 'Имя ссылки')
     url = models.URLField(max_length=120, help_text = 'url адресс ссылки')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         """
         String for representing the Model object.
@@ -160,8 +164,9 @@ class FileTypeChoices(models.Model):
 
 
 class MyBot(models.Model):
-    botname = models.CharField(max_length=120, unique = True, help_text = 'Имя бота')
-    bottoken = models.CharField(max_length=120, unique = True, help_text = 'Токен бота')
+    botname = models.CharField('Имя бота',max_length=120, unique = True, help_text = 'Имя бота')
+    bottoken = models.CharField('Токен бота',max_length=120, unique = True, help_text = 'Токен бота')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         """
         String for representing the Model object.
@@ -195,6 +200,7 @@ class Shedule(models.Model):
     month = models.CharField('Месяц', null = True, help_text = 'Месяц',max_length=12)
     dayofmount = models.CharField('День недели', null = True, help_text = 'День недели',max_length=12)
     task = models.ForeignKey('Task', help_text = 'Задача для выполнения',on_delete=models.SET_NULL, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     
     def get_absolute_url(self):
         """

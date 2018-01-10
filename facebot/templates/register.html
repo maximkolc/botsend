@@ -51,24 +51,35 @@
 				<div class="panel-heading">
 					<h3 class="text-center m-t-10"> Создать новый аккаунт </h3>
 				</div>
-
-				<form class="form-horizontal m-t-40" action="index.html">
+				{% load addcss %}
+ 				 
+				<form class="form-horizontal m-t-40" action="" method="post">
+					{% csrf_token %}
+                    {% if form.errors %}
+                       <p>Your username and password didn't match. Please try again.</p>
+                    {% endif %}
 					<div class="form-group">
 						<div class="col-xs-12">
-              <!--<input class="form-control" type="email" required="" placeholder="Email">-->
-              {{ form.username }}
+                        <!--<input class="form-control" type="email" required="" placeholder="Email">-->
+			            {{ form.username.label_tag }}		   
+			            {{ form.username|addcss:"form-control,Имя пользователя"}}
 						</div>
 					</div>
-
+                     
 					<div class="form-group ">
 						<div class="col-xs-12">
-							<input class="form-control " type="text" required="" placeholder="Username">
+							<!--<input class="form-control " type="text" required="" placeholder="Username">-->
+							{{ form.password1.label_tag }}
+							{{ form.password1|addcss:"form-control,Пароль"}}
+
 						</div>
 					</div>
 
 					<div class="form-group">
 						<div class="col-xs-12">
-							<input class="form-control " type="password" required="" placeholder="Password">
+							<!-- <input class="form-control " type="password" required="" placeholder="Password">-->
+							{{ form.password1.label_tag }}
+							{{ form.password2|addcss:"form-control,Подтверждение пароля"}}
 						</div>
 					</div>
 
@@ -87,7 +98,7 @@
 					</div>
 				</form>
       </div>
-      {{form.as_p}}
+       
 		</div>
     <!-- Basic Plugins -->
     {% load static %}
