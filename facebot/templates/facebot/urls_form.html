@@ -11,12 +11,24 @@
                     <h3 class="panel-title">url</h3>
                 </div>
                 <div class="panel-body">
-                        <form action="" method="post">
+                        <form action="" method="post" class="form-horizontal" role="form">
                                 {% csrf_token %}
-                                <table>
-                                {{ form.as_table }}
-                                </table>
-                                <input type="submit" value="Сохранить" />
+                                {% load addcss %}
+                                <div class="form-group">
+                                        {{ form.urlname.errors.as_text }}
+                                        <label class="col-md-2 control-label">{{ form.urlname.label_tag }} </label>
+                                        <div class="col-md-10">
+                                          {{ form.urlname|addcss:"form-control,Имя бота" }} 
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.url.errors.as_text }}
+                                        <label class="col-md-2 control-label">{{ form.url.label_tag }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.url|addcss:"form-control, Токен бота" }}
+                                        </div>
+                                    </div>
+                                <input type="submit" value="Сохранить" class="btn "/>
                                 
                             </form>
                     </div>

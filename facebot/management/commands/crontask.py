@@ -72,7 +72,7 @@ class Command(BaseCommand):
             if filename.split('.')[1] in ['gif','mp4','avi']:
                 logger.info('Отпрака файла '+filename+' как видео')
                 if len(mytask.url.all()) >0:
-                    tb.send_video(chanel, file,caption = mytask.caption,reply_markup = keyboard,timeout=15)
+                    tb.send_video(chanel, file,caption = mytask.caption,reply_markup = keyboard,timeout=25)
                 else:
                     tb.send_video(chanel, file, caption = mytask.caption,timeout=15)
             

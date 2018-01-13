@@ -19,10 +19,9 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="table-responsive">
-                                <table class="table">Close me!
+                                <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th>Имя </th>
                                             <th>Минута</th>
                                             <th>Час</th>
@@ -35,14 +34,13 @@
                                     <tbody>
                                     {% for shedule in shedule_list %}
                                     <tr>
-                                        <td>{{shedule.id}}</td>
                                         <td>{{shedule.name}}</td>
                                         <td>{{shedule.minute}}</td>
                                         <td>{{shedule.hour}}</td>
                                         <td>{{shedule.day}}</td>
                                         <td>{{shedule.month}}</td>
                                         <td>{{shedule.dayofmount}}</td>
-                                        <td>{{shedule.task.name}}</td>
+                                        <td>{{shedule.task.taskname}}</td>
                                         <td> <a href="{% url 'shedule_update' shedule.id %}" class="btn btn-primary">Изменить</a>   </td>
                                         <td> <a href="{% url 'shedule_delete' shedule.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 

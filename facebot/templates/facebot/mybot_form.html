@@ -11,22 +11,24 @@
                     <h3 class="panel-title">Новый бот</h3>
                 </div>
                 <div class="panel-body">
-                        <form action="" method="post">
+                        <form action="" method="post" class="form-horizontal" role="form">
                                 {% csrf_token %}
                                 {% load addcss %}
                                 <div class="form-group">
+                                        {{ form.botname.errors.as_text }}
                                         <label class="col-md-2 control-label">{{ form.botname.label_tag }} </label>
                                         <div class="col-md-10">
                                           {{ form.botname|addcss:"form-control,Имя бота" }} 
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        {{ form.bottoken.errors.as_text }}
                                         <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
                                         <div class="col-md-10">
                                             {{ form.bottoken|addcss:"form-control, Токен бота" }}
                                         </div>
                                     </div>
-                                <input type="submit" value="Сохранить" />
+                                <input type="submit" value="Сохранить" class="btn "/>
                                 
                             </form>
                     </div>

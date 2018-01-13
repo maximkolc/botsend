@@ -15,7 +15,7 @@ from django.contrib.auth.forms import UserCreationForm
 #from .forms import RenewTaskForm
 # Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot, Period,Shedule
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -113,10 +113,10 @@ def index(request):
     """
     if request.user.is_authenticated():
         # Генерация "количеств" некоторых главных объектов
-        num_tasks=Task.objects.all().count() #количество задач
-        num_chanels=Chanels.objects.all().count() #количество канала
-        num_source = SourcesData.objects.all().count() #количество источников
-        num_bots = MyBot.objects.all().count() #количество ботов
+        num_tasks=Task.objects.filter(created_by=request.user).count() #количество задач
+        num_chanels=Chanels.objects.filter(created_by=request.user).count() #количество канала
+        num_source = SourcesData.objects.filter(created_by=request.user).count() #количество источников
+        num_bots = MyBot.objects.filter(created_by=request.user).count() #количество ботов
         # Отрисовка HTML-шаблона index.html с данными внутри 
         # переменной контекста context
         return render(
@@ -229,8 +229,7 @@ class SourcesDataListView(LoginRequiredMixin,generic.ListView):
         """Returns Chanels that belong to the current user"""
         return SourcesData.objects.filter(created_by=self.request.user)
 
-class PeriodListView(LoginRequiredMixin,generic.ListView):
-    model = Period
+
 
 class SheduleListView(LoginRequiredMixin,generic.ListView):
     #model = Shedule
@@ -250,7 +249,8 @@ class UrlsListView(LoginRequiredMixin,generic.ListView):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = '__all__'
+        #fields = '__all__'
+        exclude = ['created_by']
         labels = {
             'chanelforpublic': 'Канал куда публикуем',
             'sourcefordownload': 'Яндекс диск',
@@ -272,42 +272,61 @@ class TaskForm(forms.ModelForm):
             'bottoken': forms.Select(attrs={'class':'form-control'}),
              }
              
-class TaskCreate(CreateView):
+class TaskCreate(LoginRequiredMixin, CreateView):
     form_class = TaskForm
     model = Task
+    login_url = reverse_lazy("login")
     success_url = reverse_lazy('tasks')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('tasks'))
 
-class TaskUpdate(UpdateView):
+class TaskUpdate(LoginRequiredMixin, UpdateView):
     form_class = TaskForm
     model = Task
+    login_url = reverse_lazy("login")
     success_url = reverse_lazy('tasks')
-    #fields = ['first_name','last_name','date_of_birth','date_of_death']
 
-class TaskDelete(DeleteView):
+class TaskDelete(LoginRequiredMixin,DeleteView):
     model = Task
     success_url = reverse_lazy('tasks')
 
 #MyBot
-class MyBotCreate(CreateView):
+#-----------------------------------------------------------
+class MyBotCreate(LoginRequiredMixin,CreateView):
+    model = MyBot
+    fields = ['botname','bottoken']
+    success_url = reverse_lazy('bots')
+    login_url = reverse_lazy("login")
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('bots'))
+
+class MyBotUpdate(LoginRequiredMixin,UpdateView):
     model = MyBot
     fields = '__all__'
-    #initial={'momentforwork':'12/10/2016',}
     success_url = reverse_lazy('bots')
+    login_url = reverse_lazy("login")
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('bots'))
 
-class MyBotUpdate(UpdateView):
+class MyBotDelete(LoginRequiredMixin,DeleteView):
     model = MyBot
-    fields = '__all__'
+    login_url = reverse_lazy("login")
     success_url = reverse_lazy('bots')
-    #fields = ['first_name','last_name','date_of_birth','date_of_death']
+#---------------------------------------------------------------
 
-class MyBotDelete(DeleteView):
-    model = MyBot
-    success_url = reverse_lazy('bots')
-
-
-class ChanelsCreate(CreateView):
+class ChanelsCreate(LoginRequiredMixin,CreateView):
     model = Chanels
     fields = ['chanelname','description']
+    login_url = reverse_lazy("login")
     success_url = reverse_lazy('chanels')
     def form_valid(self, form):
         # Мы используем ModelForm, а его метод save() возвращает инстанс
@@ -325,29 +344,29 @@ class ChanelsCreate(CreateView):
 
         return HttpResponseRedirect(reverse('chanels'))
 
-class ChanelsUpdate(UpdateView):
+class ChanelsUpdate(LoginRequiredMixin,UpdateView):
     model = Chanels
     fields = '__all__'
+    login_url = reverse_lazy("login")
     success_url = reverse_lazy('chanels')
     #fields = ['first_name','last_name','date_of_birth','date_of_death']
 
-class ChanelsDelete(DeleteView):
+class ChanelsDelete(LoginRequiredMixin,DeleteView):
     model = Chanels
     success_url = reverse_lazy('chanels')
 
-#SourcesData
+#SourcesData -------------------------------------------------
 class SourceForm(forms.ModelForm):
     class Meta:
         model = SourcesData
-        fields = '__all__'
-        #labels = {}
-        #token = self.request.session["token"]
+        #fields = '__all__'
+        exclude = ['created_by']
         widgets = {
             'sourcename': forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Введи имя'}),
             'token': forms.TextInput(attrs = {'class':'form-control'}),
             }
              
-class SourcesDataCreate(CreateView):
+class SourcesDataCreate(LoginRequiredMixin,CreateView):
     form_class = SourceForm
     def get_initial(self):
         # Get the initial dictionary from the superclass method
@@ -357,104 +376,93 @@ class SourcesDataCreate(CreateView):
         if "token" in self.request.session:
             initial['token'] = self.request.session['token']
             del self.request.session['token']
-
-        # etc...
         return initial
-
-    '''def get_context_data(self, **kwargs):
-        """Use this to add extra context."""
-        context = super(SourcesDataCreate, self).get_context_data(**kwargs)
-        context['message'] = "111111"
-        return context'''
-
-
     model = SourcesData
+    exclude = ['created_by']
     success_url = reverse_lazy('sources')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('sources'))
 
-class SourcesDataUpdate(UpdateView):
+class SourcesDataUpdate(LoginRequiredMixin,UpdateView):
     form_class = SourceForm
     model = SourcesData
+    exclude = ['created_by']
     success_url = reverse_lazy('sources')
-    #fields = ['first_name','last_name','date_of_birth','date_of_death']
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('sources'))
 
-class SourcesDataDelete(DeleteView):
+class SourcesDataDelete(LoginRequiredMixin,DeleteView):
     model = SourcesData
     success_url = reverse_lazy('sources')
 
 
-#Period
-
-
-class PeriodForm(forms.ModelForm):
-    def clean_days(self):
-        data = self.cleaned_data['days']
-        #Проверка того, что количество дней не отрицательно
-        if data < 0:
-            raise ValidationError('День не может быть отрицательным')
-       # Не забывайте всегда возвращать очищенные данные
-        return data
-    def clean_hour(self):
-        data = self.cleaned_data['hour']
-           #Проверка того, что количество часов не отрицательно
-        if data < 0:
-            raise ValidationError('Часы не могут быть отрицательным')
-           #Не забывайте всегда возвращать очищенные данные
-        return data
-    def clean_minutes(self):
-        data = self.cleaned_data['minutes']
-        if data < 0:
-            raise ValidationError('Минуты не могут быть отрицательным')
-       # Не забывайте всегда возвращать очищенные данные
-        return data
-
-    class Meta:
-        model = Period
-        fields = '__all__'
-        
-
-class PeriodCreate(CreateView):
-    form_class = PeriodForm
-    model = Period
-    success_url = reverse_lazy('periods')
-
-class PeriodUpdate(UpdateView):
-    form_class = PeriodForm
-    model = Period
-    success_url = reverse_lazy('periods')
-   
-
-class PeriodDelete(DeleteView):
-    model = Period
-    success_url = reverse_lazy('periods')
 
 #--------------------------------------
-class SheduleCreate(CreateView):
+class SheduleForm(forms.ModelForm):
+    class Meta:
+        model = Shedule
+        #fields = '__all__'
+        exclude = ['created_by']
+        
+class SheduleCreate(LoginRequiredMixin,CreateView):
     model = Shedule
-    fields = '__all__'
+    #fields = '__all__'
+    form_class = SheduleForm
+    exclude = ['created_by']
     initial={'minute':'*','hour':'*', 'day':'*','month':'*','dayofmount':'*'}
     success_url = reverse_lazy('shedules')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('shedules'))
 
-class SheduleUpdate(UpdateView):
+class SheduleUpdate(LoginRequiredMixin,UpdateView):
     model = Shedule
-    fields = '__all__'
+    form_class = SheduleForm
+    #fields = '__all__'
+    exclude = ['created_by']
     success_url = reverse_lazy('shedules')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('shedules'))
    
 
-class SheduleDelete(DeleteView):
+class SheduleDelete(LoginRequiredMixin,DeleteView):
     model = Shedule
     success_url = reverse_lazy('shedules')
 #----------------------------------------
 
-class UrlsCreate(CreateView):
+class UrlsCreate(LoginRequiredMixin,CreateView):
     model = Urls
-    fields = '__all__'
-    success_url = reverse_lazy('urls')
+    fields = ['urlname','url']
+    #exclude = ['created_by']
+    success_url = reverse_lazy('urlss')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('urlss'))
 
-class UrlsUpdate(UpdateView):
+class UrlsUpdate(LoginRequiredMixin,UpdateView):
     model = Urls
     fields = '__all__'
-    success_url = reverse_lazy('urls')
+    #exclude = ['created_by']
+    success_url = reverse_lazy('urlss')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('urlss'))
    
-class UrlsDelete(DeleteView):
+class UrlsDelete(LoginRequiredMixin,DeleteView):
     model = Urls
-    success_url = reverse_lazy('urls')
+    success_url = reverse_lazy('urlss')

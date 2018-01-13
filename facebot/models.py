@@ -9,7 +9,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 #---------------------------------------------------------------
 import logging
-
+import getpass
 #---------модель для профиля пользователя-----------------------
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -49,7 +49,7 @@ class Task(models.Model):
     filetypesforload = models.ManyToManyField('FileTypeChoices',null=True)
     #catalog = models.ForeignKey('Folders', on_delete=models.SET_NULL, null=True, help_text ='Каталог на диске')
     catalog_ajax = models.CharField('Каталог на диске', max_length = 30, blank= True, null = True)
-    reactioan = models.CharField('Наличие реакций',max_length=3,choices=REACTION,default='yes')
+    #reactioan = models.CharField('Наличие реакций',max_length=3,choices=REACTION,default='yes')
     numfileforpub = models.IntegerField('Количесто публикуемых файлов')
     caption = models.CharField('Подпись',max_length=120, blank=True)
     url = models.ManyToManyField('Urls', help_text="Исрользовать ссылки",null=True, blank=True)
@@ -92,8 +92,8 @@ def task_save(sender, instance, signal, *args, **kwargs):
 
 
 class Chanels(models.Model):
-    chanelname = models.CharField(max_length=25, unique = True, help_text = 'Имя канала')
-    description = models.CharField(max_length=120, help_text = 'Описание')
+    chanelname = models.CharField('Имя канала',max_length=25, unique = True, help_text = 'Имя канала')
+    description = models.CharField('Описание',max_length=120, help_text = 'Описание')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         """
@@ -181,16 +181,6 @@ class MyBot(models.Model):
         return #reverse('botname-detail', args=[str(self.id)])
 
 
-class Period(models.Model):
-    name = models.CharField('Имя',max_length=120, unique = True,null = True,  help_text = 'Уникальное имя')
-    days = models.IntegerField('Дни', null = True, help_text = 'Количество дней')
-    hour = models.IntegerField('Часы', null = True, help_text = 'Количество часов')
-    minutes = models.IntegerField('Минуты', null = True, help_text = 'Количество минут')
-    def __str__(self):
-        """
-        String for representing the Model object.
-        """
-        return self.name
 
 class Shedule(models.Model):
     name = models.CharField('Имя',max_length=120, unique = True,null = True,  help_text = 'Уникальное имя')
@@ -220,7 +210,8 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     logger.addHandler(fh)
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
-    my_cron = CronTab(user='gash_ne')
+    #user = getpass.getuser()
+    my_cron = CronTab(user=getpass.getuser())
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):
@@ -246,7 +237,7 @@ def task_del_cron(sender, instance, signal, *args, **kwargs):
     fh.setFormatter(formatter)
     # add handler to logger object
     logger.addHandler(fh)
-    my_cron = CronTab(user='gash_ne')
+    my_cron = CronTab(user=getpass.getuser()) #'gash_ne')
     for job in my_cron:
         logger.info("Зашли в удаление")
         logger.info(instance.id)

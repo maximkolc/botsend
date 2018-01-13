@@ -19,22 +19,20 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Имя задачи</th>
-                                            <th>Канал публикации</th>
-                                            <th>Имя публикующего бота</th>
-                                            <th>Источник публикаций</th>
-                                            <th>Каталог на диске</th>
-                                            <th>Наличие ссылок</th>
+                                            <th>Имя</th>
+                                            <th>Канал </th>
+                                            <th>Бот</th>
+                                            <th>Источник </th>
+                                            <th>Каталог </th>
+                                            <th>Ссылки</th>
                                             <th>Количество публикаций за раз</th>
-                                            <th>Типы контента для публикации</th>
-                                            <th>Подпись к публикации</th>                                            
+                                            <th>Контент </th>
+                                            <th>Подпись </th>                                            
                                          </tr>
                                     </thead>
                                     <tbody>
                                     {% for task in task_list %}
                                     <tr>
-                                        <td>{{task.id}}</td>
                                         <td>{{task.taskname}}</td>
                                         <td>{{task.chanelforpublic}}</td>
                                         <td>{{task.bottoken.botname}}</td>
@@ -70,7 +68,7 @@
             </div>
         </div>
     </div>
-    
+    </a>
     {% else %}
       <p>Пока нет ни одной задачи в работе </p>
       <a href="{% url 'task_create' %}" class="btn btn-success">Добавить задание</a>

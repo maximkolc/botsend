@@ -28,6 +28,13 @@
 		<link href="{% static 'assets/css/helper.css' %}" rel="stylesheet ">
 		<link href="{% static 'assets/css/style-responsive.css'  %}" rel="stylesheet" />
 		
+		<link href="{% static  'assets/plugins/cron/jquery-cron.css' %}" rel="stylesheet" />
+		<link href="{% static  'assets/plugins/gentleSelect/jquery-gentleSelect.css' %}" rel="stylesheet" />
+		
+		<script type="text/javascript" src="{% static 'assets/plugins/cron/jquery-cron.js' %}"></script>
+        <script type="text/javascript" src="{% static 'assets/plugins/gentleSelect/jquery-gentleSelect.js' %}"></script>
+
+
 		<script type="text/javascript" src=" /admin/jsi18n/ "></script>
 		<!--<link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %}"/>
 		<link rel="stylesheet" type="text/css" href="{% static 'admin/css/global.css' %}"/>
@@ -92,30 +99,30 @@
                             <span class="nav-label">Мои боты</span></a>
                     </li>
                     <li>
-                        <a href="{% url 'sources' %}"><i class="fa fa-laptop"></i> 
+                        <a href="{% url 'sources' %}"><i class="fa fa-folder-open-o"></i> 
                             <span class="nav-label">Мои источники</span></a>
 					</li>
 					
                     <li>
-                        <a href="{% url 'chanels' %}"><i class="fa fa-laptop"></i> 
+                        <a href="{% url 'chanels' %}"><i class="fa fa-globe"></i> 
                             <span class="nav-label">Мои каналы</span></a>
 					</li>
 					
                     <li>
-                        <a href="{% url 'tasks' %}"><i class="fa fa-laptop"></i> 
+                        <a href="{% url 'tasks' %}"><i class="fa fa-gavel"></i> 
                             <span class="nav-label">Мои задания</span></a>
                     </li>
                     <li>
-                        <a href="{% url 'task_create' %}"><i class="fa fa-laptop"></i> 
+                        <a href="{% url 'task_create' %}"><i class="fa fa-plus"></i> 
                             <span class="nav-label">Новое задание</span></a>
 					</li>
 					<li>
-                        <a href="{% url 'shedules' %}"><i class="fa fa-laptop"></i> 
+                        <a href="{% url 'shedules' %}"><i class="fa fa-calendar"></i> 
                             <span class="nav-label">Мое расписаие</span></a>
 					</li>
 					<li>
-							<a href="{% url 'urlss' %}"><i class="fa fa-laptop"></i> 
-								<span class="nav-label">Мои url</span></a>
+							<a href="{% url 'urlss' %}"><i class="fa fa-road"></i> 
+								<span class="nav-label">Мои кнопки</span></a>
 						</li>
                                         
 				</ul>

@@ -9,7 +9,6 @@ urlpatterns = [
     url(r'^chanels/$', views.ChanelsListView.as_view(), name='chanels'),
     url(r'^bots/$', views.MyBotListView.as_view(), name='bots'),
     url(r'^sources/$', views.SourcesDataListView.as_view(), name='sources'),
-    url(r'^periods/$', views.PeriodListView.as_view(), name='periods'),
     url(r'^shedules/$', views.SheduleListView.as_view(), name='shedules'),
     url(r'^urls/$', views.UrlsListView.as_view(), name='urlss'),
     url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
@@ -47,11 +46,6 @@ urlpatterns += [
     url(r'^sources/(?P<pk>\d+)/delete/$', views.SourcesDataDelete.as_view(), name='sources_delete'),
 ]
 
-urlpatterns += [  
-    url(r'^periods/create/$', views.PeriodCreate.as_view(), name='periods_create'),
-    url(r'^periods/(?P<pk>\d+)/update/$', views.PeriodUpdate.as_view(), name='periods_update'),
-    url(r'^periods/(?P<pk>\d+)/delete/$', views.PeriodDelete.as_view(), name='periods_delete'),
-]
 urlpatterns += [  
     url(r'^shedule/create/$', views.SheduleCreate.as_view(), name='shedule_create'),
     url(r'^shedule/(?P<pk>\d+)/update/$', views.SheduleUpdate.as_view(), name='shedule_update'),

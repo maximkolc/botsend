@@ -11,12 +11,24 @@
                     <h3 class="panel-title">Задание</h3>
                 </div>
                 <div class="panel-body">
-                        <form action="" method="post">
+                        <form action="" method="post" class="form-horizontal" role="form">
                                 {% csrf_token %}
-                                <table>
-                                {{ form.as_table }}
-                                </table>
-                                <input type="submit" value="Сохранить" />
+                                {% load addcss %}
+                                <div class="form-group">
+                                        {{ form.chanelname.errors.as_text }}
+                                        <label class="col-md-2 control-label">{{ form.chanelname.label_tag }} </label>
+                                        <div class="col-md-10">
+                                          {{ form.chanelname|addcss:"form-control,Имя" }} 
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.description.errors.as_text }}
+                                        <label class="col-md-2 control-label">{{ form.description.label_tag }}</label>
+                                        <div class="col-md-10">
+                                            {{ form.description|addcss:"form-control, Описание" }}
+                                        </div>
+                                    </div>
+                                <input type="submit" value="Сохранить" class="btn "/>
                                 
                             </form>
                     </div>
