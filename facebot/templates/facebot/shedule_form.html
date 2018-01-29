@@ -15,7 +15,7 @@
                 </div>
                 <div class="panel-body">
                     <div id="selector"></div>   
-                    <span id="example1-val"></span> 
+                    <span id="example1-val" style="visibility: hidden;"></span> 
                     <form action="" method="post" class="form-horizontal" role="form">
                         {% csrf_token %}
                         {% load addcss %}
@@ -26,22 +26,36 @@
                                 {{ form.dayofmount.as_hidden }}
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">{{ form.name.label_tag }} </label>
+                                    
                                     <div class="col-md-10">
-                                      {{ form.name|addcss:"form-control,Имя задания" }} 
+                                        {{ form.name.errors }}
+                                        {{ form.name|addcss:"form-control,Имя задания" }} 
                                     </div>
                                 </div>
                                  
-                                <div class="form-group">
+                                <!--<div class="form-group">
                                     <label class="col-md-2 control-label">Задача:</label>
                                     <div class="col-md-10">
                                       {{ form.task|addcss:"form-control,Имя бота" }} 
                                     </div>
-                                </div>
-                                
-
+                                </div>-->       
+                                    
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.task.label_tag }}</label>
+                                    {% for checkbox in form.task %}
+                                    <div class="col-md-10"> 
+                                    <label class="cr-styled">
+                                            {{ checkbox.tag }}
+                                        <i class="fa"></i> {{ checkbox.choice_label }}
+                                    </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>    
+                                     
+                                     
+                                 
                                  
                                 <input type="submit" value="Сохранить" class="btn "  />
-                                
                             </form>
                     </div>
                     <!-- panel-body -->
@@ -54,7 +68,7 @@
         
         <div class="md-modal md-effect-11" id="modal-11">
             <div class="md-content">
-                <h3>Modal Dialog</h3>
+                <h3>Справка</h3>
                 <div class="panel-heading">
                         
                     <b>формат задачи комманд</b>
@@ -91,8 +105,14 @@
            
     <script>    
         $(document).ready(function() {
+            min = $('#id_minute').val();
+            hour = $('#id_hour').val();
+            day = $('#id_day').val();
+            month = $('#id_month').val();
+            dow = $('#id_dayofmount').val();
             $('#selector').cron({
-                initial: "42 3 * * 5",
+                
+                initial: min +" "+hour+" "+day+" "+month+" "+dow,
                 onChange: function() {
                     $('#example1-val').text($(this).cron("value"));
                 },

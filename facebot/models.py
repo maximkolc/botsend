@@ -189,7 +189,7 @@ class Shedule(models.Model):
     day = models.CharField('День', null = True, help_text = 'День',max_length=12)
     month = models.CharField('Месяц', null = True, help_text = 'Месяц',max_length=12)
     dayofmount = models.CharField('День недели', null = True, help_text = 'День недели',max_length=12)
-    task = models.ForeignKey('Task', help_text = 'Задача для выполнения',on_delete=models.SET_NULL, null=True)
+    task = models.ManyToManyField(Task, help_text = 'Задача для выполнения', null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     
     def get_absolute_url(self):
@@ -197,6 +197,8 @@ class Shedule(models.Model):
         Returns the url to access a particular book instance.
         """
         return
+
+    
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
@@ -211,19 +213,25 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
     #user = getpass.getuser()
+    t_id=[]
+    for task in instance.task.all():
+        t_id.append(str(task.id))
+    print ("lengt: "+str(len(t_id)))
+    print(' '.join(t_id))
     my_cron = CronTab(user=getpass.getuser())
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):
             logger.info("Изменение существующей задачи "+ str(instance.id))
             my_cron.remove(job)
-            job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
+            #job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
+            job = my_cron.new(command=com2+' '.join(t_id), comment=str(instance.id))
             job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
             my_cron.write()
             flag = False
             logger.info("запись успешно изменена")
     if flag:
-        job = my_cron.new(command=com2+str(instance.task.id), comment=str(instance.id))
+        job = my_cron.new(command=com2+' '.join(t_id), comment=str(instance.id))
         job.setall(instance.minute, instance.hour, instance.day, instance.month, instance.dayofmount)
         my_cron.write()
 
@@ -246,5 +254,5 @@ def task_del_cron(sender, instance, signal, *args, **kwargs):
             my_cron.remove(job)
             my_cron.write()
     
-signals.post_save.connect(task_add_cron, sender=Shedule)
+signals.m2m_changed.connect(task_add_cron, sender=Shedule.task.through)
 signals.post_delete.connect(task_del_cron, sender=Shedule)

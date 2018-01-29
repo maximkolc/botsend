@@ -15,32 +15,47 @@
                     <form action="" method="post" class="form-horizontal" role="form">
                                 {% csrf_token %}
                                   <div class="form-group">
-                                    <label class="col-md-2 control-label">{{ form.taskname.label }} </label>
+                                    <label class="col-md-2 control-label">{{ form.taskname.label_tag }} </label>
                                     <div class="col-md-10">
-                                      {{ form.taskname }} 
+                                            {{ form.taskname.errors }}
+                                        {{ form.taskname }} 
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label">{{ form.chanelforpublic.label }}</label>
+                                    <label class="col-md-2 control-label">{{ form.chanelforpublic.label_tag }}</label>
                                     <div class="col-md-10">
                                         {{ form.chanelforpublic }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label">{{ form.sourcefordownload.label }}</label>
+                                    <label class="col-md-2 control-label">{{ form.sourcefordownload.label_tag }}</label>
                                     <div class="col-md-10">
                                         {{ form.sourcefordownload }}
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">{{ form.filetypesforload.label }}</label>
+
+                                <!-- <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.filetypesforload.label_tag }}</label>
                                     <div class="col-md-10">
                                         {{ form.filetypesforload }}
                                     </div>
                                 </div>
-                               
+                            -->
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label">{{ form.catalog_ajax.label }}</label>
+                                        <label class="col-md-2 control-label">{{ form.filetypesforload.label_tag }}</label>
+                                        {% for checkbox in form.filetypesforload %}
+                                        <div class="col-md-10"> 
+                                        <label class="cr-styled">
+                                                {{ checkbox.tag }}
+                                            <i class="fa"></i> {{ checkbox.choice_label }}
+                                        </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>   
+                                
+                                
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.catalog_ajax.label_tag }}</label>
                                     <div class="col-md-10">
                                         {{ form.catalog_ajax }}
                                     </div>
@@ -53,38 +68,39 @@
                                     
                                 </div>-->
                                 <div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.numfileforpub.label }}</label>
+                                        <label class="col-md-2 control-label">{{ form.numfileforpub.label_tag }}</label>
                                         <div class="col-md-10">
+                                            {{ form.numfileforpub.errors }}
                                             {{ form.numfileforpub }}
                                         </div>
                                 </div>
                                 <div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.caption.label }}</label>
+                                        <label class="col-md-2 control-label">{{ form.caption.label_tag }}</label>
                                         <div class="col-md-10">
+                                                {{ form.caption.errors }}
                                             {{ form.caption }}
                                         </div>
                                 </div>
+                                
                                 <div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.url.label }}</label>
-                                        <div class="col-md-10">
-                                            {{ form.url }}
+                                        <label class="col-md-2 control-label">{{ form.url.label_tag }}</label>
+                                        {% for checkbox in form.url %}
+                                        <div class="col-md-10"> 
+                                        <label class="cr-styled">
+                                                {{ checkbox.tag }}
+                                            <i class="fa"></i> {{ checkbox.choice_label }}
+                                        </label>
                                         </div>
-                                </div>
+                                        {% endfor %}
+                                    </div> 
+
                                 <div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.bottoken.label }}</label>
+                                        <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
                                         <div class="col-md-10">
                                             {{ form.bottoken }}
                                         </div>
                                 </div>
-                                
-                                         
-                                <!--
-                                    <table>
-                                    form.as_table
-                                    </table>
-                                -->
-                                
-                                <input type="submit" value="Сохранить" class="btn "/>
+                             <input type="submit" value="Сохранить" class="btn "/>
                         </form>
                     </div>
                     <!-- panel-body -->

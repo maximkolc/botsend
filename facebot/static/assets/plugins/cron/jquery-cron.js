@@ -46,7 +46,7 @@
             itemWidth : 30,
             columns   : 4,
             rows      : undefined,
-            title     : "Minutes Past the Hour"
+            title     : "Минута часа"
         },
         timeHourOpts : {
             minWidth  : 100, // only applies if columns and itemWidth not set
@@ -84,8 +84,8 @@
             title     : "Time: Minute"
         },
         effectOpts : {
-            openSpeed      : 400,
-            closeSpeed     : 400,
+            openSpeed      : 300,
+            closeSpeed     : 300,
             openEffect     : "slide",
             closeEffect    : "slide",
             hideOnMouseOut : true

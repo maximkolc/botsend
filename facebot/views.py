@@ -157,7 +157,9 @@ def getfolder(request,pk):
     return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json")
 
 def getNumsF(n, **kwargs):
-    '''вспомогательная функция для функции получения списка списка каталоговы'''
+    '''вспомогательная функция для функции получения списка списка каталоговы
+       подсчитывает количество файлов в каталоге на яндекс диске
+    '''
     sum =0
     token = kwargs['tok']
     fol = kwargs['folder']
@@ -407,9 +409,13 @@ class SourcesDataDelete(LoginRequiredMixin,DeleteView):
 class SheduleForm(forms.ModelForm):
     class Meta:
         model = Shedule
-        #fields = '__all__'
         exclude = ['created_by']
-        
+        labels = {
+            'task': 'Задания для выполнения',
+        }
+        widgets = {
+            'task': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'})
+        }
 class SheduleCreate(LoginRequiredMixin,CreateView):
     model = Shedule
     #fields = '__all__'
@@ -420,7 +426,8 @@ class SheduleCreate(LoginRequiredMixin,CreateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
-        instance.save() 
+        instance.save()
+        form.save_m2m() 
         return HttpResponseRedirect(reverse('shedules'))
 
 class SheduleUpdate(LoginRequiredMixin,UpdateView):
@@ -432,7 +439,8 @@ class SheduleUpdate(LoginRequiredMixin,UpdateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
-        instance.save() 
+        instance.save()
+        form.save_m2m()  
         return HttpResponseRedirect(reverse('shedules'))
    
 

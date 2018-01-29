@@ -2,18 +2,21 @@
 
 {% block content %}
 <div class="page-title">
-    <h3 class="title">Список моих распичаний</h3>
+    <h3 class="title">Список моих распиcаний</h3>
 </div>
 
     {% if shedule_list %}
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Мои расписания</h3>
-                    <br>
+                <div class="panel panel-default">
                     <a href="javascript:;" class="md-trigger btn btn-primary btn-sm" data-modal="modal-11">Справка</a>
                     
+                    <a href="{% url 'shedule_create' %}" class="btn btn-success">Добавить расписание</a>
+                </div>
+                {% for shedule in shedule_list %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{shedule.name}}</h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -32,7 +35,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for shedule in shedule_list %}
+                                   
                                     <tr>
                                         <td>{{shedule.name}}</td>
                                         <td>{{shedule.minute}}</td>
@@ -40,19 +43,24 @@
                                         <td>{{shedule.day}}</td>
                                         <td>{{shedule.month}}</td>
                                         <td>{{shedule.dayofmount}}</td>
-                                        <td>{{shedule.task.taskname}}</td>
+                                         <td>
+                                                {% for task in shedule.task.all%}
+                                                {{task.taskname}} / {{task.id}} <br>
+                                                {% endfor %}
+                                            </td>
                                         <td> <a href="{% url 'shedule_update' shedule.id %}" class="btn btn-primary">Изменить</a>   </td>
                                         <td> <a href="{% url 'shedule_delete' shedule.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 
-                                    {% endfor %}
+                                    
                                     </tbody>
                                 </table>
-                                <a href="{% url 'shedule_create' %}" class="btn btn-success">Добавить задачу в расписание</a>
+                                {#<a href="{% url 'shedule_create' %}" class="btn btn-success">Добавить задачу в расписание</a> #}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
     
