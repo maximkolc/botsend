@@ -2,21 +2,14 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
-import datetime
 from django import forms
-from .forms import EditTaskForm
-from django.contrib.admin import widgets 
 import requests
-from django.views.generic.edit import FormView
-from django.contrib.auth.forms import UserCreationForm
+
 #from .forms import RenewTaskForm
 # Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
-from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
@@ -25,48 +18,10 @@ import subprocess
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Функция для установки сессионного ключа.
 # По нему django будет определять, выполнил ли вход пользователь.
-from django.contrib.auth import login
-import requests
-from django.contrib.auth.models import User
 
-class LoginFormView(FormView):
-    form_class = AuthenticationForm
-    # Аналогично регистрации, только используем шаблон аутентификации.
-    template_name = "login.html"
+from django.core import management
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
 
-    # В случае успеха перенаправим на главную.
-    success_url = reverse_lazy("index")
-
-    def form_valid(self, form):
-        # Получаем объект пользователя на основе введённых в форму данных.
-        self.user = form.get_user()
-
-        # Выполняем аутентификацию пользователя.
-        login(self.request, self.user)
-        return super(LoginFormView, self).form_valid(form)
-
-class RegisterFormView(FormView):
-    form_class = UserCreationForm
-    # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
-    # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
-    success_url = reverse_lazy("login")
-
-    # Шаблон, который будет использоваться при отображении представления.
-    template_name = "register.html"
-
-    def form_valid(self, form):
-        # Создаём пользователя, если данные в форму были введены корректно.
-        form.save()
-        # Вызываем метод базового класса
-        return super(RegisterFormView, self).form_valid(form)
-
-class LogoutView(View):
-    def get(self, request):
-        # Выполняем выход для пользователя, запросившего данное представление.
-        logout(request)
-
-        # После чего, перенаправляем пользователя на главную страницу.
-        return HttpResponseRedirect(reverse('login'))
 
 def logs(requests):
     '''
@@ -97,7 +52,6 @@ def test_run(requests,id_task):
     """
     com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
     com2 = 'python3  ~/botsend/manage.py crontask '
-    from django.core import management
     management.call_command("crontask", id_task)
     '''
     отправка email письма!!!
@@ -133,28 +87,31 @@ def getfolder(request,pk):
     '''
     from django.core import serializers
     import json
-    disk = get_object_or_404(SourcesData, id = pk)
-    #disk = SourcesData.objects.get(id=pk)
-    token  = disk.token
-    folder = []
-    base_url = "https://cloud-api.yandex.net:443/v1/disk"
-    url = base_url + "/resources"
-    base_headers = {
-            "Accept": "application/json",
-            "Authorization": "OAuth " + token,
-            "Host": "cloud-api.yandex.net"
-        }
-    payload = {'path': '/','fields':'_embedded.items.name, _embedded.items.type'}
-    r = requests.get(url, headers=base_headers, params=payload)
-    res = r.json()
-    folder = []
-    numsF =[]
-    for items in res['_embedded']['items']:
-        if items['type'] == 'dir' and items['name']!=' ':
-            folder.append(items['name'])
-            numsF.append(getNumsF(0, tok=token, folder = items['name']))
-    res = dict(zip(folder, numsF))
-    return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json")
+    if request.user.is_authenticated():
+        disk = get_object_or_404(SourcesData, id = pk)
+        #disk = SourcesData.objects.get(id=pk)
+        token  = disk.token
+        folder = []
+        base_url = "https://cloud-api.yandex.net:443/v1/disk"
+        url = base_url + "/resources"
+        base_headers = {
+                "Accept": "application/json",
+                "Authorization": "OAuth " + token,
+                "Host": "cloud-api.yandex.net"
+            }
+        payload = {'path': '/','fields':'_embedded.items.name, _embedded.items.type'}
+        r = requests.get(url, headers=base_headers, params=payload)
+        res = r.json()
+        folder = []
+        numsF =[]
+        for items in res['_embedded']['items']:
+            if items['type'] == 'dir' and items['name']!=' ':
+                folder.append(items['name'])
+                numsF.append(getNumsF(0, tok=token, folder = items['name']))
+        res = dict(zip(folder, numsF))
+        return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json")
+    else:
+        return HttpResponseRedirect(reverse('login'))
 
 def getNumsF(n, **kwargs):
     '''вспомогательная функция для функции получения списка списка каталоговы
@@ -198,279 +155,3 @@ def gettoken(request):
     request.session["token"] = token_ya
     return HttpResponseRedirect(reverse('sources_create'))
   
-
-class TaskListView(LoginRequiredMixin,generic.ListView):
-    #model = Task
-    login_url = reverse_lazy("login")
-    def get_queryset(self):
-        """Returns Chanels that belong to the current user"""
-        return Task.objects.filter(created_by=self.request.user)
-    
-class TaskDetailView(LoginRequiredMixin,generic.DetailView):
-    model = Task
-
-class ChanelsListView(LoginRequiredMixin,generic.ListView):
-    #model = Chanels
-    login_url = reverse_lazy("login")
-    def get_queryset(self):
-        """Returns Chanels that belong to the current user"""
-        return Chanels.objects.filter(created_by=self.request.user)
-   
-
-class MyBotListView(LoginRequiredMixin,generic.ListView):
-    #model = MyBot
-    login_url = reverse_lazy("login")
-    def get_queryset(self):
-        """Returns Chanels that belong to the current user"""
-        return MyBot.objects.filter(created_by=self.request.user) 
-
-class SourcesDataListView(LoginRequiredMixin,generic.ListView):
-    #model = SourcesData
-    login_url = reverse_lazy("login")
-    def get_queryset(self):
-        """Returns Chanels that belong to the current user"""
-        return SourcesData.objects.filter(created_by=self.request.user)
-
-
-
-class SheduleListView(LoginRequiredMixin,generic.ListView):
-    #model = Shedule
-    login_url = reverse_lazy("login")
-    def get_queryset(self):
-        """Returns Chanels that belong to the current user"""
-        return Shedule.objects.filter(created_by=self.request.user)
-
-class UrlsListView(LoginRequiredMixin,generic.ListView):
-    #model = Urls
-    login_url = reverse_lazy("login")
-    def get_queryset(self):
-        """Returns Chanels that belong to the current user"""
-        return Urls.objects.filter(created_by=self.request.user)
-
-
-class TaskForm(forms.ModelForm):
-    class Meta:
-        model = Task
-        #fields = '__all__'
-        exclude = ['created_by']
-        labels = {
-            'chanelforpublic': 'Канал куда публикуем',
-            'sourcefordownload': 'Яндекс диск',
-            'filetypesforload': 'Типы публикуемых файлов',
-            'bottoken': 'Публикующий бот',
-            'url': 'Кнопки под публикацией',
-            'catalog_ajax': 'Каталог на диске'
-        }
-        widgets = {
-            'url': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
-            'filetypesforload': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'}),
-            'taskname': forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Введи имя'}),
-            'chanelforpublic': forms.Select(attrs={'class':'form-control'}),
-            'sourcefordownload': forms.Select(attrs={'class':'form-control'}),
-            'catalog_ajax': forms.Select(attrs={'class':'form-control'}),
-            'reactioan': forms.Select(attrs={'class':'form-control'}),
-            'numfileforpub': forms.NumberInput(attrs={'class':'form-control', 'min':1}),
-            'caption':forms.Textarea(attrs = {'class':'form-control', 'placeholder':'','cols': 80, 'rows': 4}),
-            'bottoken': forms.Select(attrs={'class':'form-control'}),
-             }
-             
-class TaskCreate(LoginRequiredMixin, CreateView):
-    form_class = TaskForm
-    model = Task
-    login_url = reverse_lazy("login")
-    success_url = reverse_lazy('tasks')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('tasks'))
-
-class TaskUpdate(LoginRequiredMixin, UpdateView):
-    form_class = TaskForm
-    model = Task
-    login_url = reverse_lazy("login")
-    success_url = reverse_lazy('tasks')
-
-class TaskDelete(LoginRequiredMixin,DeleteView):
-    model = Task
-    success_url = reverse_lazy('tasks')
-
-#MyBot
-#-----------------------------------------------------------
-class MyBotCreate(LoginRequiredMixin,CreateView):
-    model = MyBot
-    fields = ['botname','bottoken']
-    success_url = reverse_lazy('bots')
-    login_url = reverse_lazy("login")
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('bots'))
-
-class MyBotUpdate(LoginRequiredMixin,UpdateView):
-    model = MyBot
-    fields = '__all__'
-    success_url = reverse_lazy('bots')
-    login_url = reverse_lazy("login")
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('bots'))
-
-class MyBotDelete(LoginRequiredMixin,DeleteView):
-    model = MyBot
-    login_url = reverse_lazy("login")
-    success_url = reverse_lazy('bots')
-#---------------------------------------------------------------
-
-class ChanelsCreate(LoginRequiredMixin,CreateView):
-    model = Chanels
-    fields = ['chanelname','description']
-    login_url = reverse_lazy("login")
-    success_url = reverse_lazy('chanels')
-    def form_valid(self, form):
-        # Мы используем ModelForm, а его метод save() возвращает инстанс
-        # модели, связанный с формой. Аргумент commit=False говорит о том, что
-        # записывать модель в базу рановато.
-        instance = form.save(commit=False)
-
-        # Теперь, когда у нас есть несохранённая модель, можно ей чего-нибудь
-        # накрутить. Например, заполнить внешний ключ на auth.User. У нас же
-        # блог, а не анонимный имижборд, правда?
-        instance.created_by = self.request.user
-
-        # А теперь можно сохранить в базу
-        instance.save() 
-
-        return HttpResponseRedirect(reverse('chanels'))
-
-class ChanelsUpdate(LoginRequiredMixin,UpdateView):
-    model = Chanels
-    fields = '__all__'
-    login_url = reverse_lazy("login")
-    success_url = reverse_lazy('chanels')
-    #fields = ['first_name','last_name','date_of_birth','date_of_death']
-
-class ChanelsDelete(LoginRequiredMixin,DeleteView):
-    model = Chanels
-    success_url = reverse_lazy('chanels')
-
-#SourcesData -------------------------------------------------
-class SourceForm(forms.ModelForm):
-    class Meta:
-        model = SourcesData
-        #fields = '__all__'
-        exclude = ['created_by']
-        widgets = {
-            'sourcename': forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Введи имя'}),
-            'token': forms.TextInput(attrs = {'class':'form-control'}),
-            }
-             
-class SourcesDataCreate(LoginRequiredMixin,CreateView):
-    form_class = SourceForm
-    def get_initial(self):
-        # Get the initial dictionary from the superclass method
-        initial = super(SourcesDataCreate, self).get_initial()
-        # Copy the dictionary so we don't accidentally change a mutable dict
-        initial = initial.copy()
-        if "token" in self.request.session:
-            initial['token'] = self.request.session['token']
-            del self.request.session['token']
-        return initial
-    model = SourcesData
-    exclude = ['created_by']
-    success_url = reverse_lazy('sources')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('sources'))
-
-class SourcesDataUpdate(LoginRequiredMixin,UpdateView):
-    form_class = SourceForm
-    model = SourcesData
-    exclude = ['created_by']
-    success_url = reverse_lazy('sources')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('sources'))
-
-class SourcesDataDelete(LoginRequiredMixin,DeleteView):
-    model = SourcesData
-    success_url = reverse_lazy('sources')
-
-
-
-#--------------------------------------
-class SheduleForm(forms.ModelForm):
-    class Meta:
-        model = Shedule
-        exclude = ['created_by']
-        labels = {
-            'task': 'Задания для выполнения',
-        }
-        widgets = {
-            'task': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'})
-        }
-class SheduleCreate(LoginRequiredMixin,CreateView):
-    model = Shedule
-    #fields = '__all__'
-    form_class = SheduleForm
-    exclude = ['created_by']
-    initial={'minute':'*','hour':'*', 'day':'*','month':'*','dayofmount':'*'}
-    success_url = reverse_lazy('shedules')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save()
-        form.save_m2m() 
-        return HttpResponseRedirect(reverse('shedules'))
-
-class SheduleUpdate(LoginRequiredMixin,UpdateView):
-    model = Shedule
-    form_class = SheduleForm
-    #fields = '__all__'
-    exclude = ['created_by']
-    success_url = reverse_lazy('shedules')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save()
-        form.save_m2m()  
-        return HttpResponseRedirect(reverse('shedules'))
-   
-
-class SheduleDelete(LoginRequiredMixin,DeleteView):
-    model = Shedule
-    success_url = reverse_lazy('shedules')
-#----------------------------------------
-
-class UrlsCreate(LoginRequiredMixin,CreateView):
-    model = Urls
-    fields = ['urlname','url']
-    #exclude = ['created_by']
-    success_url = reverse_lazy('urlss')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('urlss'))
-
-class UrlsUpdate(LoginRequiredMixin,UpdateView):
-    model = Urls
-    fields = '__all__'
-    #exclude = ['created_by']
-    success_url = reverse_lazy('urlss')
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('urlss'))
-   
-class UrlsDelete(LoginRequiredMixin,DeleteView):
-    model = Urls
-    success_url = reverse_lazy('urlss')

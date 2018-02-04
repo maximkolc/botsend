@@ -47,15 +47,12 @@ class Task(models.Model):
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     sourcefordownload = models.ForeignKey('SourcesData', help_text="Источник данных для задачи" ,on_delete=models.SET_NULL, null=True)
     filetypesforload = models.ManyToManyField('FileTypeChoices',null=True)
-    #catalog = models.ForeignKey('Folders', on_delete=models.SET_NULL, null=True, help_text ='Каталог на диске')
     catalog_ajax = models.CharField('Каталог на диске', max_length = 30, blank= True, null = True)
-    #reactioan = models.CharField('Наличие реакций',max_length=3,choices=REACTION,default='yes')
     numfileforpub = models.IntegerField('Количесто публикуемых файлов')
+    numfileforpub_random =  models.BooleanField('Случайно',default = False)
     caption = models.CharField('Подпись',max_length=120, blank=True)
     url = models.ManyToManyField('Urls', help_text="Исрользовать ссылки",null=True, blank=True)
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
-    # ManyToManyField used because genre can contain many books. Books can cover many genres.
-    # Genre class has already been defined so we can specify the object above.
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     class Meta:
         ordering = ["chanelforpublic"]
@@ -198,6 +195,9 @@ class Shedule(models.Model):
         """
         return
 
+'''class Telega(models.Model):
+    phone_number = models.CharField('Tel',max_length=12, unique = True,null = True,  help_text = 'Tel')
+    code = models.CharField('code',max_length=12, unique = True,null = True,  help_text = 'code')'''
     
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
@@ -210,8 +210,8 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     fh.setFormatter(formatter)
     # add handler to logger object
     logger.addHandler(fh)
-    com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
-    com2 = 'python3  ~/botsend/manage.py crontask '
+    com2 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
+    com1 = 'python3  ~/botsend/manage.py crontask '
     #user = getpass.getuser()
     t_id=[]
     for task in instance.task.all():

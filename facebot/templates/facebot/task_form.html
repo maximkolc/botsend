@@ -34,25 +34,30 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="form-group">
-                                    <label class="col-md-2 control-label">{{ form.filetypesforload.label_tag }}</label>
-                                    <div class="col-md-10">
-                                        {{ form.filetypesforload }}
-                                    </div>
-                                </div>
-                            -->
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.filetypesforload.label_tag }}</label>
+                                        <div class="col-md-10 ">
                                         {% for checkbox in form.filetypesforload %}
-                                        <div class="col-md-10"> 
-                                        <label class="cr-styled">
-                                                {{ checkbox.tag }}
-                                            <i class="fa"></i> {{ checkbox.choice_label }}
-                                        </label>
-                                        </div>
+                                           <div class="chekbox">    
+                                            <label class="cr-styled">
+                                                {{ checkbox.tag }} <i class="fa"></i> {{ checkbox.choice_label }}
+                                             </label>
+                                            </div>
                                         {% endfor %}
+                                    </div>
                                     </div>   
-                                
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">{{ form.url.label_tag }}</label>
+                                        <div class="col-md-10">
+                                           {% for checkbox in form.url %}
+                                             <div class="chekbox">
+                                                <label class="cr-styled">
+                                                 {{ checkbox.tag }} <i class="fa"></i> {{ checkbox.choice_label }}
+                                                </label>
+                                             </div>
+                                           {% endfor %}
+                                        </div>
+                                </div> 
                                 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">{{ form.catalog_ajax.label_tag }}</label>
@@ -60,19 +65,20 @@
                                         {{ form.catalog_ajax }}
                                     </div>
                             </div>
-                                <!--<div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.reactioan.label }}</label>
-                                        <div class="col-md-10">
-                                            {{ form.reactioan }}
-                                        </div>
-                                    
-                                </div>-->
+                                
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.numfileforpub.label_tag }}</label>
                                         <div class="col-md-10">
                                             {{ form.numfileforpub.errors }}
                                             {{ form.numfileforpub }}
+                                        
+                                        <div class="chekbox">
+                                                <label class="cr-styled">
+                                                 {{ form.numfileforpub_random.tag }} <i class="fa"></i> {{ form.numfileforpub_random.choice_label }}
+                                                </label>
                                         </div>
+                                    </div>
+                                         
                                 </div>
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.caption.label_tag }}</label>
@@ -82,17 +88,7 @@
                                         </div>
                                 </div>
                                 
-                                <div class="form-group">
-                                        <label class="col-md-2 control-label">{{ form.url.label_tag }}</label>
-                                        {% for checkbox in form.url %}
-                                        <div class="col-md-10"> 
-                                        <label class="cr-styled">
-                                                {{ checkbox.tag }}
-                                            <i class="fa"></i> {{ checkbox.choice_label }}
-                                        </label>
-                                        </div>
-                                        {% endfor %}
-                                    </div> 
+                                
 
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
@@ -100,7 +96,8 @@
                                             {{ form.bottoken }}
                                         </div>
                                 </div>
-                             <input type="submit" value="Сохранить" class="btn "/>
+                                
+                                <input type="submit" value="Сохранить" class="btn "/>
                         </form>
                     </div>
                     <!-- panel-body -->

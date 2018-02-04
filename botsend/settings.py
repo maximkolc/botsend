@@ -29,7 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
      '185.16.41.210',
      '127.0.0.1',
-     '185.16.41.146'
+     '185.16.41.146',
+     '85e3a427.ngrok.io'
 ]
 
 
@@ -139,3 +140,29 @@ EMAIL_HOST_PASSWORD = "09793855"
 EMAIL_USE_SSL = True
 
 LOGIN_URL =  reverse_lazy("login")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'simple': {
+            'format': '[%(levelname)s:%(name)s:%(lineno)d] %(message)s'
+        },
+    },
+    'handlers': {
+        # ...
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        # ...
+        'django.db': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # <----<<<
+            'propagate': False,
+        }
+    }
+}
