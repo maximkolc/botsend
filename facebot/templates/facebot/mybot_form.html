@@ -15,14 +15,14 @@
                                 {% csrf_token %}
                                 {% load addcss %}
                                 <div class="form-group">
-                                        {{ form.botname.errors.as_text }}
+                                        {{ form.botname.errors }}
                                         <label class="col-md-2 control-label">{{ form.botname.label_tag }} </label>
                                         <div class="col-md-10">
                                           {{ form.botname|addcss:"form-control,Имя бота" }} 
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        {{ form.bottoken.errors.as_text }}
+                                        {{ form.bottoken.errors }}
                                         <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
                                         <div class="col-md-10">
                                             {{ form.bottoken|addcss:"form-control, Токен бота" }}

@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect,HttpResponse
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse as rv
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django import forms
 import requests
-
+from django.shortcuts import redirect, reverse, Http404
 #from .forms import RenewTaskForm
 # Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
@@ -18,10 +18,69 @@ import subprocess
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Функция для установки сессионного ключа.
 # По нему django будет определять, выполнил ли вход пользователь.
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 
 from django.core import management
 from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
+from .forms import CustomUserCreationForm
+from facebot import helpers
+from .models import Profile
 
+def register(request):
+    if request.method == 'POST':
+        f = CustomUserCreationForm(request.POST)
+        if f.is_valid():
+            # send email verification now
+
+            activation_key = helpers.generate_activation_key(username=request.POST['username'])
+
+            subject = "TheGreatDjangoBlog Account Verification"
+
+            message = '''\n Please visit the following link to verify your account \n\n{0}://{1}/facebot/activate/account/?key={2}
+                        '''.format(request.scheme, request.get_host(), activation_key)            
+
+            error = False
+            
+            try:
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [request.POST['email']])
+                #send_mail(subject, message, settings.SERVER_EMAIL, [request.POST['email']])
+                #messages.add_message(request, messages.INFO, 'Account created! Click on the link sent to your email to activate the account')
+
+            except:
+                error = True
+                #messages.add_message(request, messages.INFO, 'Unable to send email verification. Please try again')
+
+            
+            
+            if not error:
+                u = User.objects.create_user(
+                    request.POST['username'],
+                    request.POST['email'],
+                    request.POST['password1'],
+                    is_active = 0)
+                profile = Profile()
+                profile.activation_key = activation_key
+                profile.user = u
+                profile.save()
+            return HttpResponseRedirect(rv('login'))
+    else:
+        f = CustomUserCreationForm()
+    return render(request, 'register.html', {'form': f})
+
+def activate_account(request):
+    key = request.GET['key']
+    if not key:
+        raise Http404()
+
+    r = get_object_or_404(Profile, activation_key=key, email_validated=False)
+    r.user.is_active = True
+    r.user.save()
+    r.email_validated = True
+    r.save()
+
+    return render(request, 'activate.html')
 
 def logs(requests):
     '''
@@ -59,7 +118,7 @@ def test_run(requests,id_task):
     from django.conf import settings
     send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['maximkolc@gmail.com'])
     '''
-    return HttpResponseRedirect(reverse('tasks'))
+    return HttpResponseRedirect(rv('tasks'))
 
 def index(request):
     """
@@ -78,7 +137,7 @@ def index(request):
             'index.html',
             context={'num_tasks':num_tasks,'num_chanels':num_chanels, 'num_source':num_source,'num_bots':num_bots},)
     else:
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(rv('login'))
 
 def getfolder(request,pk):
     '''
@@ -111,7 +170,7 @@ def getfolder(request,pk):
         res = dict(zip(folder, numsF))
         return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json")
     else:
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(rv('login'))
 
 def getNumsF(n, **kwargs):
     '''вспомогательная функция для функции получения списка списка каталоговы
@@ -153,5 +212,5 @@ def gettoken(request):
     json_dict = r.json()
     token_ya = json_dict['access_token']
     request.session["token"] = token_ya
-    return HttpResponseRedirect(reverse('sources_create'))
+    return HttpResponseRedirect(rv('sources_create'))
   

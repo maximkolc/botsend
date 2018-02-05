@@ -53,7 +53,8 @@ urlpatterns += [
     url(r'^urls/(?P<pk>\d+)/delete/$', forms.UrlsDelete.as_view(), name='urls_delete'),
 ]
 urlpatterns +=[
-    url(r'^register/$', forms.RegisterFormView.as_view(),name='register'),
+    url(r'^register/$', views.register,name='register'),
     url(r'^login/$', forms.LoginFormView.as_view(), name = 'login' ),
     url(r'^logout/$', forms.LogoutView.as_view(), name = 'logout'),
+    url(r'^activate/account/$', views.activate_account, name='activate'),
 ]

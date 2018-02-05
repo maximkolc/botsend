@@ -8,6 +8,7 @@ from .utils.utils import YandexHelp
 from .utils.getkeyboard import *
 import requests
 import logging
+import random
 #logging.basicConfig(filename="logs/crontask_logo.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
 class Command(BaseCommand):
@@ -35,7 +36,14 @@ class Command(BaseCommand):
                 t = ft.ftype.split(',')
                 filetypes.extend(t)
                 print(filetypes)
-            logger.info('Количество файлов для загрузки:'+ str(mytask.numfileforpub))
+            # вычисление количества загружаемых файлов
+            nums_file_load = 0
+            if mytask.numfileforpub_random == True:
+                nums_file_load = random.randint(mytask.num_file_min, mytask.num_file_max)
+            else:
+                nums_file_load = mytask.numfileforpub
+
+            logger.info('Количество файлов для загрузки:'+ str(nums_file_load))
             logger.info('Типы загружаемых файлов '+' '.join(filetypes))
             dt = mytask.sourcefordownload.token
             test = 'AQAAAAAiLO4jAASpE0JmHehiVkahtwsJmy1J9fc'
@@ -45,7 +53,7 @@ class Command(BaseCommand):
             #helper.get_list_of_all_files()
             #-----------
             logger.info("Получение списка файлов для загрузки")
-            listfile = helper.getListFle2(folder,filetypes,numsfile=mytask.numfileforpub,log=file_name_log)
+            listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
             logger.info('файлы для загрузки '+' '.join(listfile))
             links = helper.getLinkFile(folder, listfile)
             logger.info('Полученные ссылки для загрузки файлов: '+' '.join(links))

@@ -12,17 +12,17 @@ import logging
 import getpass
 #---------модель для профиля пользователя-----------------------
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,  null=True)
+    telegramm = models.CharField(blank=True, max_length=20)    
+    activation_key = models.CharField(max_length=255, default=1)
+    email_validated = models.BooleanField(default=False)
 
-@receiver(post_save, sender=User)
+#@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
+#@receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 #----------------------------------------------------------------
@@ -33,23 +33,22 @@ class Task(models.Model):
     """
     Модель которая описыват задачу, для выполнения боту!!!
     """
-    '''FILE_TYPES = (
-        ('GIF', 'Гифки'),
-        ('TXT', 'Тескс Markdown'),
-        ('PNG', 'Картинки'),
-    )'''
     REACTION = (
         ('yes','Да'),
         ('no', 'Нет')
         )
-    
+    BOOL_CHOICES = ((True, ' Случайно'), (False, 'Вручную'))
     taskname = models.CharField('Имя задачи',max_length=25, unique = True)
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     sourcefordownload = models.ForeignKey('SourcesData', help_text="Источник данных для задачи" ,on_delete=models.SET_NULL, null=True)
     filetypesforload = models.ManyToManyField('FileTypeChoices',null=True)
     catalog_ajax = models.CharField('Каталог на диске', max_length = 30, blank= True, null = True)
+    # поля для обработки количества публикуемых файлов
     numfileforpub = models.IntegerField('Количесто публикуемых файлов')
-    numfileforpub_random =  models.BooleanField('Случайно',default = False)
+    numfileforpub_random =  models.BooleanField('Случайно',default = False, choices=BOOL_CHOICES)
+    num_file_min = models.IntegerField('Минимальное количесто публикуемых файлов', null = True, blank=True)
+    num_file_max = models.IntegerField('Максимальное количесто публикуемых файлов', null = True, blank=True)
+    # -----
     caption = models.CharField('Подпись',max_length=120, blank=True)
     url = models.ManyToManyField('Urls', help_text="Исрользовать ссылки",null=True, blank=True)
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)

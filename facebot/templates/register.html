@@ -4,16 +4,16 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="Admina Bootstrap Admin. This is the demo of Admina. You need to purchase a license for legal use!">
-		<meta name="author" content="DownTown Themes">
-    {% load static %}
+		<meta name="description" content="">
+		<meta name="author" content="">
+        {% load static %}
 		<link rel="shortcut icon" href="{% static 'assets/img/icon.png' %}">
 
-		<title>Admina - Responsive Admin Template</title>
+		<title> Создание аккаунта</title>
 
 		<!-- Google Fonts -->
 		<link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-    {% load static %}
+        {% load static %}
 		<!--Icon fonts css-->
 		<link href="{% static 'assets/plugins/font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
 		<link href="{% static 'assets/plugins/ionicon/css/ionicons.min.css' %}" rel="stylesheet" />
@@ -32,16 +32,29 @@
 		<link href="{% static 'assets/plugins/sweet-alert/sweet-alert.min.css' %}" rel="stylesheet">
 
 		<!-- Custom styles -->
-		<link href="{% static 'assets/css/style.css" rel="stylesheet' %}">
-		<link href="{% static 'assets/css/helper.css" rel="stylesheet' %}">
-		<link href="{% static 'assets/css/style-responsive.css" rel="stylesheet' %}" />
+		<link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+		<link href="{% static 'assets/css/helper.css' %}" rel="stylesheet">
+		<link href="{% static 'assets/css/style-responsive.css' %}" rel="stylesheet" />
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
 		<!--[if lt IE 9]>
 		<script src="js/html5shiv.js"></script>
 		<script src="js/respond.min.js"></script>
 		<![endif]-->
-
+        <style type="text/css">
+			ul.errorlist {
+				margin: 0;
+				padding: 0;
+			}
+			ul.errorlist li {
+				background-color: red;
+				color: white;
+				display: block;
+				font-size: 10px;
+				margin: 0 0 3px;
+				padding: 4px 5px;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -49,44 +62,58 @@
 		<div class="wrapper-page animated fadeInDown">
 			<div class="panel panel-color panel-primary">
 				<div class="panel-heading">
-					<h3 class="text-center m-t-10"> Создать новый аккаунт </h3>
+					<h3 class="text-center m-t-10"> Создание нового аккаунта </h3>
 				</div>
-				{% load addcss %}
- 				 
-				<form class="form-horizontal m-t-40" action="" method="post">
+                {% load addcss %}
+				 
+
+				<form class="form-horizontal m-t-40" action="", method="post">
 					{% csrf_token %}
-                    {% if form.errors %}
-                       <p>Your username and password didn't match. Please try again.</p>
-                    {% endif %}
 					<div class="form-group">
 						<div class="col-xs-12">
-                        <!--<input class="form-control" type="email" required="" placeholder="Email">-->
-			            {{ form.username.label_tag }}		   
-			            {{ form.username|addcss:"form-control,Имя пользователя"}}
+							{{ form.username.errors }}
+							<label for={{ form.username.id_for_label}}>{{form.username.label_tag}}</label>
+							{{ form.username|addcss:"form-control,Имя пользователя"}}
 						</div>
 					</div>
-                     
+
 					<div class="form-group ">
 						<div class="col-xs-12">
 							<!--<input class="form-control " type="text" required="" placeholder="Username">-->
-							{{ form.password1.label_tag }}
-							{{ form.password1|addcss:"form-control,Пароль"}}
-
+							{{ form.email.errors }}
+							<label for={{ form.email.id_for_label}}>{{form.email.label_tag}}</label>
+							{{ form.email|addcss:"form-control, email"}}
 						</div>
 					</div>
 
 					<div class="form-group">
 						<div class="col-xs-12">
-							<!-- <input class="form-control " type="password" required="" placeholder="Password">-->
-							{{ form.password1.label_tag }}
-							{{ form.password2|addcss:"form-control,Подтверждение пароля"}}
+							{{ form.password1.errors }}
+							<label for={{ form.password1.id_for_label}}>{{form.password1.label_tag}}</label>
+							{{ form.password1|addcss:"form-control,Пароль"}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<div class="col-xs-12">
+							{{ form.password2.errors }}
+							<label for={{ form.password2.id_for_label}}>{{form.password2.label_tag}}</label>
+							{{ form.password2|addcss:"form-control,Подтвердите пароль"}}
+						</div>
+					</div>
+					
+					<div class="form-group ">
+						<div class="col-xs-12">
+							<label class="cr-styled">
+								<input type="checkbox" checked>
+								<i class="fa"></i> Я согласен с <strong><a href="#">правилами и условиями</a></strong> </label>
 						</div>
 					</div>
 
 					<div class="form-group text-right">
 						<div class="col-xs-12">
 							<button class="btn btn-purple w-md" type="submit">
-								Зарегистрироваться
+								Регистрация
 							</button>
 						</div>
 					</div>
@@ -97,18 +124,17 @@
 						</div>
 					</div>
 				</form>
-      </div>
-       
-		</div>
-    <!-- Basic Plugins -->
-    {% load static %}
-		<script src="{% static 'assets/js/jquery.js' %}"></script>
-		<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-		<script src="{% static 'assets/js/pace.min.js' %}"></script>
-		<script src="{% static 'assets/js/wow.min.js' %}"></script>
-		<script src="{% static 'assets/js/jquery.nicescroll.js' %}" type="text/javascript"></script>
 
-    <script src="{% static 'assets/js/app.js' %}"></script>
+			</div>
+		</div>
+		<!-- Basic Plugins -->
+		<script src="assets/js/jquery.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/pace.min.js"></script>
+		<script src="assets/js/wow.min.js"></script>
+		<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+
+		<script src="assets/js/app.js"></script>
 
 	</body>
 

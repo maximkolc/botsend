@@ -36,12 +36,6 @@ class YandexHelp:
         return list_for_load
 
     def getListFle2(self, folder,filetypes,numsfile,log):
-        #logger = logging.getLogger("run_task")
-        #logger.setLevel(logging.INFO)
-        #fh = logging.FileHandler("logs/"+file_name_log)
-        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        #fh.setFormatter(formatter)
-        #logger.addHandler(fh)
         list = self.client.get_content_of_folder(folder).get_children()  
         #logger.info("Всего файлов в каталоге: - "+ str(len(list)))
         new_list = []

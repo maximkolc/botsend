@@ -69,14 +69,33 @@
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.numfileforpub.label_tag }}</label>
                                         <div class="col-md-10">
+                                        {%if form.numfileforpub_random.value == False %}
                                             {{ form.numfileforpub.errors }}
                                             {{ form.numfileforpub }}
-                                        
-                                        <div class="chekbox">
-                                                <label class="cr-styled">
-                                                 {{ form.numfileforpub_random.tag }} <i class="fa"></i> {{ form.numfileforpub_random.choice_label }}
-                                                </label>
+                                            <!--form.numfileforpub_random-->
+                                            {{ form.num_file_min.errors.as_hidden}}
+                                            {{ form.num_file_min.as_hidden }}
+                                            {{ form.num_file_max.errors.as_hidden }}
+                                            {{ form.num_file_max.as_hidden }}
+                                        {% else %}
+                                            {{ form.numfileforpub.errors.as_hidden }}
+                                            {{ form.numfileforpub.as_hidden }}
+                                            <!--form.numfileforpub_random-->
+                                            {{ form.num_file_min.errorsn}}
+                                            {{ form.num_file_min }}
+                                            {{ form.num_file_max.errors }}
+                                            {{ form.num_file_max }}
+                                        {% endif %}
+                                        {% for radio in form.numfileforpub_random %}
+                                        <div class="radio-inline">
+                                            <label class="cr-styled" for={{ radio.id_for_label }}>
+                                                {{radio.tag}}
+                                                <i class="fa"></i>{{ radio.choice_label}} </label>
                                         </div>
+                                        
+                                       
+                                        
+                                        {% endfor %}
                                     </div>
                                          
                                 </div>
@@ -129,6 +148,27 @@
                     return sEnding;
                 }
             $(document).ready( function(){
+                //num_file = $('#id_numfileforpub').val();
+                $("#id_numfileforpub_random_0").change(function () {
+                        $('#id_num_file_min').attr('type','number').addClass('form-control');
+                        $('#id_num_file_min').attr('placeholder','от');
+                        $('#id_num_file_max').attr('type','number').addClass('form-control');
+                        $('#id_num_file_max').attr('placeholder','до');
+                        $('#id_numfileforpub').attr('type','hidden');
+                        num_file = $('#id_numfileforpub').val();
+                        $('#id_numfileforpub').val(0);
+
+                });
+                $("#id_numfileforpub_random_1").change(function () {
+                    $('#id_num_file_min').attr('type','hidden').addClass('form-control');
+                    $('#id_num_file_min').attr('placeholder','от');
+                    $('#id_num_file_max').attr('type','hidden').addClass('form-control');
+                    $('#id_num_file_max').attr('placeholder','до');
+                    $('#id_numfileforpub').attr('type','number').addClass('form-control');
+                    $('#id_numfileforpub').attr('value', num_file);
+
+
+            });
                 var cat = '{{form.catalog_ajax.value}}';
                 $.ajax({
                     url: '/facebot/ajax/getfolder/'+$('#id_sourcefordownload').val()+'/',
