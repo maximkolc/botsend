@@ -95,7 +95,7 @@ class Chanels(models.Model):
         """
         String for representing the Model object.
         """
-        return self.chanelname
+        return self.chanelname+" ("+self.description+")"
     
     
     def get_absolute_url(self):
@@ -149,7 +149,7 @@ class FileTypeChoices(models.Model):
         """
         String for representing the Model object.
         """
-        return self.desc
+        return self.desc+" ("+self.ftype+")"
     
     
     def get_absolute_url(self):

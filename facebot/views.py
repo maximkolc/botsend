@@ -38,7 +38,7 @@ def register(request):
 
             subject = "TheGreatDjangoBlog Account Verification"
 
-            message = '''\n Please visit the following link to verify your account \n\n{0}://{1}/facebot/activate/account/?key={2}
+            message = '''\n Для подтверждения аккаунта переидите по этой ссылке \n\n{0}://{1}/facebot/activate/account/?key={2}
                         '''.format(request.scheme, request.get_host(), activation_key)            
 
             error = False

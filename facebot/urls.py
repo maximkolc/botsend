@@ -2,6 +2,7 @@ from django.conf.urls import url
 
 from . import views
 from . import forms
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -57,4 +58,13 @@ urlpatterns +=[
     url(r'^login/$', forms.LoginFormView.as_view(), name = 'login' ),
     url(r'^logout/$', forms.LogoutView.as_view(), name = 'logout'),
     url(r'^activate/account/$', views.activate_account, name='activate'),
+    url(r'^password-change-done/$',
+        auth_views.password_change_done,
+        {'template_name': 'password_change_done.html'},
+        name='password_change_done'),
+    url(r'^password-change/$',
+        auth_views.password_change,
+       {'template_name': 'password_change.html' , 'post_change_redirect': 'password_change_done'},
+        name='password_change'
+    ),
 ]
