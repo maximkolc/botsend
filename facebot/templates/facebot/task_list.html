@@ -8,18 +8,18 @@
     {% if task_list %}
     <div class="row">
         <div class="col-md-12">
+{% for task in task_list %}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Описание</h3>
+                    <h3 class="panel-title">{{task.taskname}}, добавлена {{task.created_at}}</h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table table-bordered">
                                     <thead>
-                                        <tr>
-                                            <th>Имя</th>
+                                        <tr class="success">
                                             <th>Канал </th>
                                             <th>Бот</th>
                                             <th>Источник </th>
@@ -31,17 +31,19 @@
                                          </tr>
                                     </thead>
                                     <tbody>
-                                    {% for task in task_list %}
+                                    
                                     <tr>
-                                        <td>{{task.taskname}}</td>
                                         <td>{{task.chanelforpublic}}</td>
                                         <td>{{task.bottoken.botname}}</td>
                                         <td>{{task.sourcefordownload}}</td>
                                         <td>{{task.catalog_ajax}}</td>
                                         
                                         <td>
+                                            
                                             {% for url in task.url.all%}
                                             {{url.urlname}} <br>
+                                            {% empty %}
+                                                Нет
                                             {% endfor %}
                                         </td>
                                         
@@ -53,24 +55,40 @@
                                         </td>
                                         <td>{{task.caption}}</td>
                                         
-                                        <td> <a href="{% url 'task_update' task.id %}"  class="btn btn-primary">Изменить</a>   </td>
-                                        <td> <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">Удалить</a>   </td>
-                                        <td> <a href="{% url 'test_run' task.id %}" class="btn btn-primary">Тест</a>   </td>
+                                       
                                     </tr>                                 
-                                    {% endfor %}
+                                    
                                     </tbody>
                                 </table>
-                                <a href="{% url 'task_create' %}" class="btn btn-success">Добавить задание</a>
+                                <td> <a href="{% url 'task_update' task.id %}"  class="btn btn-primary">Изменить</a>   </td>
+                                <td> <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">Удалить</a>   </td>
+                                <td> <a href="{% url 'test_run' task.id %}" class="btn btn-success">Тест</a>   </td>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
+{% endfor %}
+            <a href="{% url 'task_create' %}" class="btn btn-success">Добавить задание</a>
         </div>
     </div>
-    </a>
+    
     {% else %}
       <p>Пока нет ни одной задачи в работе </p>
       <a href="{% url 'task_create' %}" class="btn btn-success">Добавить задание</a>
-    {% endif %}       
+    {% endif %}   
+
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+            $( document ).ready(function() {
+                swal('{{ message }}');
+            });
+            //$('#modal-11').addClass('md-show' );
+            </script>
+        {% endfor %}
+    {% endif %}
+    
+            
+               
 {% endblock %}

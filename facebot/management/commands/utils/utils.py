@@ -22,7 +22,7 @@ class YandexHelp:
         self.token = token
         self.client = YandexDiskRestClient(self.token)
         
-    def getListFle(self, folder,filetypes,numsfile):
+    '''def getListFle(self, folder,filetypes,numsfile):
         list = self.client.get_content_of_folder(folder).get_children()  
         new_list = []
         list_for_load=[]
@@ -33,7 +33,7 @@ class YandexHelp:
         random.shuffle(new_list)
         for i in range(numsfile):
             list_for_load.append(new_list[i])
-        return list_for_load
+        return list_for_load'''
 
     def getListFle2(self, folder,filetypes,numsfile,log):
         list = self.client.get_content_of_folder(folder).get_children()  
@@ -46,8 +46,11 @@ class YandexHelp:
                 new_list.append(key.name)  
         #logger.info("Из них файлов удовлетворящюх требованиям: - "+ str(len(new_list)))
         random.shuffle(new_list)
-        for i in range(numsfile):
-            list_for_load.append(new_list[i])
+        if(numsfile>1):
+            for i in range(numsfile):
+                list_for_load.append(new_list[i])
+        else:
+            list_for_load.append(new_list[1])
         return list_for_load
     
     def remove_folder_or_file(self,folder, listfiles):

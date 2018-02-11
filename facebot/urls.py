@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^bots/$', forms.MyBotListView.as_view(), name='bots'),
     url(r'^sources/$', forms.SourcesDataListView.as_view(), name='sources'),
     url(r'^shedules/$', forms.SheduleListView.as_view(), name='shedules'),
+    url(r'^oncetasks/$', forms.OnceTaskListView.as_view(), name='oncetasks'),
     url(r'^urls/$', forms.UrlsListView.as_view(), name='urlss'),
     url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
     url(r'^logs/$', views.logs),
@@ -53,6 +54,11 @@ urlpatterns += [
     url(r'^urls/(?P<pk>\d+)/update/$', forms.UrlsUpdate.as_view(), name='urls_update'),
     url(r'^urls/(?P<pk>\d+)/delete/$', forms.UrlsDelete.as_view(), name='urls_delete'),
 ]
+urlpatterns += [  
+    url(r'^oncetask/create/$', forms.OnceTaskCreate.as_view(), name='oncetask_create'),
+    url(r'^oncetask/(?P<pk>\d+)/update/$', forms.OnceTaskUpdate.as_view(), name='oncetask_update'),
+    url(r'^oncetask/(?P<pk>\d+)/delete/$', forms.OnceTaskDelete.as_view(), name='oncetask_delete'),
+]
 urlpatterns +=[
     url(r'^register/$', views.register,name='register'),
     url(r'^login/$', forms.LoginFormView.as_view(), name = 'login' ),
@@ -67,4 +73,8 @@ urlpatterns +=[
        {'template_name': 'password_change.html' , 'post_change_redirect': 'password_change_done'},
         name='password_change'
     ),
+    url(r'^update/$', forms.UserUpdate.as_view(), name = 'userupdate' ),
+]
+urlpatterns += [  
+    url(r'^profile/$', views.profile, name='profile'),
 ]

@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -15,6 +15,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+from datetimewidget.widgets import DateTimeWidget
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class LoginFormView(FormView):
@@ -160,6 +162,7 @@ class SourcesDataListView(LoginRequiredMixin,generic.ListView):
     def get_queryset(self):
         """Returns Chanels that belong to the current user"""
         return SourcesData.objects.filter(created_by=self.request.user)
+
 
 
 
@@ -348,6 +351,7 @@ class SourcesDataDelete(LoginRequiredMixin,DeleteView):
 class SheduleForm(forms.ModelForm):
     class Meta:
         model = Shedule
+        #fields = '__all__'
         exclude = ['created_by']
         labels = {
             'task': 'Задания для выполнения',
@@ -355,10 +359,21 @@ class SheduleForm(forms.ModelForm):
         widgets = {
             'task': forms.CheckboxSelectMultiple(attrs={'style' : 'list-style-type: none'})
         }
+    # получаем только таски с действующем юзером
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(SheduleForm, self).__init__(*args, **kwargs)
+        self.fields['task'].queryset = Task.objects.filter(created_by = user)
+
 class SheduleCreate(LoginRequiredMixin,CreateView):
     model = Shedule
     #fields = '__all__'
     form_class = SheduleForm
+    # получаем только таски с действующем юзером продоложение
+    def get_form_kwargs(self):
+        kwargs = super(SheduleCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
     initial={'minute':'*','hour':'*', 'day':'*','month':'*','dayofmount':'*'}
     success_url = reverse_lazy('shedules')
     def form_valid(self, form):
@@ -413,3 +428,77 @@ class UrlsUpdate(LoginRequiredMixin,UpdateView):
 class UrlsDelete(LoginRequiredMixin,DeleteView):
     model = Urls
     success_url = reverse_lazy('urlss')
+
+
+
+#-------------------------------------------
+class UpdateForm(forms.ModelForm):
+    #form for updating users
+    #the field you want to use should already be defined in the model
+    #so no need to add them here again DRY
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+class UserUpdate(UpdateView):  
+    context_object_name = 'variable_used_in `user_form.html`'
+    form_class = UpdateForm
+    template_name = 'facebot/user_form.html'
+    success_url = reverse_lazy('profile')
+    #get object
+    def get_object(self, queryset=None): 
+        return self.request.user
+    #override form_valid method
+    def form_valid(self, form):
+        #save cleaned post data
+        clean = form.cleaned_data 
+        context = {}        
+        self.object = context.save(clean) 
+        return super(UserUpdate, self).form_valid(form) 
+#-------------------------------------------
+class OnceTaskUploadForm(forms.ModelForm):
+    text = forms.CharField( widget=forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"10"}) )
+    class Meta:
+        model = OnceTask
+        fields = ('name', 'imgs','text','run_date' )
+        widgets = {
+            #Use localization and bootstrap 3
+            'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3)
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super(OnceTaskUploadForm, self).__init__(*args, **kwargs)
+        self.fields['imgs'].widget.attrs.update({
+            'name':'pic[]',
+             'class' : 'photo' 
+        })
+class OnceTaskCreate(LoginRequiredMixin, CreateView):
+    form_class = OnceTaskUploadForm
+    model = OnceTask
+    success_url = reverse_lazy('oncetasks')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save()
+        return HttpResponseRedirect(reverse('oncetasks'))
+
+class OnceTaskUpdate(LoginRequiredMixin,UpdateView):
+    form_class = OnceTaskUploadForm
+    model = OnceTask
+    success_url = reverse_lazy('oncetasks')
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        return HttpResponseRedirect(reverse('oncetasks'))
+   
+class OnceTaskDelete(LoginRequiredMixin,DeleteView):
+    model = OnceTask
+    success_url = reverse_lazy('oncetasks')
+
+class OnceTaskListView(LoginRequiredMixin,generic.ListView):
+    #model = SourcesData
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return OnceTask.objects.filter(created_by=self.request.user)

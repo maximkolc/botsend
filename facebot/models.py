@@ -17,6 +17,12 @@ class Profile(models.Model):
     activation_key = models.CharField(max_length=255, default=1)
     email_validated = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.user.username
+
+    def get_absolute_url(self):
+        return reverse('post_by_author', args=[self.user.username])
+
 #@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -38,7 +44,7 @@ class Task(models.Model):
         ('no', 'Нет')
         )
     BOOL_CHOICES = ((True, ' Случайно'), (False, 'Вручную'))
-    taskname = models.CharField('Имя задачи',max_length=25, unique = True)
+    taskname = models.CharField('Имя задачи',max_length=25)
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     sourcefordownload = models.ForeignKey('SourcesData', help_text="Источник данных для задачи" ,on_delete=models.SET_NULL, null=True)
     filetypesforload = models.ManyToManyField('FileTypeChoices',null=True)
@@ -53,8 +59,10 @@ class Task(models.Model):
     url = models.ManyToManyField('Urls', help_text="Исрользовать ссылки",null=True, blank=True)
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     class Meta:
         ordering = ["chanelforpublic"]
+        unique_together = ('taskname', 'created_by')
     def __str__(self):
         """
         String for representing the Model object.
@@ -77,6 +85,8 @@ class Task(models.Model):
         #if self.time_run == None or self.time_run < timezone.now():
             #self.time_run = self.time_period.+self.momentforwork
         #    self.time_run = datetime.combine(datetime.now(), self.momentforwork) +self.time_period
+        if self.caption == '':
+            self.caption = "Нет"
         
         super(Task, self).save(*args, **kwargs) # Call the "real" save() method.'''
         
@@ -86,6 +96,13 @@ def task_save(sender, instance, signal, *args, **kwargs):
     #Send verification email
     send_mess.delay(instance.id)
 
+class OnceTask(models.Model):
+    name = models.CharField("Имя задачи", max_length=25, unique = True)
+    imgs = models.ImageField(upload_to = 'pic_folder/', default = 'pic_folder/no-img.png')
+    text =  models.CharField('Описание',max_length=600, help_text = 'Описание')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    run_date = models.DateTimeField("Время запуска", null=True)
+    
 
 class Chanels(models.Model):
     chanelname = models.CharField('Имя канала',max_length=25, unique = True, help_text = 'Имя канала')

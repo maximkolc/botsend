@@ -27,7 +27,9 @@
 		<link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
 		<link href="{% static 'assets/css/helper.css' %}" rel="stylesheet ">
 		<link href="{% static 'assets/css/style-responsive.css'  %}" rel="stylesheet" />
-		
+		<!-- sweet alerts -->
+		<link href="{% static 'assets/plugins/sweet-alert/sweet-alert.min.css'  %}" rel="stylesheet">
+
 		<link href="{% static  'assets/plugins/cron/jquery-cron.css' %}" rel="stylesheet" />
 		<link href="{% static  'assets/plugins/gentleSelect/jquery-gentleSelect.css' %}" rel="stylesheet" />
 		
@@ -79,7 +81,7 @@
 					<a data-toggle="dropdown" class="dropdown-toggle" href="#"> <span class="username">{{ user.username}} </span> <span class="caret"></span> </a>
 					<ul class="dropdown-menu extended pro-menu fadeInUp animated" tabindex="5003" style="overflow: hidden; outline: none;">
 						<li>
-							<a href="profile.html"><i class="fa fa-briefcase"></i>Профиль</a>
+							<a href="{% url 'profile' %}"><i class="fa fa-briefcase"></i>Профиль</a>
 						</li>
 						<li>
 							<a href="#"><i class="fa fa-cog"></i> Настройки</a>
@@ -124,10 +126,15 @@
                     <li>
                         <a href="{% url 'tasks' %}"><i class="fa fa-gavel"></i> 
                             <span class="nav-label">Мои задания</span></a>
-                    </li>
+					</li>
+					
                     <li>
                         <a href="{% url 'task_create' %}"><i class="fa fa-plus"></i> 
-                            <span class="nav-label">Новое задание</span></a>
+                            <span class="nav-label">Новое переодическое задание</span></a>
+					</li>
+					<li>
+                        <a href="{% url 'oncetask_create' %}"><i class="fa fa-plus"></i> 
+                            <span class="nav-label">Новое разовое задание</span></a>
 					</li>
 					<li>
                         <a href="{% url 'shedules' %}"><i class="fa fa-calendar"></i> 
@@ -175,7 +182,12 @@
          <!-- Modal-Effect -->
 		 <script src="{% static 'assets/plugins/modal-effect/js/classie.js' %}"></script>
 		 <script src="{% static 'assets/plugins/modal-effect/js/modalEffects.js' %}"></script>
-    </body>
+
+		 <!-- Sweet Alert Plugin -->
+		<script src="{% static 'assets/plugins/sweet-alert/sweet-alert.min.js' %}"></script>
+		<script src="{% static 'assets/plugins/sweet-alert/sweet-alert.init.js' %}"></script>
+		
+	</body>
 
 </html>
 

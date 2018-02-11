@@ -21,6 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 
 from django.core import management
 from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
@@ -118,6 +119,9 @@ def test_run(requests,id_task):
     from django.conf import settings
     send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['maximkolc@gmail.com'])
     '''
+    task = Task.objects.get(id=id_task)
+    
+    messages.info(requests, 'Задача '+task.taskname+" выполнена успешно")
     return HttpResponseRedirect(rv('tasks'))
 
 def index(request):
@@ -214,3 +218,10 @@ def gettoken(request):
     request.session["token"] = token_ya
     return HttpResponseRedirect(rv('sources_create'))
   
+def profile(request):
+    try:
+        #p = Profile.objects.get(pk=request.user.id)
+        u = User.objects.get(pk=request.user.id) 
+    except Profile.DoesNotExist:
+        raise Http404("Poll does not exist")
+    return render(request, 'facebot/profile.html', {'user': u})

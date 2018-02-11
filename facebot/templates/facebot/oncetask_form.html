@@ -1,0 +1,168 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+        .input-file-row-1:after {
+            content: ".";
+            display: block;
+            clear: both;
+            visibility: hidden;
+            line-height: 0;
+            height: 0;
+        }
+        
+        .input-file-row-1{
+            display: inline-block;
+            margin-top: 25px;
+            position: relative;
+        }
+        
+        html[xmlns] .input-file-row-1{
+            display: block;
+        }
+        
+        * html .input-file-row-1 {
+            height: 1%;
+        }
+        
+        .upload-file-container { 
+            position: relative; 
+            width: 100px; 
+            height: 137px; 
+            overflow: hidden;	
+            background: url(http://i.imgur.com/AeUEdJb.png) top center no-repeat;
+            float: left;
+            margin-left: 23px;
+        } 
+        
+        .upload-file-container:first-child { 
+            margin-left: 0;
+        } 
+        
+        .upload-file-container > img {
+            width: 93px;
+            height: 93px;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+        }
+        
+        .upload-file-container-text{
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #719d2b;
+            line-height: 17px;
+            text-align: center;
+            display: block;
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            width: 100px; 
+            height: 35px;
+        }
+        
+        .upload-file-container-text > span{
+            border-bottom: 1px solid #719d2b;
+            cursor: pointer;
+        }
+        
+        .upload-file-container input  { 
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            font-size: 1px; 
+            opacity: 0;
+            filter: alpha(opacity=0);	
+            margin: 0; 
+            padding: 0; 
+            border: none; 
+            width: 70px; 
+            height: 50px; 
+            cursor: pointer;
+        }
+</style>
+<div class="page-title">
+    <h3 class="title">Создание разового задания</h3>
+</div>
+<div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Новый задание</h3>
+                </div>
+                <div class="panel-body">
+           <!-- imae start -->
+           {{ form.media }}
+
+                    <form name="" method="post" action="#" enctype="multipart/form-data" class="feedback-form-1">
+                        <fieldset>
+                        {% csrf_token %}
+                        {% load addcss %}
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">{{ form.name.label_tag }} </label>
+                            <div class="col-md-10">
+                                {{ form.name.errors }}
+                                {{ form.name|addcss:"form-control,Имя задачи" }} 
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-md-2 control-label">{{ form.run_date.label_tag }} </label>
+                                <div class="col-md-10">
+                                    {{ form.run_date.errors }}
+                                    {{ form.run_date }} 
+                                </div>
+                            </div> 
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">{{ form.text.label_tag }} </label>
+                                <div class="col-md-8">
+                                    {{ form.text.errors }}
+                                    {{ form.text|addcss:"form-control,Описание" }} 
+                                </div>                           
+                            <div class="input-file-row-1 col-md-2">
+                                <div class="upload-file-container">
+                                    <img id="image" src="#" alt="" />						
+                                    <div class="upload-file-container-text">
+                                        <span>Добавить<br />картинку</span>
+                                        {{ form.imgs }}
+                                        {{ form.imgs.errors }}
+                                    </div>
+                                </div>		                                                
+                            </div>		
+                        </div>	
+                        </fieldset>
+                        <button type="submit">Upload</button>
+                    </form>
+                    
+                        </div>
+                    <!-- panel-body -->
+                </div>
+                <!-- panel -->
+            </div>
+            <!-- col -->
+        </div>
+        <!-- End row -->
+        <script>
+                function readURL(input) {
+
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                
+                        reader.onload = function (e) {
+                            $('#image').attr('src', e.target.result);
+                        };
+                
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+                
+                $("#id_imgs").change(function(){
+                    readURL(this);
+                });
+    </script>
+    {% load static %}
+    <script src="{% static 'assets/plugins/markdown/js/markdown.js' %}"></script>
+    
+    <script src="{% static 'assets/plugins/markdown/js/to-markdown.js' %}"></script>
+    <script src="{% static 'assets/plugins/markdown/js/bootstrap-markdown.js' %}"></script>
+    <script src="{% static 'assets/plugins/markdown/css/bootstrap-markdown.min.css' %}"></script>
+    {% endblock %}
