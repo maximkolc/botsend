@@ -92,17 +92,30 @@
                 </div>
                 <div class="panel-body">
            <!-- imae start -->
-           {{ form.media }}
+           
 
                     <form name="" method="post" action="#" enctype="multipart/form-data" class="feedback-form-1">
                         <fieldset>
-                        {% csrf_token %}
+                            {{ form.media }}
+                            {% csrf_token %}
                         {% load addcss %}
                         <div class="form-group">
                             <label class="col-md-2 control-label">{{ form.name.label_tag }} </label>
                             <div class="col-md-10">
                                 {{ form.name.errors }}
                                 {{ form.name|addcss:"form-control,Имя задачи" }} 
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-md-2 control-label">{{ form.chanelforpublic.label_tag }}</label>
+                                <div class="col-md-10">
+                                    {{ form.chanelforpublic }} 
+                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
+                            <div class="col-md-10">
+                                {{ form.bottoken }}
                             </div>
                         </div>
                         <div class="form-group">
@@ -114,11 +127,11 @@
                             </div> 
                         <div class="form-group">
                             <label class="col-md-2 control-label">{{ form.text.label_tag }} </label>
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     {{ form.text.errors }}
                                     {{ form.text|addcss:"form-control,Описание" }} 
                                 </div>                           
-                            <div class="input-file-row-1 col-md-2">
+                            <div class="input-file-row-1 col-md-3">
                                 <div class="upload-file-container">
                                     <img id="image" src="#" alt="" />						
                                     <div class="upload-file-container-text">
@@ -130,7 +143,7 @@
                             </div>		
                         </div>	
                         </fieldset>
-                        <button type="submit">Upload</button>
+                        <button type="submit" class = 'btn btn-success m-b-5'>Сохранить</button>
                     </form>
                     
                         </div>

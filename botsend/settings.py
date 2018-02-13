@@ -134,6 +134,9 @@ BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600} 
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
@@ -158,6 +161,13 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
+        'celery': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/celery.log',
+            'formatter': 'simple',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
     },
     'loggers': {
         # ...
@@ -165,6 +175,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',  # <----<<<
             'propagate': False,
-        }
+        },
+        'celery': {
+            'handlers': ['celery', 'console'],
+            'level': 'DEBUG',
+        },
     }
 }

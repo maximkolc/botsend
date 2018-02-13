@@ -457,15 +457,21 @@ class UserUpdate(UpdateView):
         return super(UserUpdate, self).form_valid(form) 
 #-------------------------------------------
 class OnceTaskUploadForm(forms.ModelForm):
-    text = forms.CharField( widget=forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"10"}) )
+    #text = forms.CharField( widget=forms.
     class Meta:
         model = OnceTask
-        fields = ('name', 'imgs','text','run_date' )
-        widgets = {
-            #Use localization and bootstrap 3
-            'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3)
+        exclude = ['created_by']
+        labels = {
+            'chanelforpublic': 'Канал',
+            'bottoken': 'Бот',
+            'text' : 'Текст'
         }
-        
+        widgets = {
+            'chanelforpublic': forms.Select(attrs={'class':'form-control'}),
+            'bottoken': forms.Select(attrs={'class':'form-control'}),
+            'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
+            'text': forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"5",'cols':'1'}) 
+             }       
     def __init__(self, *args, **kwargs):
         super(OnceTaskUploadForm, self).__init__(*args, **kwargs)
         self.fields['imgs'].widget.attrs.update({

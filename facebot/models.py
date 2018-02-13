@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse #Used to generate URLs by reversing the URL patterns
 from django.db.models import signals
+from facebot.tasks import send_once
 from django.utils import timezone
 from crontab import CronTab
 #------------для работы с пользователями------------------------
@@ -10,6 +11,9 @@ from django.dispatch import receiver
 #---------------------------------------------------------------
 import logging
 import getpass
+from datetime import datetime
+from datetime import timedelta
+
 #---------модель для профиля пользователя-----------------------
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,  null=True)
@@ -91,21 +95,31 @@ class Task(models.Model):
         super(Task, self).save(*args, **kwargs) # Call the "real" save() method.'''
         
     
-def task_save(sender, instance, signal, *args, **kwargs):
+'''def task_save(sender, instance, signal, *args, **kwargs):
     #if not instance.is_verified:
     #Send verification email
-    send_mess.delay(instance.id)
+    send_mess.delay(instance.id)'''
 
 class OnceTask(models.Model):
-    name = models.CharField("Имя задачи", max_length=25, unique = True)
+    name = models.CharField("Имя задачи", max_length=25)
     imgs = models.ImageField(upload_to = 'pic_folder/', default = 'pic_folder/no-img.png')
     text =  models.CharField('Описание',max_length=600, help_text = 'Описание')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     run_date = models.DateTimeField("Время запуска", null=True)
-    
+    chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
+    bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    class Meta:
+        unique_together = ('name', 'created_by')
+
+def oncetask_post_save(sender, instance, signal, *args, **kwargs):
+    #send_once.delay(instance.id)
+    send_once.apply_async ([instance.id], countdown=(datetime.now() - instance.run_date ))
+signals.post_save.connect(oncetask_post_save, sender=OnceTask)
+
 
 class Chanels(models.Model):
-    chanelname = models.CharField('Имя канала',max_length=25, unique = True, help_text = 'Имя канала')
+    chanelname = models.CharField('Имя канала',max_length=25,  help_text = 'Имя канала')
     description = models.CharField('Описание',max_length=120, help_text = 'Описание')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
@@ -113,7 +127,8 @@ class Chanels(models.Model):
         String for representing the Model object.
         """
         return self.chanelname+" ("+self.description+")"
-    
+    class Meta:
+        unique_together = ('chanelname', 'created_by')
     
     def get_absolute_url(self):
         """
@@ -122,13 +137,14 @@ class Chanels(models.Model):
         return #reverse('chanel-detail', args=[str(self.id)])
 
 class SourcesData(models.Model):
-    sourcename = models.CharField('Имя',max_length=25, unique = True, help_text = 'Произвольное имя источника', null = True)
+    sourcename = models.CharField('Имя',max_length=25, help_text = 'Произвольное имя источника', null = True)
     token = models.CharField('Токен',max_length=50, help_text = 'отладочный токен ядиска', null = True) 
     #password = models.CharField('Пароль', max_length=120, help_text = 'Пароль от яндекс диска')
     #login  = models.CharField('Логин',max_length=120, help_text = 'Логин от яндекс диска')
     #urls = models.CharField('Сервер',max_length=120, help_text = 'Адрес WebDav сервера')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-
+    class Meta:
+        unique_together = ('sourcename', 'created_by')
     def __str__(self):
         """
         String for representing the Model object.
@@ -143,7 +159,7 @@ class SourcesData(models.Model):
         return #reverse('sourcename-detail', args=[str(self.id)])
 
 class Urls(models.Model):
-    urlname = models.CharField(max_length=120, unique = True, help_text = 'Имя ссылки')
+    urlname = models.CharField(max_length=120, help_text = 'Имя ссылки')
     url = models.URLField(max_length=120, help_text = 'url адресс ссылки')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
@@ -151,7 +167,8 @@ class Urls(models.Model):
         String for representing the Model object.
         """
         return self.urlname
-    
+    class Meta:
+        unique_together = ('urlname', 'created_by')
     
     def get_absolute_url(self):
         """
@@ -177,15 +194,16 @@ class FileTypeChoices(models.Model):
 
 
 class MyBot(models.Model):
-    botname = models.CharField('Имя бота',max_length=120, unique = True, help_text = 'Имя бота')
-    bottoken = models.CharField('Токен бота',max_length=120, unique = True, help_text = 'Токен бота')
+    botname = models.CharField('Имя бота',max_length=120, help_text = 'Имя бота')
+    bottoken = models.CharField('Токен бота',max_length=120, help_text = 'Токен бота')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         """
         String for representing the Model object.
         """
         return self.botname
-    
+    class Meta:
+        unique_together = ('botname', 'created_by','bottoken')
     
     def get_absolute_url(self):
         """
@@ -196,7 +214,7 @@ class MyBot(models.Model):
 
 
 class Shedule(models.Model):
-    name = models.CharField('Имя',max_length=120, unique = True,null = True,  help_text = 'Уникальное имя')
+    name = models.CharField('Имя',max_length=120, null = True,  help_text = 'Уникальное имя')
     minute = models.CharField('Минута', null = True, help_text = 'минута',max_length=12)
     hour = models.CharField('Час', null = True, help_text = 'Час',max_length=12)
     day = models.CharField('День', null = True, help_text = 'День',max_length=12)
@@ -204,7 +222,8 @@ class Shedule(models.Model):
     dayofmount = models.CharField('День недели', null = True, help_text = 'День недели',max_length=12)
     task = models.ManyToManyField(Task, help_text = 'Задача для выполнения', null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    
+    class Meta:
+        unique_together = ('name', 'created_by')
     def get_absolute_url(self):
         """
         Returns the url to access a particular book instance.
