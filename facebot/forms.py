@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from datetimewidget.widgets import DateTimeWidget
+from datetime import datetime
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class LoginFormView(FormView):
@@ -470,6 +471,7 @@ class OnceTaskUploadForm(forms.ModelForm):
             'chanelforpublic': forms.Select(attrs={'class':'form-control'}),
             'bottoken': forms.Select(attrs={'class':'form-control'}),
             'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
+            'del_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
             'text': forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"5",'cols':'1'}) 
              }       
     def __init__(self, *args, **kwargs):
@@ -478,12 +480,36 @@ class OnceTaskUploadForm(forms.ModelForm):
             'name':'pic[]',
              'class' : 'photo' 
         })
+        self.fields['del_date'].required = True
+        self.fields['run_date'].required = True 
+        
+    def clean(self):
+        form_data = self.cleaned_data
+        if form_data['run_date'] > form_data['del_date']:
+            self._errors["del_date"] = "Неверная дата удаления сообщения (раньше даты запуска)"
+        if form_data['run_date'].replace(tzinfo=None) < datetime.now():
+            self._errors["run_date"] = "Неверная дата запуска (дата уже прошла)"
+        #del form_data['password']
+        return form_data
+    '''def clean_del_date(self):
+        del_date = self.cleaned_data["del_date"]
+        run_date = self.cleaned_data["run_date"]
+        if del_date < run_date:
+            raise ValidationError('Неверная дата удаления сообщения (раньше даты запуска)')
+        return del_date
+        
+    def clean_run_date(self):
+        run_date = self.cleaned_data["run_date"]
+        if run_date.replace(tzinfo=None) < datetime.now():
+            raise ValidationError('Неверная дата запуска сообщения (дата уже прошла)')
+        return run_date'''
+           
 class OnceTaskCreate(LoginRequiredMixin, CreateView):
     form_class = OnceTaskUploadForm
     model = OnceTask
     success_url = reverse_lazy('oncetasks')
     def form_valid(self, form):
-        instance = form.save(commit=False)
+        instance = form.save(commit=False)      
         instance.created_by = self.request.user
         instance.save()
         return HttpResponseRedirect(reverse('oncetasks'))

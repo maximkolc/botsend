@@ -106,6 +106,7 @@ class OnceTask(models.Model):
     text =  models.CharField('Описание',max_length=600, help_text = 'Описание')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     run_date = models.DateTimeField("Время запуска", null=True)
+    del_date = models.DateTimeField("Время удаления", null=True)
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -114,7 +115,11 @@ class OnceTask(models.Model):
 
 def oncetask_post_save(sender, instance, signal, *args, **kwargs):
     #send_once.delay(instance.id)
-    send_once.apply_async ([instance.id], countdown=(datetime.now() - instance.run_date ))
+    print ("SECONDS:" + str(instance.run_date))
+    print ("SECONDS:" + str(datetime.now()))
+    print((instance.run_date.replace(tzinfo=None) - datetime.now()).total_seconds())
+    send_once.apply_async([instance.id], countdown=(instance.run_date.replace(tzinfo=None) - datetime.now()).total_seconds())
+    #print ("SECONDS:" + str((instance.run_date - datetime.now()).total_seconds()))
 signals.post_save.connect(oncetask_post_save, sender=OnceTask)
 
 
