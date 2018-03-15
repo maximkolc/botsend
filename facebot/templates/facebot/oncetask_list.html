@@ -20,16 +20,28 @@
                                     <thead>
                                         <tr>
                                             <th>Имя </th>
-                                            <th>Картинка</th>
-                                            <th>Описание </th>
+                                            <th>Статус</th>
+                                            <th>Тип</th>
+                                            <th>Каналы</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     {% for oncetask in oncetask_list %}
                                     <tr>
                                         <td>{{oncetask.name}}</td>
-                                        <td>{{oncetask.imgs}}</td>
-                                        <td>{{oncetask.text}}</td>
+                                        <td>{{oncetask.status}}</td>
+                                        <td>{{oncetask.type_mes}}</td>
+                                        <td>
+                                            
+                                            {% for chanelforpublic in oncetask.chanelforpublic.all%}
+                                            {{chanelforpublic.chanelname}} <br>
+                                            {% empty %}
+                                                Нет
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                                <img src="{{MEDIA_URL}}{{ oncetask.imgs }}">
+                                        </td>
                                         <td> <a href="{% url 'oncetask_update' oncetask.id %}" class="btn btn-primary">Изменить</a>   </td>
                                         <td> <a href="{% url 'oncetask_delete' oncetask.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 
@@ -46,7 +58,7 @@
     </div>
     
     {% else %}
-      <p>Пока нет ни одного канала в работе</p>
-      <a href="{% url 'chanels_create' %}" class="btn btn-success">Добавить канал</a>
+      <p>Пока нет ни одного задания в работе</p>
+      <a href="{% url 'oncetask_create' %}" class="btn btn-success">Добавить разовое задание</a>
     {% endif %}       
 {% endblock %}

@@ -100,6 +100,15 @@
                             {% csrf_token %}
                         {% load addcss %}
                         <div class="form-group">
+                        {% for radio in form.type_mes %}
+                        <div class="radio-inline">
+                            <label class="cr-styled" for={{ radio.id_for_label }}>
+                                {{radio.tag}}
+                                <i class="fa"></i>{{ radio.choice_label}} </label>
+                        </div>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group">
                             <label class="col-md-2 control-label">{{ form.name.label_tag }} </label>
                             <div class="col-md-10">
                                 {{ form.name.errors }}
@@ -107,10 +116,16 @@
                             </div>
                         </div>
                         <div class="form-group">
-                                <label class="col-md-2 control-label">{{ form.chanelforpublic.label_tag }}</label>
-                                <div class="col-md-10">
-                                    {{ form.chanelforpublic }} 
+                            <label class="col-md-2 control-label">{{ form.chanelforpublic.label_tag }}</label>
+                            <div class="col-md-10 ">
+                            {% for checkbox in form.chanelforpublic %}
+                               <div class="chekbox">    
+                                <label class="cr-styled">
+                                    {{ checkbox.tag }} <i class="fa"></i> {{ checkbox.choice_label }}
+                                 </label>
                                 </div>
+                            {% endfor %}
+                        </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
@@ -138,47 +153,119 @@
                                     {{ form.text.errors }}
                                     {{ form.text|addcss:"form-control,Описание" }} 
                                 </div>                           
-                            <div class="input-file-row-1 col-md-3">
-                                <div class="upload-file-container">
-                                    <img id="image" src="#" alt="" />						
-                                    <div class="upload-file-container-text">
-                                        <span>Добавить<br />картинку</span>
-                                        {{ form.imgs }}
-                                        {{ form.imgs.errors }}
-                                    </div>
-                                </div>		                                                
-                            </div>		
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Загрузить картинку</button>    		
                         </div>	
                         </fieldset>
                         <button type="submit" class = 'btn btn-success m-b-5'>Сохранить</button>
+                        
                     </form>
-                    
+                    <img id="image" src="" alt="" />
+                 
                         </div>
                     <!-- panel-body -->
                 </div>
                 <!-- panel -->
             </div>
             <!-- col -->
+            
+            <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="myModalLabel">Загрузка изображения</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action = "{% url 'upload_pic' %}" method="post"  id='myform'  enctype = 'multipart/form-data'>
+                                {% csrf_token %}
+                                {{ form }}
+                                <input id="id_image" type="file"  name="image" class="form-control">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id = 'sub'>Загрузить</button>
+                        </div>
+                    </form>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            </div>
         </div>
         <!-- End row -->
         <script>
                 function readURL(input) {
-
                     if (input.files && input.files[0]) {
                         var reader = new FileReader();
-                
                         reader.onload = function (e) {
-                            $('#image').attr('src', e.target.result);
+                            $('#image').attr('src', e.target.result);  
                         };
-                
                         reader.readAsDataURL(input.files[0]);
                     }
                 }
-                
-                $("#id_imgs").change(function(){
+                $("#id_image").change(function(){
                     readURL(this);
                 });
+                
     </script>
+   
+            <script type="text/javascript">
+                function getCookie(name)
+                {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                
+                $.ajaxSetup({ 
+                     beforeSend: function(xhr, settings) {
+                         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                             // Only send the token to relative URLs i.e. locally.
+                             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                         }
+                     } 
+                });
+                $(document).ready(function(){
+                   $("#myform").submit(
+                        function() { //устанавливаем событие отправки для формы с id=form
+                            //e.preventDefault(); /// без этого
+                            var form_data = $("#myform").serialize(); //собераем все данные из формы
+                            //var form_data = new FormData($('#myform').get(1));
+                            alert(form_data)
+                            $.ajax({
+                                    type: "POST", //Метод отправки
+                                    url: "{% url 'upload_pic' %}", //путь до php фаила отправителя
+                                    data: form_data,
+                                    enctype: 'multipart/form-data',
+                                    success: function(data) {
+                                            //код в этом блоке выполняется при успешной отправке сообщения
+                                            alert("Ваше сообщение отпрвлено!");
+                                            for (key in data){
+                                                alert(key);
+                                            }
+                                            //$('#image').attr('src') = data['url'];
+                                    },
+                                    error: function(xhr) {
+                                            alert(xhr.statusText);
+                                    },
+
+
+                                    
+                                });
+                    });
+                });    
+                </script>                    
+    
     {% load static %}
     <script src="{% static 'assets/plugins/markdown/js/markdown.js' %}"></script>
     

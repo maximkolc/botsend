@@ -100,24 +100,38 @@ class Task(models.Model):
     #Send verification email
     send_mess.delay(instance.id)'''
 
+# Models
+class ImageUpload(models.Model):
+        model_pic = models.ImageField(upload_to='pic_folder/', null=True)
+
 class OnceTask(models.Model):
+    MESSAGE_TYPE = (('text', ' Текст'), ('photo', 'Картинка с подписью'))
     name = models.CharField("Имя задачи", max_length=25)
-    imgs = models.ImageField(upload_to = 'pic_folder/', default = 'pic_folder/no-img.png')
-    text =  models.CharField('Описание',max_length=600, help_text = 'Описание')
+    #imgs = models.ImageField(upload_to = 'pic_folder/', default = 'pic_folder/no-img.png')
+    text =  models.CharField('Описание',max_length=6000, help_text = 'Описание')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     run_date = models.DateTimeField("Время запуска", null=True)
     del_date = models.DateTimeField("Время удаления", null=True)
-    chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
+    chanelforpublic = models.ManyToManyField('Chanels',  null=True, help_text ='Канал для публикации')
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
+    status = models.CharField("Статус", max_length=25, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    class Meta:
-        unique_together = ('name', 'created_by')
+    type_mes =  models.CharField('Тип контента',max_length=10,default = 'text', choices= MESSAGE_TYPE )
+    
+    #class Meta:
+        #unique_together = ('name', 'created_by')
+
+    '''def save(self, *args, **kwargs):
+        self.status = "Ожидает выполнения "+ str(self.run_date)
+        super(OnceTask, self).save(*args, **kwargs) # Call the real save() method'''
 
 def oncetask_post_save(sender, instance, signal, *args, **kwargs):
     #send_once.delay(instance.id)
-    print ("SECONDS:" + str(instance.run_date))
-    print ("SECONDS:" + str(datetime.now()))
-    print((instance.run_date.replace(tzinfo=None) - datetime.now()).total_seconds())
+    #print ("SECONDS:" + str(instance.run_date))
+    #print ("SECONDS:" + str(datetime.now()))
+    #print((instance.run_date.replace(tzinfo=None) - datetime.now()).total_seconds())
+    #instance.status = "Ожидает выполнения "+ str(instance.run_date)
+    OnceTask.objects.filter(id=instance.id).update(status = "Ожидает выполнения "+ str(instance.run_date))
     send_once.apply_async([instance.id], countdown=(instance.run_date.replace(tzinfo=None) - datetime.now()).total_seconds())
     #print ("SECONDS:" + str((instance.run_date - datetime.now()).total_seconds()))
 signals.post_save.connect(oncetask_post_save, sender=OnceTask)

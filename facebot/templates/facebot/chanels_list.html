@@ -19,7 +19,6 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th>Имя </th>
                                             <th>Описание канала</th>
                                         </tr>
@@ -27,7 +26,6 @@
                                     <tbody>
                                     {% for chanels in chanels_list %}
                                     <tr>
-                                        <td>{{chanels.id}}</td>
                                         <td>{{chanels.chanelname}}</td>
                                         <td>{{chanels.description}}</td>
                                         <td> <a href="{% url 'chanels_update' chanels.id %}" class="btn btn-primary">Изменить</a>   </td>

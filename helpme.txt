@@ -1,0 +1,50 @@
+source ~/work/workbot/bin/activate
+pkill -9 -f 'celery worker'
+python manage.py runserver&
+sudo fuser -k 8000/tcp
+celery worker -A botsend --loglevel=debug --concurrency=4&
+python manage.py makemigrations
+python manage.py migrate
+
+
+<div class="input-file-row-1 col-md-3">
+                                <div class="upload-file-container">
+                                    <img id="image" src="{{MEDIA_URL}}{{ oncetask.imgs }}" alt="" />						
+                                    <div class="upload-file-container-text">
+                                        <span>Добавить<br />картинку</span>
+                                        {{ form.imgs }}
+                                        {{ form.imgs.errors }}
+                                    </div>
+                                </div>		                                                
+                            </div>
+
+
+
+
+///
+$('#submit-image').click(function() {
+                var form_data = new FormData();
+                //var form = document.forms.namedItem("fileinfo");
+                form_data.append('file', $('#myform').get(0));
+                console.log(form_data);
+                $.ajax({
+                        url: "{% url 'upload_pic' %}",
+                        data: form_data,
+                        processData: false,
+                        contentType: false,
+                        type: 'POST',
+                        success: function(data) {
+                                //var data = $.parseJSON(data);
+                                //alert('Success');
+                                $('#image').attr('src') = data['url'];
+                        },
+                        error: function(xhr) {
+                                alert(xhr.statusText);
+                        },
+                        params: {
+                        'csrf_token': '{{ csrf_token }}',
+                        //'csrf_name': 'csrfmiddlewaretoken',
+                        //'csrf_xname': 'X-CSRFToken',
+                        //},
+                });
+        });

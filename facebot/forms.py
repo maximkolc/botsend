@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, ImageUpload
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -211,12 +211,25 @@ class TaskForm(forms.ModelForm):
             'caption':forms.Textarea(attrs = {'class':'form-control', 'placeholder':'','cols': 80, 'rows': 4}),
             'bottoken': forms.Select(attrs={'class':'form-control'}),
              }
+        # получаем только таски с действующем юзером
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(TaskForm, self).__init__(*args, **kwargs)
+        self.fields['chanelforpublic'].queryset = Chanels.objects.filter(created_by = user)
+        self.fields['sourcefordownload'].queryset = SourcesData.objects.filter(created_by = user)
+        self.fields['bottoken'].queryset = MyBot.objects.filter(created_by = user)
+        self.fields['url'].queryset = Urls.objects.filter(created_by = user)
              
 class TaskCreate(LoginRequiredMixin, CreateView):
     form_class = TaskForm
     model = Task
     login_url = reverse_lazy("login")
     success_url = reverse_lazy('tasks')
+    # получаем только таски с действующем юзером продоложение
+    def get_form_kwargs(self):
+        kwargs = super(TaskCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
@@ -228,6 +241,10 @@ class TaskUpdate(LoginRequiredMixin, UpdateView):
     model = Task
     login_url = reverse_lazy("login")
     success_url = reverse_lazy('tasks')
+    def get_form_kwargs(self):
+        kwargs = super(TaskUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 class TaskDelete(LoginRequiredMixin,DeleteView):
     model = Task
@@ -457,29 +474,39 @@ class UserUpdate(UpdateView):
         self.object = context.save(clean) 
         return super(UserUpdate, self).form_valid(form) 
 #-------------------------------------------
+
+# Form
+class ImageUploadForm(forms.Form):
+    """Image upload form."""
+    image = forms.ImageField()
+
 class OnceTaskUploadForm(forms.ModelForm):
     #text = forms.CharField( widget=forms.
     class Meta:
         model = OnceTask
-        exclude = ['created_by']
+        exclude = ['created_by','status']
         labels = {
             'chanelforpublic': 'Канал',
             'bottoken': 'Бот',
             'text' : 'Текст'
         }
         widgets = {
-            'chanelforpublic': forms.Select(attrs={'class':'form-control'}),
+            'chanelforpublic': forms.CheckboxSelectMultiple(),
+            'type_mes':forms.RadioSelect(),
             'bottoken': forms.Select(attrs={'class':'form-control'}),
             'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
             'del_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
             'text': forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"5",'cols':'1'}) 
              }       
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(OnceTaskUploadForm, self).__init__(*args, **kwargs)
-        self.fields['imgs'].widget.attrs.update({
-            'name':'pic[]',
-             'class' : 'photo' 
-        })
+        self.fields['chanelforpublic'].queryset = Chanels.objects.filter(created_by = user)
+        self.fields['bottoken'].queryset = MyBot.objects.filter(created_by = user)
+        #self.fields['imgs'].widget.attrs.update({
+        #    'name':'pic[]',
+        #     'class' : 'photo' 
+        #})
         self.fields['del_date'].required = True
         self.fields['run_date'].required = True 
         
@@ -508,20 +535,30 @@ class OnceTaskCreate(LoginRequiredMixin, CreateView):
     form_class = OnceTaskUploadForm
     model = OnceTask
     success_url = reverse_lazy('oncetasks')
+    def get_form_kwargs(self):
+        kwargs = super(OnceTaskCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
     def form_valid(self, form):
         instance = form.save(commit=False)      
         instance.created_by = self.request.user
         instance.save()
+        form.save_m2m() 
         return HttpResponseRedirect(reverse('oncetasks'))
 
 class OnceTaskUpdate(LoginRequiredMixin,UpdateView):
     form_class = OnceTaskUploadForm
     model = OnceTask
     success_url = reverse_lazy('oncetasks')
+    def get_form_kwargs(self):
+        kwargs = super(OnceTaskUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
         instance.save() 
+        form.save_m2m() 
         return HttpResponseRedirect(reverse('oncetasks'))
    
 class OnceTaskDelete(LoginRequiredMixin,DeleteView):

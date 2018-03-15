@@ -1207,8 +1207,9 @@
             } else {
               chunk = selected.text;
             }
-
-            link = prompt(e.__localize('Insert Image Hyperlink'), 'http://');
+            /// мои добавления для получения адреса картинки
+            var src = $('#image').attr('src');
+            link = prompt(e.__localize('Insert Image Hyperlink'), 'https://'+window.location.host+src);
 
             var urlRegex = new RegExp('^((http|https)://|(//))[a-z0-9]', 'i');
             if (link !== null && link !== '' && link !== 'http://' && urlRegex.test(link)) {

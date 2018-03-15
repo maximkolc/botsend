@@ -16,7 +16,8 @@ from django.urls import reverse_lazy
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMP_TOKEN = '00000000'
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -30,7 +31,7 @@ ALLOWED_HOSTS = [
      '185.16.41.210',
      '127.0.0.1',
      '185.16.41.146',
-     '85e3a427.ngrok.io'
+     '87de4e19.ngrok.io'
 ]
 
 
@@ -71,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -125,7 +127,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-#STATIC_ROOT = '/home/maximkolc/static'
+STATIC_ROOT = '/home/maximkolc/static'
 STATIC_URL = '/static/'
 # REDIS related settings 
 REDIS_HOST = 'localhost'

@@ -22,10 +22,12 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
-
+from django.http import JsonResponse
+from django.core import serializers
+import json
 from django.core import management
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule
-from .forms import CustomUserCreationForm
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, ImageUpload
+from .forms import CustomUserCreationForm, ImageUploadForm
 from facebot import helpers
 from .models import Profile
 
@@ -148,8 +150,7 @@ def getfolder(request,pk):
     Функция отдающая в ответ список каталогов с количествов
     файлов в них, на яндекс диске, ответ в формате json
     '''
-    from django.core import serializers
-    import json
+    
     if request.user.is_authenticated():
         disk = get_object_or_404(SourcesData, id = pk)
         #disk = SourcesData.objects.get(id=pk)
@@ -225,3 +226,17 @@ def profile(request):
     except Profile.DoesNotExist:
         raise Http404("Poll does not exist")
     return render(request, 'facebot/profile.html', {'user': u})
+
+def upload_pic(request):
+    if request.method == 'POST':
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            m = ImageUpload() #.objects.get(pk=course_id))
+            m.model_pic = form.cleaned_data['image']
+            m.save()
+            data = {'is_valid': True, 'name': m.model_pic.name, 'url': m.model_pic.url}
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json")
+
+        else:
+            data = {'is_valid': False}
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json")

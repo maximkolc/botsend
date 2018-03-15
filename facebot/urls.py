@@ -77,4 +77,7 @@ urlpatterns +=[
 ]
 urlpatterns += [  
     url(r'^profile/$', views.profile, name='profile'),
+] 
+urlpatterns += [
+    url(r'^upload_pic/$', views.upload_pic, name='upload_pic'),
 ]

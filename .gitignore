@@ -7,3 +7,4 @@ db.sqlite3
 sample.log
 /logs
 /pic_folder
+/tests
