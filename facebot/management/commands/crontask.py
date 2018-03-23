@@ -9,6 +9,8 @@ from .utils.getkeyboard import *
 import requests
 import logging
 import random
+from facebot.models import MessageReaction
+import json
 #logging.basicConfig(filename="logs/crontask_logo.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
 class Command(BaseCommand):
@@ -36,7 +38,7 @@ class Command(BaseCommand):
                 t = ft.ftype.split(',')
                 filetypes.extend(t)
                 print(filetypes)
-            # вычисление количества загружаемых файлов
+            # вычисление количества загружаемых файлов, случайное или установленно заранее
             nums_file_load = 0
             if mytask.numfileforpub_random == True:
                 nums_file_load = random.randint(mytask.num_file_min, mytask.num_file_max)
@@ -63,16 +65,25 @@ class Command(BaseCommand):
             logger.info('Канал для публикации: '+chanel)
             #for x, y in zip(key_dict, value_dict):
             #dict_out[x] = y
+            
+            # добавление клавиатуры, то есть кнопок с лайками под постами
             mykeys = []
             keyboard = None
-            if len(mytask.url.all()) >0:
-                for key in mytask.url.all():
-                    mykeys.append(key.urlname)
-                    mykeys.append(key.url)
-                    keyboard = GenerateKeyboard.create_keyboard(type_keyboard = 'link',keys=mykeys) 
-                logger.info("Кнопки под постом добавленны: "+str(keyboard))
-            if len(mytask.url.all()) <= 0:
-                logger.info('Кнопки под постом отсутствуют')
+            #if len(mytask.url.all()) >0:
+            #    for key in mytask.url.all():
+            #mykeys.append("да")
+            #mykeys.append("нет")
+            #keyboard = GenerateKeyboard.create_keyboard(type_keyboard = 'inline',keys=mykeys) 
+            keyboard = types.InlineKeyboardMarkup()
+            callback_button = types.InlineKeyboardButton(text="like", callback_data="like")
+            keyboard.add(callback_button)
+            
+            
+            logger.info("Кнопки под постом добавленны: "+str(keyboard))
+            #if len(mytask.url.all()) <= 0:
+            #    logger.info('Кнопки под постом отсутствуют')
+            
+            # скачивание файлов и т.д. для отправки в телеграмм
             for link,filename in zip(links, listfile):
                 url = urlopen(link)
                 file = url.read()
@@ -81,7 +92,11 @@ class Command(BaseCommand):
                     if len(mytask.url.all()) >0:
                         tb.send_video(chanel, file,caption = mytask.caption,reply_markup = keyboard,timeout=15)
                     else:
-                        tb.send_video(chanel, file, caption = mytask.caption,timeout=15)
+                        ch_id = tb.send_video(chanel, file, caption = mytask.caption,reply_markup = keyboard,timeout=15)
+                        # работа идет здесь
+                        res = ch_id.de_json()
+                        message = MessageReaction(str(res['message_id']['message_id']), 0,0)
+                        message.save()
                 
                 elif filename.split('.')[1] in ['jpeg','jpg','png']:
                     logger.info('Отпрака файла: '+filename+' как картинку')

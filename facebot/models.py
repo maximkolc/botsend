@@ -252,7 +252,15 @@ class Shedule(models.Model):
 '''class Telega(models.Model):
     phone_number = models.CharField('Tel',max_length=12, unique = True,null = True,  help_text = 'Tel')
     code = models.CharField('code',max_length=12, unique = True,null = True,  help_text = 'code')'''
-    
+
+
+class MessageReaction(models.Model):
+    '''
+    Модель для сохранения результатов лайков, дизлайков
+    '''
+    message_id = models.CharField("ид собщения", max_length = 120, null = True)
+    like_count = models.IntegerField("количество лайков", null = True)
+    dislike_count = models.IntegerField("количество лайков", null = True)
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)

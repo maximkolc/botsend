@@ -123,7 +123,7 @@ def test_run(requests,id_task):
     '''
     task = Task.objects.get(id=id_task)
     
-    messages.info(requests, 'Задача '+task.taskname+" выполнена успешно")
+    messages.info(requests, 'Задача '+task.taskname+" выполнена успешно!")
     return HttpResponseRedirect(rv('tasks'))
 
 def index(request):
