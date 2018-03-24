@@ -74,14 +74,14 @@ class Command(BaseCommand):
             #mykeys.append("да")
             #mykeys.append("нет")
             #keyboard = GenerateKeyboard.create_keyboard(type_keyboard = 'inline',keys=mykeys) 
-            keyboard = types.InlineKeyboardMarkup()
-            callback_button = types.InlineKeyboardButton(text="like", callback_data="like")
-            keyboard.add(callback_button)
+            #keyboard = types.InlineKeyboardMarkup()
+            #callback_button = types.InlineKeyboardButton(text="like", callback_data="like")
+            #keyboard.add(callback_button)
             
             
-            logger.info("Кнопки под постом добавленны: "+str(keyboard))
-            #if len(mytask.url.all()) <= 0:
-            #    logger.info('Кнопки под постом отсутствуют')
+            #logger.info("Кнопки под постом добавленны: "+str(keyboard))
+            if len(mytask.url.all()) <= 0:
+                logger.info('Кнопки под постом отсутствуют')
             
             # скачивание файлов и т.д. для отправки в телеграмм
             for link,filename in zip(links, listfile):
@@ -94,9 +94,9 @@ class Command(BaseCommand):
                     else:
                         ch_id = tb.send_video(chanel, file, caption = mytask.caption,reply_markup = keyboard,timeout=15)
                         # работа идет здесь
-                        res = ch_id.de_json()
-                        message = MessageReaction(str(res['message_id']['message_id']), 0,0)
-                        message.save()
+                        #res = ch_id.de_json()
+                        #message = MessageReaction(str(res['message_id']['message_id']), 0,0)
+                        #message.save()
                 
                 elif filename.split('.')[1] in ['jpeg','jpg','png']:
                     logger.info('Отпрака файла: '+filename+' как картинку')
