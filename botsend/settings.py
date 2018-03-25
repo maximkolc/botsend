@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'botsend.middleware.SetLastVisitMiddleware',
+    'botsend.middleware.SetLastVisitMiddleware', #посредник для записи времени последнего визита
     
 ]
 
