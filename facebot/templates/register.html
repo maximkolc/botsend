@@ -77,6 +77,14 @@
 						</div>
 					</div>
 
+					<div class="form-group">
+						<div class="col-xs-12">
+							{{ form.telega.errors }}
+							<label for={{ form.telega.id_for_label}}>{{form.telega.label_tag}}</label>
+							{{ form.telega|addcss:"form-control,Имя пользователя в телеграмм"}}
+						</div>
+					</div>
+
 					<div class="form-group ">
 						<div class="col-xs-12">
 							<!--<input class="form-control " type="text" required="" placeholder="Username">-->

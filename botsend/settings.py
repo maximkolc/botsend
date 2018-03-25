@@ -56,7 +56,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'botsend.middleware.SetLastVisitMiddleware',
+    
 ]
+
+#MIDDLEWARE_CLASSES = (,)
 
 ROOT_URLCONF = 'botsend.urls'
 

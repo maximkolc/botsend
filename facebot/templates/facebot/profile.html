@@ -8,12 +8,21 @@
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h1 class="panel-title">{{ user.username }}</h3>
+                    <h1 class="panel-title">{{ user.username }}</h1>
+                    <h4>Последний раз был {{user.profile.last_visit}}</h4>
                 </div>
                 <div class="panel-body">
-                    <h2 class="panel-title">Email : {{ user.email }}</h3>
-                    <h2 class="panel-title">Зарегистрирован: {{ user.date_joined }}</h3>
-                    <h2 class="panel-title">Имя пользователя в Telegramm: {{ user.profile.telegramm }}</h3>
+                    <h2 class="panel-title">Email : {{ user.email }}</h2>
+                    
+                    <h2 class="panel-title">Зарегистрирован: 
+                        <span class="">{{ user.date_joined }}</span>
+                    </h2>
+                    <h2 class="panel-title">Имя пользователя в Telegramm: 
+                        <span class="">{{ user.profile.telegramm }}</span>
+                    </h2>
+                    <h2 class="panel-title">Аккаунт действительн до: 
+                        <span class="">{{ user.profile.datetowork }}</span>
+                    </h2>    
                 </div>
                     <!-- panel-body -->
                 </div>

@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="page-title">
-    <h3 class="title">ххххх</h3>
+    <h3 class="title">{{ user.get_username }}, действие Вашей подписки истекает {{user.profile.datetowork}}</h3>
 </div>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Общая информации о моих насторйках</h3>
+                <h3 class="panel-title">Общая информации</h3>
             </div>
             <div class="panel-body">
                 <div class="row">

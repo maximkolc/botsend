@@ -11,7 +11,10 @@
 {% for task in task_list %}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">{{task.taskname}}, добавлена {{task.created_at}}</h3>
+                    <h3 class="panel-title">{{task.taskname}}, добавлена {{task.created_at}}
+                        
+                    </h3>
+                    <h5>Статус: {{task.status}}</h5>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -27,7 +30,8 @@
                                             <th>Ссылки</th>
                                             <th>Количество публикаций за раз</th>
                                             <th>Контент </th>
-                                            <th>Подпись </th>                                            
+                                            <th>Подпись </th>
+                                                                                        
                                          </tr>
                                     </thead>
                                     <tbody>
@@ -54,7 +58,7 @@
                                             {% endfor %}
                                         </td>
                                         <td>{{task.caption}}</td>
-                                        
+                                         
                                        
                                     </tr>                                 
                                     

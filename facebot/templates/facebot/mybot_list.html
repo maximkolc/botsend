@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Все о ботах</h3>
+                        <a href="https://core.telegram.org/bots#6-botfather" class="btn btn-success"> Справка</a>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -48,6 +48,7 @@
     
     {% else %}
       <p>Пока нет ни одного бота в работе</p>
+      <a href="https://core.telegram.org/bots#6-botfather" class="btn btn-success"> Справка</a>
       <a href="{% url 'mybot_create' %}" class="btn btn-success">Создать новго</a>
     {% endif %}       
 {% endblock %}

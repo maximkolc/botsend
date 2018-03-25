@@ -17,10 +17,12 @@ from datetime import timedelta
 #---------модель для профиля пользователя-----------------------
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,  null=True)
-    telegramm = models.CharField(blank=True, max_length=20)    
+    telegramm = models.CharField(blank=True, max_length=20, default="не задано")    
     activation_key = models.CharField(max_length=255, default=1)
     email_validated = models.BooleanField(default=False)
-
+    ip_adress = models.CharField(max_length=255, null = True)
+    datetowork = models.DateTimeField(null=True)
+    last_visit = models.DateTimeField(null = True)
     def __str__(self):
         return self.user.username
 
@@ -37,6 +39,15 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 #----------------------------------------------------------------
 
+# модель для сообщений пользователю от бота
+class Messages(models.Model):
+    '''
+    Модель для сообщений пользователю от бота
+    '''
+    username = models.CharField('Имя пользователя', max_length = 30)
+    text = models.CharField('Текст сообщения', max_length = 200)
+    date = models.DateTimeField('Дата отправки')
+
 # Create your models here.
 
 class Task(models.Model):
@@ -48,6 +59,7 @@ class Task(models.Model):
         ('no', 'Нет')
         )
     BOOL_CHOICES = ((True, ' Случайно'), (False, 'Вручную'))
+    IS_DEL = ((True, 'Да'), (False, 'Нет'))
     taskname = models.CharField('Имя задачи',max_length=25)
     chanelforpublic = models.ForeignKey('Chanels',  on_delete=models.SET_NULL, null=True, help_text ='Канал для публикации')
     sourcefordownload = models.ForeignKey('SourcesData', help_text="Источник данных для задачи" ,on_delete=models.SET_NULL, null=True)
@@ -64,6 +76,8 @@ class Task(models.Model):
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    isfiledelete = models.BooleanField('Нет',default = False, choices=IS_DEL)
+    status = models.CharField('Статус',max_length=25, null = True)
     class Meta:
         ordering = ["chanelforpublic"]
         unique_together = ('taskname', 'created_by')
@@ -81,14 +95,6 @@ class Task(models.Model):
         return reverse('task-detail', args=[str(self.id)])
 
     def save(self, *args, **kwargs):
-        #if self.time_run.seconds<timezone.now().seconds:
-        #    self.time_run = null
-        #self.time_period = timedelta(days=self.peripd_pub.days, 
-        #                             hours=self.peripd_pub.hour, 
-        #                             minutes = self.peripd_pub.minutes)
-        #if self.time_run == None or self.time_run < timezone.now():
-            #self.time_run = self.time_period.+self.momentforwork
-        #    self.time_run = datetime.combine(datetime.now(), self.momentforwork) +self.time_period
         if self.caption == '':
             self.caption = "Нет"
         
@@ -258,9 +264,12 @@ class MessageReaction(models.Model):
     '''
     Модель для сохранения результатов лайков, дизлайков
     '''
+    chat_id = models.CharField("ид чата", max_length = 120, null = True)
     message_id = models.CharField("ид собщения", max_length = 120, null = True)
     like_count = models.IntegerField("количество лайков", null = True)
     dislike_count = models.IntegerField("количество лайков", null = True)
+    username = models.CharField("Имя пользователя", max_length = 120, null = True)
+    chanel_name = models.CharField("Имя канала", max_length = 120, null = True)
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)

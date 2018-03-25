@@ -36,16 +36,26 @@ class LoginFormView(FormView):
 class CustomUserCreationForm(forms.Form):
     username = forms.CharField(label='Имя рользователя', min_length=4, max_length=150)
     email = forms.EmailField(label='Email')
+    telega = forms.CharField(label='Имя рользователя в Telegramm', min_length=4, max_length=150)
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Подтвердите пароль', widget=forms.PasswordInput)
-
+    
+    #проверка имени пользователя занят или нет
     def clean_username(self):
         username = self.cleaned_data['username'].lower()
         r = User.objects.filter(username=username)
         if r.count():
             raise  ValidationError("Пользователь с таким именем уже существует")
         return username
-
+    #проверка логина в телеграмм занят или нет
+    def clean_telegramm(self):
+        telega = self.cleaned_data['telega']
+        r = User.objects.filter(telegramm=telega)
+        if r.count():
+            raise  ValidationError("Пользователь с таким логином в телеграмм уже существует")
+        return telega
+    
+    #проверка email адресса, занят или нет
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
         r = User.objects.filter(email=email)
@@ -71,23 +81,6 @@ class CustomUserCreationForm(forms.Form):
         return user
 
 
-'''class RegisterFormView(FormView):
-    form_class = UserCreationForm
-    # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
-    # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
-    success_url = reverse_lazy("login")
-    email = forms.EmailField(required=True)
-    # Шаблон, который будет использоваться при отображении представления.
-    template_name = "register.html"
-    class Meta:
-        model = User
-        fields = ("username", "email", "password1", "password2")
-    def form_valid(self, form):
-        # Создаём пользователя, если данные в форму были введены корректно.
-        form.save()
-        # Вызываем метод базового класса
-        return super(RegisterFormView, self).form_valid(form)'''
-
 class LogoutView(View):
     def get(self, request):
         # Выполняем выход для пользователя, запросившего данное представление.
@@ -98,11 +91,8 @@ class LogoutView(View):
 
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
 #MyBot
-#-----------------------------------------------------------
+# формы для работы с моделью MyBot
 class MyBotForm(forms.ModelForm):
     class Meta:
         model = MyBot
@@ -132,6 +122,7 @@ class MyBotDelete(LoginRequiredMixin,DeleteView):
     login_url = reverse_lazy("login")
     success_url = reverse_lazy('bots')
 
+# Формы для просмотра списка объектов в разных моделях
 class TaskListView(LoginRequiredMixin,generic.ListView):
     #model = Task
     login_url = reverse_lazy("login")
@@ -164,9 +155,6 @@ class SourcesDataListView(LoginRequiredMixin,generic.ListView):
         """Returns Chanels that belong to the current user"""
         return SourcesData.objects.filter(created_by=self.request.user)
 
-
-
-
 class SheduleListView(LoginRequiredMixin,generic.ListView):
     #model = Shedule
     login_url = reverse_lazy("login")
@@ -181,6 +169,7 @@ class UrlsListView(LoginRequiredMixin,generic.ListView):
         """Returns Chanels that belong to the current user"""
         return Urls.objects.filter(created_by=self.request.user)
 
+# формы для работы с моделью Task
 
 class TaskForm(forms.ModelForm):
     
@@ -195,6 +184,7 @@ class TaskForm(forms.ModelForm):
             'bottoken': 'Публикующий бот',
             'url': 'Кнопки под публикацией',
             'catalog_ajax': 'Каталог на диске',
+            'isfiledelete': 'Удалять файл с Яндекс.Диск после публиуации'
 
         }
         widgets = {
@@ -210,6 +200,7 @@ class TaskForm(forms.ModelForm):
             'numfileforpub_random':forms.RadioSelect(),
             'caption':forms.Textarea(attrs = {'class':'form-control', 'placeholder':'','cols': 80, 'rows': 4}),
             'bottoken': forms.Select(attrs={'class':'form-control'}),
+            'isfiledelete':forms.RadioSelect(),
              }
         # получаем только таски с действующем юзером
     def __init__(self, *args, **kwargs):
@@ -250,37 +241,7 @@ class TaskDelete(LoginRequiredMixin,DeleteView):
     model = Task
     success_url = reverse_lazy('tasks')
 
-'''#MyBot
-#-----------------------------------------------------------
-class MyBotForm(forms.ModelForm):
-    class Meta:
-        model = MyBot
-        #fields = '__all__'
-        exclude = ['created_by']
-
-class MyBotCreate(LoginRequiredMixin,CreateView):
-    form_class = MyBotForm
-    model = MyBot
-    success_url = reverse_lazy('bots')
-    login_url = reverse_lazy("login")
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.created_by = self.request.user
-        instance.save() 
-        return HttpResponseRedirect(reverse('bots'))
-
-class MyBotUpdate(LoginRequiredMixin,UpdateView):
-    form_class = MyBotForm
-    model = MyBot
-    success_url = reverse_lazy('bots')
-    login_url = reverse_lazy("login")
-   
-
-class MyBotDelete(LoginRequiredMixin,DeleteView):
-    model = MyBot
-    login_url = reverse_lazy("login")
-    success_url = reverse_lazy('bots')'''
-#---------------------------------------------------------------
+# формы для работы с моделью Chanels
 class MyChanelsForm(forms.ModelForm):
     class Meta:
         model = Chanels
@@ -316,8 +277,7 @@ class ChanelsDelete(LoginRequiredMixin,DeleteView):
     model = Chanels
     success_url = reverse_lazy('chanels')
 
-#SourcesData -------------------------------------------------
-
+#формы для работы с моделью SourcesData
 class SourceForm(forms.ModelForm):
     class Meta:
         model = SourcesData
@@ -365,7 +325,7 @@ class SourcesDataDelete(LoginRequiredMixin,DeleteView):
 
 
 
-#--------------------------------------
+# формы для работы с моделью Shedule
 class SheduleForm(forms.ModelForm):
     class Meta:
         model = Shedule
@@ -417,6 +377,7 @@ class SheduleUpdate(LoginRequiredMixin,UpdateView):
 class SheduleDelete(LoginRequiredMixin,DeleteView):
     model = Shedule
     success_url = reverse_lazy('shedules')
+
 #----------------------------------------
 class MyUrlsForm(forms.ModelForm):
     class Meta:
@@ -475,13 +436,13 @@ class UserUpdate(UpdateView):
         return super(UserUpdate, self).form_valid(form) 
 #-------------------------------------------
 
-# Form
+# Формы для работы с Разовой задачей
+
 class ImageUploadForm(forms.Form):
     """Image upload form."""
     image = forms.ImageField()
 
 class OnceTaskUploadForm(forms.ModelForm):
-    #text = forms.CharField( widget=forms.
     class Meta:
         model = OnceTask
         exclude = ['created_by','status']
@@ -503,10 +464,6 @@ class OnceTaskUploadForm(forms.ModelForm):
         super(OnceTaskUploadForm, self).__init__(*args, **kwargs)
         self.fields['chanelforpublic'].queryset = Chanels.objects.filter(created_by = user)
         self.fields['bottoken'].queryset = MyBot.objects.filter(created_by = user)
-        #self.fields['imgs'].widget.attrs.update({
-        #    'name':'pic[]',
-        #     'class' : 'photo' 
-        #})
         self.fields['del_date'].required = True
         self.fields['run_date'].required = True 
         
@@ -518,18 +475,7 @@ class OnceTaskUploadForm(forms.ModelForm):
             self._errors["run_date"] = "Неверная дата запуска (дата уже прошла)"
         #del form_data['password']
         return form_data
-    '''def clean_del_date(self):
-        del_date = self.cleaned_data["del_date"]
-        run_date = self.cleaned_data["run_date"]
-        if del_date < run_date:
-            raise ValidationError('Неверная дата удаления сообщения (раньше даты запуска)')
-        return del_date
-        
-    def clean_run_date(self):
-        run_date = self.cleaned_data["run_date"]
-        if run_date.replace(tzinfo=None) < datetime.now():
-            raise ValidationError('Неверная дата запуска сообщения (дата уже прошла)')
-        return run_date'''
+    
            
 class OnceTaskCreate(LoginRequiredMixin, CreateView):
     form_class = OnceTaskUploadForm

@@ -30,42 +30,53 @@ from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, ImageUpload
 from .forms import CustomUserCreationForm, ImageUploadForm
 from facebot import helpers
 from .models import Profile
-
+from datetime import date
+import telebot
 def register(request):
+    #получаем ip адресс пользователя при регистрации
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
     if request.method == 'POST':
         f = CustomUserCreationForm(request.POST)
         if f.is_valid():
             # send email verification now
-
             activation_key = helpers.generate_activation_key(username=request.POST['username'])
-
-            subject = "TheGreatDjangoBlog Account Verification"
-
+            subject = "Подтверждения аккаунта"
             message = '''\n Для подтверждения аккаунта переидите по этой ссылке \n\n{0}://{1}/facebot/activate/account/?key={2}
                         '''.format(request.scheme, request.get_host(), activation_key)            
-
             error = False
-            
             try:
-                send_mail(subject, message, settings.EMAIL_HOST_USER, [request.POST['email']])
-                #send_mail(subject, message, settings.SERVER_EMAIL, [request.POST['email']])
-                #messages.add_message(request, messages.INFO, 'Account created! Click on the link sent to your email to activate the account')
+                #send_mail(subject, message, settings.EMAIL_HOST_USER, [request.POST['email']])
+                tb = telebot.TeleBot('460229690:AAGfrgxIU1Hh6dBAv0LoYsAWd4YUF7cvLHQ')
+                mes = '''
+                **Запрос на регистрацию нового пользователя:** 
+                1. *username*: {0}
+                2. *email*: {1}
+                3. *логин в телеграмме*: {2}
+                4. *ссылка для активации аккаунта*: {3},
+                '''.format(request.POST['username'],request.POST['email'],request.POST['telega'],message)
 
+                tb.send_message('@cool_chanel',mes, parse_mode='Markdown')
+                
             except:
                 error = True
-                #messages.add_message(request, messages.INFO, 'Unable to send email verification. Please try again')
-
-            
-            
+                print ("!!!!!!!!!ERROR!!!!!!!!!!!!!!!!!!!!11") 
             if not error:
                 u = User.objects.create_user(
                     request.POST['username'],
                     request.POST['email'],
                     request.POST['password1'],
-                    is_active = 0)
+                    is_active = 0
+                    )
                 profile = Profile()
                 profile.activation_key = activation_key
                 profile.user = u
+                profile.ip_adress = ip
+                profile.telegramm = request.POST['telega']
+                profile.datetowork = date.today()
                 profile.save()
             return HttpResponseRedirect(rv('login'))
     else:
@@ -123,7 +134,7 @@ def test_run(requests,id_task):
     '''
     task = Task.objects.get(id=id_task)
     
-    messages.info(requests, 'Задача '+task.taskname+" выполнена успешно!")
+    messages.info(requests, 'Задача '+task.taskname+" "+task.status)
     return HttpResponseRedirect(rv('tasks'))
 
 def index(request):
@@ -221,11 +232,11 @@ def gettoken(request):
   
 def profile(request):
     try:
-        #p = Profile.objects.get(pk=request.user.id)
+        p = Profile.objects.get(user=request.user)
         u = User.objects.get(pk=request.user.id) 
     except Profile.DoesNotExist:
         raise Http404("Poll does not exist")
-    return render(request, 'facebot/profile.html', {'user': u})
+    return render(request, 'facebot/profile.html', {'user': u, 'prorile':p })
 
 def upload_pic(request):
     if request.method == 'POST':
