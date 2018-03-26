@@ -97,7 +97,6 @@ class Task(models.Model):
     def save(self, *args, **kwargs):
         if self.caption == '':
             self.caption = "Нет"
-        
         super(Task, self).save(*args, **kwargs) # Call the "real" save() method.'''
         
     

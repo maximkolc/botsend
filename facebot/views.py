@@ -192,7 +192,6 @@ def getNumsF(n, **kwargs):
     '''вспомогательная функция для функции получения списка списка каталоговы
        подсчитывает количество файлов в каталоге на яндекс диске
     '''
-    sum =0
     token = kwargs['tok']
     fol = kwargs['folder']
     base_headers = {
@@ -202,15 +201,16 @@ def getNumsF(n, **kwargs):
     }
     base_url = "https://cloud-api.yandex.net:443/v1/disk"
     url = base_url + "/resources"
-    payload = {'path': fol,'fields':'_embedded.items.name, _embedded.items.type','offset':n}
+    payload = {'path': fol,'fields':'_embedded.total'} #items.name, _embedded.items.type','offset':n}
     r = requests.get(url, headers=base_headers,params=payload)
-    nums = len(r.json()['_embedded']['items'])
-    if nums < 20:
-        return sum + nums
-    else:
-        k = payload['offset']+nums
-        #sum = nums
-        return nums + getNumsF(k, tok = token, folder = fol)
+    nums = r.json()['_embedded']['total'] #['items'])
+    #if nums < 20:
+    #    return sum + nums
+    #else:
+    #    k = payload['offset']+nums
+    #    #sum = nums
+    #    return nums + getNumsF(k, tok = token, folder = fol)
+    return nums
 
 
 

@@ -24,20 +24,24 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">{{ form.chanelforpublic.label_tag }}</label>
                                     <div class="col-md-10">
+                                            {{ form.chanelforpublic.errors }} 
                                         {{ form.chanelforpublic }} 
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">{{ form.sourcefordownload.label_tag }}</label>
                                     <div class="col-md-10">
+                                            {{ form.sourcefordownload.errors }}
                                         {{ form.sourcefordownload }}
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.filetypesforload.label_tag }}</label>
+                                        
                                         <div class="col-md-10 ">
-                                        {% for checkbox in form.filetypesforload %}
+                                                {{ form.filetypesforload.errors }}
+                                            {% for checkbox in form.filetypesforload %}
                                            <div class="chekbox">    
                                             <label class="cr-styled">
                                                 {{ checkbox.tag }} <i class="fa"></i> {{ checkbox.choice_label }}
@@ -112,6 +116,7 @@
                                 <div class="form-group">
                                         <label class="col-md-2 control-label">{{ form.bottoken.label_tag }}</label>
                                         <div class="col-md-10">
+                                                {{ form.bottoken.errors }}
                                             {{ form.bottoken }}
                                         </div>
                                 </div>

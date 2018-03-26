@@ -23,55 +23,48 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from django.conf import settings
         for task_id in options['task_ids']:
+            #получение всех данных для задачи
             mytask = Task.objects.get(pk=task_id)
+            folder = mytask.catalog_ajax
+            filetypes = []
+            for ft in mytask.filetypesforload.all():
+                t = ft.ftype.split(',')
+                filetypes.extend(t)
+            nums_file_load = 0
+            if mytask.numfileforpub_random == True:
+                nums_file_load = random.randint(mytask.num_file_min, mytask.num_file_max)
+            else:
+                nums_file_load = mytask.numfileforpub
+            chanel = mytask.chanelforpublic.chanelname
+            yande_token = mytask.sourcefordownload.token
+            tb = telebot.TeleBot(mytask.bottoken.bottoken)
+            helper = YandexHelp(token = yande_token)
+            
+            #настройка логера
+            file_name_log = mytask.created_by.username.replace(' ', '') + "_log.log"
+            logger = logging.getLogger("run_task")
+            logger.setLevel(logging.INFO)
+            fh = logging.FileHandler(settings.BASE_DIR+"/logs/"+file_name_log)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            fh.setFormatter(formatter)
+            logger.addHandler(fh)
+            
             # получения пользователя, который создал задачу
             user = Profile.objects.get(user = mytask.created_by)
             # проверка даты, до которой пользователь может выполнять задачи
             if datetime.datetime.now() < user.datetowork.replace(tzinfo=None):
-                
-                file_name_log = mytask.created_by.username.replace(' ', '') + "_log.log"
-                logger = logging.getLogger("run_task")
-                logger.setLevel(logging.INFO)
-                fh = logging.FileHandler(settings.BASE_DIR+"/logs/"+file_name_log)
-                formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-                fh.setFormatter(formatter)
-                logger.addHandler(fh)
-                
                 logger.info("Начало выполнение задачи - "+mytask.taskname)
-                folder = mytask.catalog_ajax
+                logger.info('Бот '+str(mytask.bottoken)+' создан')
                 logger.info("Каталог c файлами для "+mytask.taskname +": "+folder)
-                filetypes = []
-                for ft in mytask.filetypesforload.all():
-                    t = ft.ftype.split(',')
-                    filetypes.extend(t)
-                    print(filetypes)
-                # вычисление количества загружаемых файлов, случайное или установленно заранее
-                nums_file_load = 0
-                if mytask.numfileforpub_random == True:
-                    nums_file_load = random.randint(mytask.num_file_min, mytask.num_file_max)
-                else:
-                    nums_file_load = mytask.numfileforpub
-    
                 logger.info('Количество файлов для загрузки:'+ str(nums_file_load))
-                logger.info('Типы загружаемых файлов '+' '.join(filetypes))
-                dt = mytask.sourcefordownload.token
-                test = 'AQAAAAAiLO4jAASpE0JmHehiVkahtwsJmy1J9fc'
-                helper = YandexHelp(token = dt)
-                #-----------
-                #logger.info("Данные о диске:\n "+ helper.get_disk_metadata())
-                #helper.get_list_of_all_files()
-                #-----------
-                logger.info("Получение списка файлов для загрузки")
+                logger.info('Типы загружаемых файлов '+' '.join(filetypes))        
+                logger.info('Канал для публикации: '+chanel)
+
+                #Получение списка файлов для загрузки
                 listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
                 logger.info('файлы для загрузки '+' '.join(listfile))
                 links = helper.getLinkFile(folder, listfile)
                 logger.info('Полученные ссылки для загрузки файлов: '+' '.join(links))
-                tb = telebot.TeleBot(mytask.bottoken.bottoken)
-                logger.info('Бот '+str(mytask.bottoken)+' создан')
-                chanel = mytask.chanelforpublic.chanelname
-                logger.info('Канал для публикации: '+chanel)
-                #for x, y in zip(key_dict, value_dict):
-                #dict_out[x] = y
                 
                 # добавление клавиатуры, то есть кнопок с лайками под постами
                 mykeys = []
@@ -84,12 +77,11 @@ class Command(BaseCommand):
                 #keyboard = types.InlineKeyboardMarkup()
                 #callback_button = types.InlineKeyboardButton(text="like", callback_data="like")
                 #keyboard.add(callback_button)
-                
-                
                 #logger.info("Кнопки под постом добавленны: "+str(keyboard))
                 if len(mytask.url.all()) <= 0:
                     logger.info('Кнопки под постом отсутствуют')
-                messages = []
+                messages = [] #для сбора информации об отправленных файлах
+                
                 # скачивание файлов и т.д. для отправки в телеграмм
                 for link,filename in zip(links, listfile):
                     url = urlopen(link)
@@ -131,10 +123,10 @@ class Command(BaseCommand):
                 if mytask.isfiledelete:
                     res = helper.remove_folder_or_file(folder,listfile)    
                     logger.info(''.join(res))
-                mytask.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M:%S"))
+                mytask.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
                 mytask.save()
             else:
-                mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, продлите подписку!!!, https://t.me/w_s_c"
+                mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, ПРООДЛИТЕ ПОДПИСКУ!, https://t.me/w_s_c"
                 mytask.save()
-             
+                logger.info("Истекла подписка  - "+mytask.created_by.username)
     

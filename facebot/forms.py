@@ -210,7 +210,8 @@ class TaskForm(forms.ModelForm):
         self.fields['sourcefordownload'].queryset = SourcesData.objects.filter(created_by = user)
         self.fields['bottoken'].queryset = MyBot.objects.filter(created_by = user)
         self.fields['url'].queryset = Urls.objects.filter(created_by = user)
-             
+        self.fields['status'].required = False
+        self.fields['filetypesforload'].required = True
 class TaskCreate(LoginRequiredMixin, CreateView):
     form_class = TaskForm
     model = Task
