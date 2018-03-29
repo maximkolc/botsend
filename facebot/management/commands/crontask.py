@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 logger.info('Количество файлов для загрузки:'+ str(nums_file_load))
                 logger.info('Типы загружаемых файлов '+' '.join(filetypes))        
                 logger.info('Канал для публикации: '+chanel)
-
+                print("11111111111111111111111111111111111111")
                 #Получение списка файлов для загрузки
                 listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
                 logger.info('файлы для загрузки '+' '.join(listfile))
@@ -81,11 +81,15 @@ class Command(BaseCommand):
                 if len(mytask.url.all()) <= 0:
                     logger.info('Кнопки под постом отсутствуют')
                 messages = [] #для сбора информации об отправленных файлах
-                
                 # скачивание файлов и т.д. для отправки в телеграмм
+                #start = time.time()
+                #i = 0
                 for link,filename in zip(links, listfile):
                     url = urlopen(link)
-                    file = url.read()
+                    #with open('test'+str(i),'wb') as output:
+                    #    output.write(url.read())
+                    #i = i+1
+                
                     if filename.split('.')[1] in ['gif','mp4','avi']:
                         logger.info('Отпрака файла '+filename+' как видео')
                         if len(mytask.url.all()) >0:
@@ -125,8 +129,9 @@ class Command(BaseCommand):
                     logger.info(''.join(res))
                 mytask.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
                 mytask.save()
+                #print("Process took: {:.2f} seconds".format(time.time() - start))
             else:
-                mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, ПРООДЛИТЕ ПОДПИСКУ!, https://t.me/w_s_c"
-                mytask.save()
+               # mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, ПРООДЛИТЕ ПОДПИСКУ!, https://t.me/w_s_c"
+               # mytask.save()
                 logger.info("Истекла подписка  - "+mytask.created_by.username)
     

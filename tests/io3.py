@@ -55,7 +55,7 @@ async def consume(queue,num_file):
             async with session.get(link[1]) as resp:
                 with open(link[0], 'ab') as fd:
                     while True:
-                        chunk = await resp.content.read(1024)
+                        chunk = await resp.content.read(102)
                         if not chunk:
                             break
                         fd.write(chunk)
@@ -66,7 +66,7 @@ loop = asyncio.get_event_loop()
 queue = asyncio.Queue(loop=loop)
 start = time.time()
 producer_coro = produce(queue, total, ['gif'])
-consumer_coro = consume(queue, 20)
+consumer_coro = consume(queue, 10)
 loop.run_until_complete(asyncio.gather(producer_coro, consumer_coro))
 loop.close()
 print("Process took: {:.2f} seconds".format(time.time() - start))
