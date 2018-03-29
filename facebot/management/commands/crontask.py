@@ -82,15 +82,15 @@ class Command(BaseCommand):
                     logger.info('Кнопки под постом отсутствуют')
                 messages = [] #для сбора информации об отправленных файлах
                 # скачивание файлов и т.д. для отправки в телеграмм
-                start = time.time()
-                i = 0
+                #start = time.time()
+                #i = 0
                 for link,filename in zip(links, listfile):
                     url = urlopen(link)
-                    with open('test'+str(i),'wb') as output:
-                        output.write(url.read())
-                    i = i+1
+                    #with open('test'+str(i),'wb') as output:
+                    #    output.write(url.read())
+                    #i = i+1
                 
-                    '''if filename.split('.')[1] in ['gif','mp4','avi']:
+                    if filename.split('.')[1] in ['gif','mp4','avi']:
                         logger.info('Отпрака файла '+filename+' как видео')
                         if len(mytask.url.all()) >0:
                             message = tb.send_video(chanel, file,caption = mytask.caption,reply_markup = keyboard,timeout=15)
@@ -128,8 +128,8 @@ class Command(BaseCommand):
                     res = helper.remove_folder_or_file(folder,listfile)    
                     logger.info(''.join(res))
                 mytask.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
-                mytask.save()'''
-                print("Process took: {:.2f} seconds".format(time.time() - start))
+                mytask.save()
+                #print("Process took: {:.2f} seconds".format(time.time() - start))
             else:
                # mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, ПРООДЛИТЕ ПОДПИСКУ!, https://t.me/w_s_c"
                # mytask.save()
