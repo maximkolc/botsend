@@ -126,7 +126,7 @@ def test_run(requests,id_task):
     """
     management.call_command("crontask", id_task)
     task = Task.objects.get(id=id_task)
-    task.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))""
+    task.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
     messages.info(requests, 'Задача '+task.taskname+" "+task.status)
     return HttpResponseRedirect(rv('tasks'))
 
