@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'botsend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'botsend2',
+        'NAME': 'botsend_bd',
         'USER': 'botsend',
         'PASSWORD': '09793855',
         'HOST': 'localhost',
