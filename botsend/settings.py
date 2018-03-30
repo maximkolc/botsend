@@ -136,6 +136,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+TOKEN_YA = '7b560b5652324f189ffe9e230b052429'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
