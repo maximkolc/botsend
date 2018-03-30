@@ -77,7 +77,7 @@ class Task(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     isfiledelete = models.BooleanField('Нет',default = False, choices=IS_DEL)
-    status = models.CharField('Статус',max_length=25, null = True)
+    status = models.CharField('Статус',max_length=100, null = True)
     class Meta:
         ordering = ["chanelforpublic"]
         unique_together = ('taskname', 'created_by')
