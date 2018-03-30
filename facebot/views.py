@@ -31,6 +31,7 @@ from .forms import CustomUserCreationForm, ImageUploadForm
 from facebot import helpers
 from .models import Profile
 from datetime import date
+import datetime
 import telebot
 def register(request):
     #получаем ip адресс пользователя при регистрации
@@ -123,17 +124,9 @@ def test_run(requests,id_task):
     """
     Функция отвечающая за запуск джаного задачи кнопкой в списке задач, для теста!
     """
-    com1 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
-    com2 = 'python3  ~/botsend/manage.py crontask '
     management.call_command("crontask", id_task)
-    '''
-    отправка email письма!!!
-    from django.core.mail import send_mail
-    from django.conf import settings
-    send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['maximkolc@gmail.com'])
-    '''
     task = Task.objects.get(id=id_task)
-    
+    task.status == "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))""
     messages.info(requests, 'Задача '+task.taskname+" "+task.status)
     return HttpResponseRedirect(rv('tasks'))
 
