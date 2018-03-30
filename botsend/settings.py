@@ -25,12 +25,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = 'fyc&ilm*0s-bj_vxp@)f2@g23i%p4tfh$j1zg&0au2j=*x1rix'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-     '185.16.41.210',
-     '127.0.0.1',
-     '185.16.41.146',
+     #'185.16.41.210',
+     #'127.0.0.1',
+     #'185.16.41.146',
      '46.229.213.248',
      'botsend.ru', 
      'www.botsend.ru,'
@@ -90,11 +90,17 @@ WSGI_APPLICATION = 'botsend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'botsendbd',
+        'USER': 'botsend',
+        'PASSWORD': '09793855',
+        'HOST': 'localhost',
+        'PORT': '',
+}
 }
 
 
@@ -190,3 +196,7 @@ LOGGING = {
         },
     }
 }
+try:
+    from local_settings import *
+except ImportError:
+    pass
