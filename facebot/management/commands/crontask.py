@@ -131,7 +131,7 @@ class Command(BaseCommand):
                 mytask.save()
                 #print("Process took: {:.2f} seconds".format(time.time() - start))
             else:
-               # mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, ПРООДЛИТЕ ПОДПИСКУ!, https://t.me/w_s_c"
-               # mytask.save()
+                mytask.status = "ЗАДАЧА НЕ ВЫПОЛНЕНА, ПРООДЛИТЕ ПОДПИСКУ!, https://t.me/w_s_c"
+                mytask.save()
                 logger.info("Истекла подписка  - "+mytask.created_by.username)
     
