@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
      '127.0.0.1',
      '185.16.41.146',
      '46.229.213.248',
+     'botsend.ru', 
+     'www.botsend.ru,'
 ]
 
 
