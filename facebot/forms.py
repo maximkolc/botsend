@@ -226,6 +226,7 @@ class TaskCreate(LoginRequiredMixin, CreateView):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
         instance.save() 
+        form.save_m2m()
         return HttpResponseRedirect(reverse('tasks'))
 
 class TaskUpdate(LoginRequiredMixin, UpdateView):
