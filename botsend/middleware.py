@@ -13,8 +13,8 @@ class SetLastVisitMiddleware(MiddlewareMixin):
             else:
                 u = Profile(user = request.user, 
                             last_visit=now(),
-                            telegramm = "No"
-                            email_validated = True
-                            ip_adress = request.META.get('REMOTE_ADDR')
-                            datetowork = date.today())
+                            telegramm = "No",
+                            email_validated = True,
+                            ip_adress = request.META.get('REMOTE_ADDR'),
+                            datetowork = now())
         return response 
