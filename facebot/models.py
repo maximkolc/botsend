@@ -291,6 +291,7 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     print ("lengt: "+str(len(t_id)))
     print(' '.join(t_id))
     my_cron = CronTab(user=getpass.getuser())
+    logger.info("User:  "+ str(my_cron))
     flag = True
     for job in my_cron:
         if job.comment == str(instance.id):

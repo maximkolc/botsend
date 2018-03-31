@@ -368,6 +368,10 @@ class SheduleUpdate(LoginRequiredMixin,UpdateView):
     form_class = SheduleForm
     #fields = '__all__'
     success_url = reverse_lazy('shedules')
+    def get_form_kwargs(self):
+        kwargs = super(SheduleCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
