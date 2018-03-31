@@ -8,5 +8,5 @@ sample.log
 /logs
 /pic_folder
 /media
-/home/maxim/work/botsend/botsend/local_settings.py
-/home/maxim/work/botsend/facebot/migrations
+/botsend/local_settings.py
+/facebot/migrations
