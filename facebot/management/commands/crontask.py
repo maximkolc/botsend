@@ -86,8 +86,7 @@ class Command(BaseCommand):
                 #i = 0
                 for link,filename in zip(links, listfile):
                     url = urlopen(link)
-                    with open('test'+str(i),'wb') as output:
-                        output.write(url.read())
+                    file = url.read()
                     #i = i+1
                 
                     if filename.split('.')[1] in ['gif','mp4','avi']:
