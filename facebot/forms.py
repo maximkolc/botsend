@@ -204,7 +204,7 @@ class TaskForm(forms.ModelForm):
              }
         # получаем только таски с действующем юзером
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        user = self.request.user #kwargs.pop('user')
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['chanelforpublic'].queryset = Chanels.objects.filter(created_by = user)
         self.fields['sourcefordownload'].queryset = SourcesData.objects.filter(created_by = user)
