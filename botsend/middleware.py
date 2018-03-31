@@ -16,5 +16,5 @@ class SetLastVisitMiddleware(MiddlewareMixin):
                             telegramm = "No"
                             email_validated = True
                             ip_adress = request.META.get('REMOTE_ADDR')
-                            profile.datetowork = date.today())
+                            datetowork = date.today())
         return response 
