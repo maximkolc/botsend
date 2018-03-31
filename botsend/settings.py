@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'botsend.middleware.SetLastVisitMiddleware', #посредник для записи времени последнего визита
+    #'botsend.middleware.SetLastVisitMiddleware', #посредник для записи времени последнего визита
     
 ]
 
@@ -140,7 +140,7 @@ TOKEN_YA = '7b560b5652324f189ffe9e230b052429'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-STATIC_ROOT = '/home/maximkolc/static'
+STATIC_ROOT = '/home/botsend/static'
 STATIC_URL = '/static/'
 # REDIS related settings 
 REDIS_HOST = 'localhost'
