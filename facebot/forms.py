@@ -218,10 +218,10 @@ class TaskCreate(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy("login")
     success_url = reverse_lazy('tasks')
     # получаем только таски с действующем юзером продоложение
-    def get_form_kwargs(self):
-        kwargs = super(TaskCreate, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    #def get_form_kwargs(self):
+    #    kwargs = super(TaskCreate, self).get_form_kwargs()
+    #    kwargs['user'] = self.request.user
+    #    return kwargs
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.created_by = self.request.user
@@ -233,10 +233,10 @@ class TaskUpdate(LoginRequiredMixin, UpdateView):
     model = Task
     login_url = reverse_lazy("login")
     success_url = reverse_lazy('tasks')
-    def get_form_kwargs(self):
-        kwargs = super(TaskUpdate, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    #def get_form_kwargs(self):
+    #    kwargs = super(TaskUpdate, self).get_form_kwargs()
+    #    kwargs['user'] = self.request.user
+    #    return kwargs
 
 class TaskDelete(LoginRequiredMixin,DeleteView):
     model = Task
