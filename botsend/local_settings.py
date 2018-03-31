@@ -11,4 +11,5 @@ DATABASES = {
     }
 }
 DEBUG = True
+com2 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
 

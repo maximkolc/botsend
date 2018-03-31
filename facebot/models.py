@@ -282,7 +282,7 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     fh.setFormatter(formatter)
     # add handler to logger object
     logger.addHandler(fh)
-    com2 = '/home/maxim/work/botenv2/bin/python  /home/maxim/work/botsend/manage.py crontask '
+    com2 = '/home/botsend/env/botsend/bin/python  /home/botsend/botsend/manage.py crontask '
     com1 = 'python3  ~/botsend/manage.py crontask '
     #user = getpass.getuser()
     t_id=[]
