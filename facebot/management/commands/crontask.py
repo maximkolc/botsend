@@ -120,7 +120,7 @@ class Command(BaseCommand):
                                             dislike_count = 0,
                                             created_by = mytask.created_by,
                                             chanel_name = chanel,
-                                            bottoken = mytask.bottoken.bottoken,
+                                            bottoken = str(mytask.bottoken.bottoken),
                                             task = mytask,
                                             created_at = datetime.datetime.now())
                         m.save()   
