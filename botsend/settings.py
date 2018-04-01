@@ -191,9 +191,9 @@ LOGGING = {
         #    'level': 'DEBUG',  # <----<<<
         #    'propagate': False,
         #},
-        'celery': {
-            'handlers': ['celery', 'console'],
-            'level': 'DEBUG',
+        #'celery': {
+        #    'handlers': ['celery', 'console'],
+        #    'level': 'DEBUG',
         },
     }
 }
