@@ -127,7 +127,7 @@ def delete_message(requests, id_message):
     '''
     message = MessageReaction.objects.get(id=id_message)
     url = 'https://api.telegram.org/bot{0}/deletemessage'.format(message.bottoken)
-    payload = {'message_id':message.message_id, 'chat_id':message.chat.id}
+    payload = {'message_id':message.message_id, 'chat_id':message.chat_id}
     r = reqq.get(url,params=payload)
     messages.info(requests, 'Сообщение удалено')
     return HttpResponseRedirect(rv('messages'))
