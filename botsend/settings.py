@@ -184,7 +184,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 100,  # 100 mb
         },
     },
-    'loggers': {
+    '''loggers': {
         # ...
         'django.db': {
             'handlers': ['console'],
@@ -195,7 +195,7 @@ LOGGING = {
             'handlers': ['celery', 'console'],
             'level': 'DEBUG',
         },
-    }
+    }'''
 }
 try:
     from local_settings import *

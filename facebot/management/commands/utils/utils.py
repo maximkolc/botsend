@@ -24,7 +24,7 @@ class YandexHelp:
         
     def getListFle2(self, folder,filetypes,numsfile,log):
         list = self.client.get_content_of_folder(folder).get_children()  
-        print("Всего файлов в каталоге: - "+ str(len(list)))
+        #print("Всего файлов в каталоге: - "+ str(len(list)))
         new_list = []
         list_for_load=[]
         for key in list:
