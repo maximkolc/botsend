@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse as rv
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django import forms
-import requests
+import requests as reqqq
 from django.shortcuts import redirect, reverse, Http404
 #from .forms import RenewTaskForm
 # Опять же, спасибо django за готовую форму аутентификации.
@@ -126,10 +126,9 @@ def delete_message(requests, id_message):
     Функция предназначена для удаления сообщения, ид которно передано в параметрах 
     '''
     message = MessageReaction.objects.get(id=id_message)
-    requests.get('https://api.telegram.org/bot{0}/deletemessage?message_id={1}&chat_id={2}'.format(
-        message.bottoken, 
-        message.message_id, 
-        message.chat.id))
+    url = 'https://api.telegram.org/bot{0}/deletemessage'.format(message.bottoken))
+    payload = {'message_id':message.message_id, 'chat_id':message.chat.id}
+    r = reqq.get(url,params=payload)
     messages.info(requests, 'Сообщение удалено')
     return HttpResponseRedirect(rv('messages'))
 
