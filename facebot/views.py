@@ -126,8 +126,7 @@ def delete_message(requests, id_message):
     Функция предназначена для удаления сообщения, ид которно передано в параметрах 
     '''
     message = MessageReaction.objects.get(id=id_message)
-    s = requests.Session()
-    s.get('https://api.telegram.org/bot{0}/deletemessage?message_id={1}&chat_id={2}'.format(
+    requests.get('https://api.telegram.org/bot{0}/deletemessage?message_id={1}&chat_id={2}'.format(
         message.bottoken, 
         message.message_id, 
         message.chat.id))
