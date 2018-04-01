@@ -288,8 +288,8 @@ def task_add_cron(sender, instance, signal, *args, **kwargs):
     t_id=[]
     for task in instance.task.all():
         t_id.append(str(task.id))
-    print ("lengt: "+str(len(t_id)))
-    print(' '.join(t_id))
+    #print ("lengt: "+str(len(t_id)))
+    #print(' '.join(t_id))
     my_cron = CronTab(user=getpass.getuser())
     logger.info("User:  "+ str(getpass.getuser()))
     flag = True
