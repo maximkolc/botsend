@@ -32,6 +32,7 @@
                                         <td>{{messages.created_at}}></td>
                                         <td>{{messages.like_count}}</td>
                                         <td>{{messages.dislike_count}}</td>
+                                        <td> <a href="{% url 'delete_message' messages.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 
                                     {% endfor %}
                                     </tbody>
