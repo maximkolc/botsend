@@ -273,7 +273,7 @@ class MessageReaction(models.Model):
     chanel_name = models.CharField("Имя канала", max_length = 120, null = True)
     created_at = models.DateTimeField('Время выполнения',auto_now_add=True, null=True)
     bottoken = models.CharField('Токен бота отправителя',max_length=120, help_text = 'Токен бота', null = True) 
-    task = models.ForeignKey('Задание которое отправило',Task,on_delete=models.CASCADE, null = True)
+    task = models.ForeignKey(Task,on_delete=models.CASCADE, null = True)
 
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
