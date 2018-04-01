@@ -186,14 +186,14 @@ LOGGING = {
     },
     'loggers': {
         # ...
-        #'django.db': {
-        #    'handlers': ['console'],
-        #    'level': 'DEBUG',  # <----<<<
-        #    'propagate': False,
-        #},
-        #'celery': {
-        #    'handlers': ['celery', 'console'],
-        #    'level': 'DEBUG',
+        'django.db': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # <----<<<
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['celery', 'console'],
+            'level': 'DEBUG',
         },
     }
 }
