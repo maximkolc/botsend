@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
     url(r'^logs/$', views.logs),
     url(r'^log_detail/(?P<log_file>.+)/$', views.log_detail, name='log_detail'),
-    url(r'^delete_message/(?P<pk>\d+)/$', views.delete_message, name = 'delete_message'),
+    url(r'^delete_message/(?P<id_message>\d+)/$', views.delete_message, name = 'delete_message'),
     url(r'^tokens/$', views.gettoken, name='tokens'),
     url(r'^ajax/getfolder/(?P<pk>\d+)/$', views.getfolder, name='getfolder'),
 ]

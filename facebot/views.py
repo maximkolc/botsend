@@ -121,7 +121,7 @@ def log_detail(requests, log_file):
         context={'res':res},
     )       
 
-def delete_message(requests, message_id):
+def delete_message(requests, id_message):
     '''
     Функция предназначена для удаления сообщения, ид которно передано в параметрах 
     '''
