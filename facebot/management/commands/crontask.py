@@ -120,6 +120,8 @@ class Command(BaseCommand):
                                             dislike_count = 0,
                                             created_by = mytask.created_by,
                                             chanel_name = chanel,
+                                            bottoken = mytask.bottoken.bottoken,
+                                            task = mytask,
                                             created_at = datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
                         m.save()   
                 # Удаление файла с диска, если отмечено соответвуещее

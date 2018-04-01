@@ -120,6 +120,12 @@ def log_detail(requests, log_file):
         context={'res':res},
     )       
 
+def delete_message(requests, message_id):
+    '''
+    Функция предназначена для удаления сообщения, ид которно передано в параметрах 
+    '''
+    pass
+
 def test_run(requests,id_task):
     """
     Функция отвечающая за запуск джаного задачи кнопкой в списке задач, для теста!
