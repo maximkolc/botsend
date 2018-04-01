@@ -269,7 +269,7 @@ class MessageReaction(models.Model):
     message_id = models.CharField("ид собщения", max_length = 120, null = True)
     like_count = models.IntegerField("количество лайков", null = True)
     dislike_count = models.IntegerField("количество лайков", null = True)
-    username = models.CharField("Имя пользователя", max_length = 120, null = True)
+    created_by = models.CharField("Имя пользователя", max_length = 120, null = True)
     chanel_name = models.CharField("Имя канала", max_length = 120, null = True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     
