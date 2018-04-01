@@ -122,7 +122,7 @@ class Command(BaseCommand):
                                             chanel_name = chanel,
                                             bottoken = mytask.bottoken.bottoken,
                                             task = mytask,
-                                            created_at = datetime.datetime.now().strftime("%y-%m-%d-%H:%M")
+                                            created_at = datetime.datetime.now())
                         m.save()   
                 # Удаление файла с диска, если отмечено соответвуещее
                 if mytask.isfiledelete:
