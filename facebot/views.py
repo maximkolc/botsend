@@ -26,7 +26,7 @@ from django.http import JsonResponse
 from django.core import serializers
 import json
 from django.core import management
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, ImageUpload
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, ImageUpload, MessageReaction
 from .forms import CustomUserCreationForm, ImageUploadForm
 from facebot import helpers
 from .models import Profile
@@ -125,7 +125,7 @@ def delete_message(requests, id_message):
     '''
     Функция предназначена для удаления сообщения, ид которно передано в параметрах 
     '''
-    message = facebot.models.MessageReaction.objects.get(id=id_message)
+    message = MessageReaction.objects.get(id=id_message)
     s = requests.Session()
     s.get('https://api.telegram.org/bot{0}/deletemessage?message_id={1}&chat_id={2}'.format(
         message.bottoken, 
