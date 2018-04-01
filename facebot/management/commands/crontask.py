@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 logger.info('Количество файлов для загрузки:'+ str(nums_file_load))
                 logger.info('Типы загружаемых файлов '+' '.join(filetypes))        
                 logger.info('Канал для публикации: '+chanel)
-                print("11111111111111111111111111111111111111")
+                #print("11111111111111111111111111111111111111")
                 #Получение списка файлов для загрузки
                 listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
                 logger.info('файлы для загрузки '+' '.join(listfile))
