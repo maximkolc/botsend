@@ -118,8 +118,9 @@ class Command(BaseCommand):
                                             message_id = message_id, 
                                             like_count = 0, 
                                             dislike_count = 0,
-                                            username = mytask.created_by,
-                                            chanel_name = chanel)
+                                            created_by = mytask.created_by,
+                                            chanel_name = chanel,
+                                            created_at = datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
                         m.save()   
                 # Удаление файла с диска, если отмечено соответвуещее
                 if mytask.isfiledelete:
