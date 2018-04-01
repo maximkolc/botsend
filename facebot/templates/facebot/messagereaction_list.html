@@ -1,0 +1,50 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="title">Отправленные сообщения</h3>
+</div>
+
+    {% if messagereaction_list %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Все сообщения</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Отправленно в канал </th>
+                                            <th>Like</th>
+                                            <th>Dislike</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for messages in messagereaction_list %}
+                                    <tr>
+                                        <td>{{messages.chanel_name}}</td>
+                                        <td>{{messages.like_count}}</td>
+                                        <td>{{messages.dislike_count}}</td>
+                                    </tr>                                 
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="{% url 'chanels_create' %}" class="btn btn-success">Добавить канал</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+      <p>Пока нет ни одного канала в работе</p>
+      <a href="{% url 'chanels_create' %}" class="btn btn-success">Добавить канал</a>
+    {% endif %}       
+{% endblock %}

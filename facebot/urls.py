@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^chanels/$', forms.ChanelsListView.as_view(), name='chanels'),
     url(r'^bots/$', forms.MyBotListView.as_view(), name='bots'),
     url(r'^sources/$', forms.SourcesDataListView.as_view(), name='sources'),
+    url(r'^messages/$', forms.MessageReactionListView.as_view(), name='messages'),
     url(r'^shedules/$', forms.SheduleListView.as_view(), name='shedules'),
     url(r'^oncetasks/$', forms.OnceTaskListView.as_view(), name='oncetasks'),
     url(r'^urls/$', forms.UrlsListView.as_view(), name='urlss'),

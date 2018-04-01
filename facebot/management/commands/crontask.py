@@ -88,7 +88,6 @@ class Command(BaseCommand):
                     url = urlopen(link)
                     file = url.read()
                     #i = i+1
-                
                     if filename.split('.')[1] in ['gif','mp4','avi']:
                         logger.info('Отпрака файла '+filename+' как видео')
                         if len(mytask.url.all()) >0:

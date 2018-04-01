@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, ImageUpload
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, ImageUpload, MessageReaction
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -139,7 +139,13 @@ class ChanelsListView(LoginRequiredMixin,generic.ListView):
     def get_queryset(self):
         """Returns Chanels that belong to the current user"""
         return Chanels.objects.filter(created_by=self.request.user)
-   
+
+class MessageReactionListView(LoginRequiredMixin,generic.ListView):
+    #model = Chanels
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return MessageReaction.objects.filter(created_by=self.request.user)   
 
 class MyBotListView(LoginRequiredMixin,generic.ListView):
     #model = MyBot

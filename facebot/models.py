@@ -271,7 +271,8 @@ class MessageReaction(models.Model):
     dislike_count = models.IntegerField("количество лайков", null = True)
     username = models.CharField("Имя пользователя", max_length = 120, null = True)
     chanel_name = models.CharField("Имя канала", max_length = 120, null = True)
-
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    
 def task_add_cron(sender, instance, signal, *args, **kwargs):
     #logging.basicConfig(filename="sample.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
     logger = logging.getLogger("model")
