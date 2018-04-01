@@ -20,6 +20,7 @@
                                     <thead>
                                         <tr>
                                             <th>Отправленно в канал </th>
+                                            <th>Дата отправки</th>
                                             <th>Like</th>
                                             <th>Dislike</th>
                                         </tr>
@@ -28,6 +29,7 @@
                                     {% for messages in messagereaction_list %}
                                     <tr>
                                         <td>{{messages.chanel_name}}</td>
+                                        <td>{{messages.created_at}}></td>
                                         <td>{{messages.like_count}}</td>
                                         <td>{{messages.dislike_count}}</td>
                                     </tr>                                 
