@@ -5,10 +5,8 @@ from django.core.urlresolvers import reverse as rv
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django import forms
-import requests as reqqq
+import requests
 from django.shortcuts import redirect, reverse, Http404
-#from .forms import RenewTaskForm
-# Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -26,10 +24,9 @@ from django.http import JsonResponse
 from django.core import serializers
 import json
 from django.core import management
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, ImageUpload, MessageReaction
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, ImageUpload, MessageReaction, Profile
 from .forms import CustomUserCreationForm, ImageUploadForm
 from facebot import helpers
-from .models import Profile
 from datetime import date
 import datetime
 import telebot
@@ -98,47 +95,46 @@ def activate_account(request):
 
     return render(request, 'activate.html')
 
-def logs(requests):
+def logs(request):
     '''
     Функция для работы с логами просмотр списка логов и детали лога
     '''
     t =os.getcwd()
     list_logs = os.listdir(path='logs')
     return render(
-        requests,
+        request,
         'facebot/logos.html',
         context={'list_logs':list_logs,'t':t},
     ) 
-def log_detail(requests, log_file):
+def log_detail(request, log_file):
     '''
     Функция для работы с логами, детальный просмотр лога
     '''
     input = open('logs/'+log_file, 'r')
     res = input.readlines()
     return render(
-        requests,
+        request,
         'facebot/log.html',
         context={'res':res},
     )       
 
-def delete_message(requests, id_message):
+def delete_message(request, id_message):
     '''
     Функция предназначена для удаления сообщения, ид которно передано в параметрах 
     '''
     message = MessageReaction.objects.get(id=id_message)
     url = 'https://api.telegram.org/bot{0}/deletemessage'.format(message.bottoken)
     payload = {'message_id':message.message_id, 'chat_id':message.chat_id}
-    r = reqqq.get(url,params=payload)
-    messages.info(requests, 'Сообщение удалено')
+    r = requests.get(url,params=payload)
     return HttpResponseRedirect(rv('messages'))
 
-def test_run(requests,id_task):
+def test_run(request,id_task):
     """
     Функция отвечающая за запуск джаного задачи кнопкой в списке задач, для теста!
     """
     management.call_command("crontask", id_task)
     task = Task.objects.get(id=id_task)
-    messages.info(requests, 'Задача '+task.taskname+" "+task.status)
+    messages.info(request, 'Задача '+task.taskname+" "+task.status)
     return HttpResponseRedirect(rv('tasks'))
 
 def index(request):

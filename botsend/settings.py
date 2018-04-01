@@ -25,7 +25,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = 'fyc&ilm*0s-bj_vxp@)f2@g23i%p4tfh$j1zg&0au2j=*x1rix'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
      #'185.16.41.210',
@@ -197,7 +197,9 @@ LOGGING = {
         },
     }
 }
+
 try:
-    from local_settings import *
+    from .local_settings import *
+    print ("LOCAL!!!!!!!!!!!!!!!!!!!!!!!!!!1")
 except ImportError:
     pass
