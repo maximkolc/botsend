@@ -33,6 +33,7 @@ from .models import Profile
 from datetime import date
 import datetime
 import telebot
+from facebot.tasks import delete_message
 def register(request):
     #получаем ip адресс пользователя при регистрации
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -124,7 +125,14 @@ def delete_message(requests, message_id):
     '''
     Функция предназначена для удаления сообщения, ид которно передано в параметрах 
     '''
-    pass
+    message = facebot.models.MessageReaction.objects.get(id=id_message)
+    s = requests.Session()
+    s.get('https://api.telegram.org/bot{0}/deletemessage?message_id={1}&chat_id={2}'.format(
+        message.bottoken, 
+        message.message_id, 
+        message.chat.id))
+    messages.info(requests, 'Сообщение удалено')
+    return HttpResponseRedirect(rv('messages'))
 
 def test_run(requests,id_task):
     """
