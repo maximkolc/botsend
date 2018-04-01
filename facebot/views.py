@@ -62,7 +62,6 @@ def register(request):
                 
             except:
                 error = True
-                print ("!!!!!!!!!ERROR!!!!!!!!!!!!!!!!!!!!11") 
             if not error:
                 u = User.objects.create_user(
                     request.POST['username'],
@@ -125,7 +124,13 @@ def delete_message(request, id_message):
     message = MessageReaction.objects.get(id=id_message)
     url = 'https://api.telegram.org/bot{0}/deletemessage'.format(message.bottoken)
     payload = {'message_id':message.message_id, 'chat_id':message.chat_id}
-    r = requests.get(url,params=payload)
+    try:
+        result = requests.get(url,params=payload)
+        message.status = result.json()['ok']
+        message.save()
+    except:
+        message.status = 'errors'
+        message.save()
     return HttpResponseRedirect(rv('messages'))
 
 def test_run(request,id_task):

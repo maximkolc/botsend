@@ -112,6 +112,7 @@ class Command(BaseCommand):
                         messages.append(message)
                     #запись в бд информации об отправленном сообщении
                     for message in messages:
+                        print(message)
                         chat_id = str(message.chat.id)
                         message_id = str(message.message_id)
                         m = MessageReaction(chat_id = chat_id, 
@@ -122,7 +123,8 @@ class Command(BaseCommand):
                                             chanel_name = chanel,
                                             bottoken = str(mytask.bottoken.bottoken),
                                             task = mytask,
-                                            created_at = datetime.datetime.now())
+                                            created_at = datetime.datetime.now(),
+                                            status = 'public')
                         m.save()   
                 # Удаление файла с диска, если отмечено соответвуещее
                 if mytask.isfiledelete:

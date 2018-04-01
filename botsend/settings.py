@@ -186,11 +186,7 @@ LOGGING = {
     },
     'loggers': {
         # ...
-        'django.db': {
-            'handlers': ['console'],
-            'level': 'DEBUG',  # <----<<<
-            'propagate': False,
-        },
+        
         'celery': {
             'handlers': ['celery', 'console'],
             'level': 'DEBUG',
@@ -200,6 +196,5 @@ LOGGING = {
 
 try:
     from .local_settings import *
-    print ("LOCAL!!!!!!!!!!!!!!!!!!!!!!!!!!1")
 except ImportError:
     pass

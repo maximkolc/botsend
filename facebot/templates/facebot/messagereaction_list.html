@@ -23,15 +23,27 @@
                                             <th>Дата отправки</th>
                                             <th>Like</th>
                                             <th>Dislike</th>
+                                            <th>Статус сообщения</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     {% for messages in messagereaction_list %}
                                     <tr>
                                         <td>{{messages.chanel_name}}</td>
-                                        <td>{{messages.created_at}}></td>
+                                        <td>{{messages.created_at}}</td>
                                         <td>{{messages.like_count}}</td>
                                         <td>{{messages.dislike_count}}</td>
+                                        {% if messages.status == 'public' %}
+                                        <td>Опубликовано в канале</td>
+                                        {% elif messages.status == True %}
+                                        <td>Удалено из канала</td>
+                                        {% elif messages.status == 'False' %}
+                                        <td>Сообщение не найдено</td>
+                                        {% elif messages.status == 'errors' %}
+                                        <td>Попробуйте еще раз</td>
+                                        {% else %}
+                                        <td> {{ messages.status }}</td>
+                                        {% endif %}
                                         <td> <a href="{% url 'delete_message' messages.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 
                                     {% endfor %}
