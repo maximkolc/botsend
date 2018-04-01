@@ -132,10 +132,7 @@
                         <a href="{% url 'task_create' %}"><i class="fa fa-plus"></i> 
                             <span class="nav-label">Новое переодическое задание</span></a>
 					</li>
-					<li>
-                        <a href="{% url 'oncetask_create' %}"><i class="fa fa-plus"></i> 
-                            <span class="nav-label">Новое разовое задание</span></a>
-					</li>
+				
 					<li>
                         <a href="{% url 'shedules' %}"><i class="fa fa-calendar"></i> 
                             <span class="nav-label">Мое расписаие</span></a>
@@ -148,6 +145,21 @@
 							<a href="{% url 'messages' %}"><i class="fa fa-road"></i> 
 							<span class="nav-label">Мои сообщения</span></a>
 					</li>
+
+
+                    <li class="has-submenu">
+						<a href="#"><i class="ion-flask"></i> <span class="nav-label">Разовое задание</span> <span class="caret pull-right m-t-10"></span></a>
+						<ul class="list-unstyled">
+							<li>
+								<a href="{% url 'oncetask_create' %}">Отправить медиафайл</a>
+							</li>
+							<li>
+								<a href="{% url 'oncetask_create' %}">Отправить текст</a>
+							</li>
+						</ul>
+					</li>
+
+
                                         
 				</ul>
 			</nav>
