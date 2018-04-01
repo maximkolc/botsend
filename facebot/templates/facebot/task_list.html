@@ -57,8 +57,11 @@
                                             {{ft.ftype}} <br>
                                             {% endfor %}
                                         </td>
+                                        {% if task.caption == ""%}
+                                        <td>Без подписи</td>
+                                        {% else %}
                                         <td>{{task.caption}}</td>
-                                         
+                                        {%endif%} 
                                        
                                     </tr>                                 
                                     

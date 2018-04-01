@@ -96,7 +96,7 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         if self.caption == '':
-            self.caption = "Нет"
+            self.caption = ""
         if self.status == '':
             self.status = "Еще не выполнялась"    
         super(Task, self).save(*args, **kwargs) # Call the "real" save() method.'''
