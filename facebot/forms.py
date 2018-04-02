@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, ImageUpload, MessageReaction
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, MessageReaction
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -453,15 +453,10 @@ class UserUpdate(UpdateView):
 #-------------------------------------------
 
 # Формы для работы с Разовой задачей
-
-class ImageUploadForm(forms.Form):
-    """Image upload form."""
-    image = forms.ImageField()
-
 class OnceTaskUploadForm(forms.ModelForm):
     class Meta:
         model = OnceTask
-        exclude = ['created_by','status']
+        exclude = ['created_by','status','type_file']
         labels = {
             'chanelforpublic': 'Канал',
             'bottoken': 'Бот',
@@ -469,7 +464,6 @@ class OnceTaskUploadForm(forms.ModelForm):
         }
         widgets = {
             'chanelforpublic': forms.CheckboxSelectMultiple(),
-            'type_mes':forms.RadioSelect(),
             'bottoken': forms.Select(attrs={'class':'form-control'}),
             'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
             'del_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
@@ -486,10 +480,9 @@ class OnceTaskUploadForm(forms.ModelForm):
     def clean(self):
         form_data = self.cleaned_data
         if form_data['run_date'] > form_data['del_date']:
-            self._errors["del_date"] = "Неверная дата удаления сообщения (раньше даты запуска)"
+            self._errors["del_date"] = "Дата удаления раньше даты запуска"
         if form_data['run_date'].replace(tzinfo=None) < datetime.now():
-            self._errors["run_date"] = "Неверная дата запуска (дата уже прошла)"
-        #del form_data['password']
+            self._errors["run_date"] = "Дата уже прошла"
         return form_data
     
            

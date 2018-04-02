@@ -132,6 +132,6 @@ class Command(BaseCommand):
                     mytask.status = "На диске "+str(mytask.sourcefordownload)+"недостаточно файлов с расширением "+str(filetypes)
                     mytask.save()
             else:
-                mytask.status = "ПРООДЛИТЕ ПОДПИСКУ!"
+                mytask.status = "ПРООДЛИТЕ ПОДПИСКУ"
                 mytask.save()
                 logger.info("Истекла подписка  - "+mytask.created_by.username)
