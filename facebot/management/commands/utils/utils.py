@@ -10,6 +10,7 @@ import string
 import sys
 import re
 from .src.YandexDiskException import YandexDiskException
+from .src.YandexDiskException import NotFileTypeinDisk
 from .src.YandexDiskRestClient import YandexDiskRestClient
 from .src.YandexDiskRestClient import Directory
 import random
@@ -82,7 +83,7 @@ class YandexHelp:
             return result
         return result
     
-    def get_links(self,dir, filetypes, num_file):
+    def get_links(self, dir, filetypes, num_file):
         base_url = "https://cloud-api.yandex.net:443/v1/disk"
         base_headers = {
             "Accept": "application/json",
@@ -93,22 +94,26 @@ class YandexHelp:
         payload = {'path': dir, 'fields':' _embedded.total'}
         r = requests.get(url, headers=base_headers,params=payload)
         total = r.json()['_embedded']['total']
-        links = []
-        files = [] 
-        offset = total - 1
-        i =0 
-        while i != num_file: 
-            payload = {'path': 'humor', 'fields':'_embedded.items.name, _embedded.items.file', 'offset':offset}
-            response = requests.get(url,headers = base_headers, params=payload)
-            file = response.json()
-            ext = file['_embedded']['items'][0]['name'].split('.')[1]
+        links = [] # возвращается список имен файлов
+        names = [] # возвращается список ссылок на файлы
+        payload = {'path': dir, 'fields':'_embedded.items.name, _embedded.items.file', 'limit':total}
+        response = requests.get(url,headers = base_headers, params=payload)
+        files = response.json()
+        random.shuffle(files['_embedded']['items'])
+        i = 0 
+        count_true_file = 0 
+        while i != total:    
+            ext = files['_embedded']['items'][i]['name'].split('.')[1]
             if ext.lower() in filetypes:
-                links.append(file['_embedded']['items'][0]['file'])
-                files.append(file['_embedded']['items'][0]['name'])
-            offset = offset - 1
+                links.append(files['_embedded']['items'][i]['file'])
+                names.append(files['_embedded']['items'][i]['name'])
+                count_true_file = count_true_file + 1
+            if count_true_file == num_file:
+                break
             i = i+1
-        return zip (links,files) 
-
+        if count_true_file != num_file:
+            raise NotFileTypeinDisk
+        return links,names   
 
 
 

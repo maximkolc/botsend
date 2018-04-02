@@ -12,6 +12,7 @@ import random
 from facebot.models import MessageReaction, Profile, Messages
 import json
 import time
+from .utils.src.YandexDiskException import NotFileTypeinDisk
 #logging.basicConfig(filename="logs/crontask_logo.log",format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
 class Command(BaseCommand):
@@ -59,87 +60,78 @@ class Command(BaseCommand):
                 logger.info('Количество файлов для загрузки:'+ str(nums_file_load))
                 logger.info('Типы загружаемых файлов '+' '.join(filetypes))        
                 logger.info('Канал для публикации: '+chanel)
-                
-                
-                #Получение списка файлов для загрузки
-                #Переписать этот участок, косчяный
-                #listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
-                #logger.info('файлы для загрузки '+' '.join(listfile))
-                #links = helper.getLinkFile(folder, listfile)
-                #logger.info('Полученные ссылки для загрузки файлов: '+' '.join(links))
-                #--------------------------------------------
-                result = helper.get_links(folder, filetypes, nums_file_load)
-                
-                # добавление клавиатуры, то есть кнопок с лайками под постами
-                mykeys = []
-                keyboard = None
-                #if len(mytask.url.all()) >0:
-                #    for key in mytask.url.all():
-                #mykeys.append("да")
-                #mykeys.append("нет")
-                #keyboard = GenerateKeyboard.create_keyboard(type_keyboard = 'inline',keys=mykeys) 
-                #keyboard = types.InlineKeyboardMarkup()
-                #callback_button = types.InlineKeyboardButton(text="like", callback_data="like")
-                #keyboard.add(callback_button)
-                #logger.info("Кнопки под постом добавленны: "+str(keyboard))
-                if len(mytask.url.all()) <= 0:
-                    logger.info('Кнопки под постом отсутствуют')
-                messages = [] #для сбора информации об отправленных файлах
-                
-                # скачивание файлов и т.д. для отправки в телеграмм
-                #start = time.time()
-                #for link,filename in zip(links, listfile):
-                for link, filename in result:
-                    url = urlopen(link)
-                    file = url.read()
-                    #i = i+1
-                    if filename.split('.')[1] in ['gif','mp4','avi']:
-                        logger.info('Отпрака файла '+filename+' как видео')
-                        if len(mytask.url.all()) >0:
-                            message = tb.send_video(chanel, file,caption = mytask.caption,reply_markup = keyboard,timeout=15)
-                        else:
-                            message = tb.send_video(chanel, file, caption = mytask.caption,timeout=15)
-                        messages.append(message)
-                            
-                    elif filename.split('.')[1] in ['jpeg','jpg','png']:
-                        logger.info('Отпрака файла: '+filename+' как картинку')
-                        if len(mytask.url.all()) >0:
-                            message = tb.send_photo(chanel, file,caption = mytask.caption,reply_markup = keyboard)
-                        else:
-                            message = tb.send_photo(chanel,file,caption = mytask.caption)
-                        messages.append(message)
-                    elif filename.split('.')[1] in ['txt']:
-                        logger.info('Отпрака файла: '+filename+' как текст')
-                        if len(mytask.url.all()) >0:
-                            message = tb.send_message(chanel, file.read(),caption = mytask.caption,parse_mode='Markdown',reply_markup = keyboard)
-                        else:
-                            message = tb.send_message(chanel, file,parse_mode='Markdown')
-                        messages.append(message)
-                    #запись в бд информации об отправленном сообщении
-                    for message in messages:
-                        print(message)
-                        chat_id = str(message.chat.id)
-                        message_id = str(message.message_id)
-                        m = MessageReaction(chat_id = chat_id, 
-                                            message_id = message_id, 
-                                            like_count = 0, 
-                                            dislike_count = 0,
-                                            created_by = mytask.created_by,
-                                            chanel_name = chanel,
-                                            bottoken = str(mytask.bottoken.bottoken),
-                                            task = mytask,
-                                            created_at = datetime.datetime.now(),
-                                            status = 'public')
-                        m.save()   
-                # Удаление файла с диска, если отмечено соответвуещее
-                if mytask.isfiledelete:
-                    res = helper.remove_folder_or_file(folder,listfile)    
-                    logger.info(''.join(res))
-                mytask.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
-                mytask.save()
-                #print("Process took: {:.2f} seconds".format(time.time() - start))
+                try:
+                    links, listfile = helper.get_links(folder, filetypes, nums_file_load)
+                    # добавление клавиатуры, то есть кнопок с лайками под постами
+                    mykeys = []
+                    keyboard = None
+                    #if len(mytask.url.all()) >0:
+                    #    for key in mytask.url.all():
+                    #mykeys.append("да")
+                    #mykeys.append("нет")
+                    #keyboard = GenerateKeyboard.create_keyboard(type_keyboard = 'inline',keys=mykeys) 
+                    #keyboard = types.InlineKeyboardMarkup()
+                    #callback_button = types.InlineKeyboardButton(text="like", callback_data="like")
+                    #keyboard.add(callback_button)
+                    #logger.info("Кнопки под постом добавленны: "+str(keyboard))
+                    if len(mytask.url.all()) <= 0:
+                        logger.info('Кнопки под постом отсутствуют')
+                    messages = [] #для сбора информации об отправленных файлах
+                    # скачивание файлов и т.д. для отправки в телеграмм
+                    #start = time.time()
+                    for link, filename in zip(links, listfile):
+                        url = urlopen(link)
+                        file = url.read()
+                        #i = i+1
+                        if filename.split('.')[1] in ['gif','mp4','avi']:
+                            logger.info('Отпрака файла '+filename+' как видео')
+                            if len(mytask.url.all()) >0:
+                                message = tb.send_video(chanel, file,caption = mytask.caption,reply_markup = keyboard,timeout=15)
+                            else:
+                                message = tb.send_video(chanel, file, caption = mytask.caption,timeout=15)
+                            messages.append(message)
+                                
+                        elif filename.split('.')[1] in ['jpeg','jpg','png']:
+                            logger.info('Отпрака файла: '+filename+' как картинку')
+                            if len(mytask.url.all()) >0:
+                                message = tb.send_photo(chanel, file,caption = mytask.caption,reply_markup = keyboard)
+                            else:
+                                message = tb.send_photo(chanel,file,caption = mytask.caption)
+                            messages.append(message)
+                        elif filename.split('.')[1] in ['txt']:
+                            logger.info('Отпрака файла: '+filename+' как текст')
+                            if len(mytask.url.all()) >0:
+                                message = tb.send_message(chanel, file.read(),caption = mytask.caption,parse_mode='Markdown',reply_markup = keyboard)
+                            else:
+                                message = tb.send_message(chanel, file,parse_mode='Markdown')
+                            messages.append(message)
+                        #запись в бд информации об отправленном сообщении
+                        for message in messages:
+                            print(message)
+                            chat_id = str(message.chat.id)
+                            message_id = str(message.message_id)
+                            m = MessageReaction(chat_id = chat_id, 
+                                                message_id = message_id, 
+                                                like_count = 0, 
+                                                dislike_count = 0,
+                                                created_by = mytask.created_by,
+                                                chanel_name = chanel,
+                                                bottoken = str(mytask.bottoken.bottoken),
+                                                task = mytask,
+                                                created_at = datetime.datetime.now(),
+                                                status = 'public')
+                            m.save()   
+                    # Удаление файла с диска, если отмечено соответвуещее
+                    if mytask.isfiledelete:
+                        res = helper.remove_folder_or_file(folder,listfile)    
+                        logger.info(''.join(res))
+                    mytask.status = "Последний раз выполнена "+str(datetime.datetime.now().strftime("%y-%m-%d-%H:%M"))
+                    mytask.save()
+                    
+                except NotFileTypeinDisk:
+                    mytask.status = "На диске "+str(mytask.sourcefordownload)+"недостаточно файлов с расширением "+str(filetypes)
+                    mytask.save()
             else:
                 mytask.status = "ПРООДЛИТЕ ПОДПИСКУ!"
                 mytask.save()
                 logger.info("Истекла подписка  - "+mytask.created_by.username)
-    

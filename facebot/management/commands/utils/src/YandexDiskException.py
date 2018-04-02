@@ -10,3 +10,6 @@ class YandexDiskException(Exception):
 
     def __str__(self):
         return "%d. %s" % (self.code, super(YandexDiskException, self).__str__())
+
+class NotFileTypeinDisk(Exception):
+    pass

@@ -1,5 +1,8 @@
 import requests
+import random
 
+class NotFileinDisk(Exception):
+    pass
 
 def get_links(dir, filetypes, num_file, token):
     base_url = "https://cloud-api.yandex.net:443/v1/disk"
@@ -12,20 +15,33 @@ def get_links(dir, filetypes, num_file, token):
     payload = {'path': dir, 'fields':' _embedded.total'}
     r = requests.get(url, headers=base_headers,params=payload)
     total = r.json()['_embedded']['total']
-    links = []
-    files = [] 
-    offset = total - 1
-    i =0 
-    while i != num_file: 
-        payload = {'path': 'humor', 'fields':'_embedded.items.name, _embedded.items.file', 'offset':offset}
-        response = requests.get(url,headers = base_headers, params=payload)
-        file = response.json()
-        ext = file['_embedded']['items'][0]['name'].split('.')[1]
+    links = [] # возвращается список имен файлов
+    names = [] # возвращается список ссылок на файлы
+    payload = {'path': dir, 'fields':'_embedded.items.name, _embedded.items.file', 'limit':total}
+    response = requests.get(url,headers = base_headers, params=payload)
+    files = response.json()
+    random.shuffle(files['_embedded']['items'])
+    i = 0 
+    count_true_file = 0 
+    while i != total:    
+        ext = files['_embedded']['items'][i]['name'].split('.')[1]
         if ext.lower() in filetypes:
-            links.append(file['_embedded']['items'][0]['file'])
-            files.append(file['_embedded']['items'][0]['name'])
-        offset = offset - 1
+            links.append(files['_embedded']['items'][i]['file'])
+            names.append(files['_embedded']['items'][i]['name'])
+            count_true_file = count_true_file + 1
+        if count_true_file == num_file:
+            break
         i = i+1
-    return zip (links,files)    
+    if count_true_file != num_file:
+        raise NotFileinDisk
+    return links,names    
 
 token = 'AQAAAAAGNdiUAATo52--OmcBuE1NjWAA-rW5NPc'
+
+try:
+    links, names = get_links('humor',['exe'], 3, token)
+    for link, name in zip(links, names):
+        print(link)
+    print(name)
+except NotFileinDisk:
+    print('файлы указанного типа отсутствуют на диске')
