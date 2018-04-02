@@ -209,12 +209,6 @@ def getNumsF(n, **kwargs):
     payload = {'path': fol,'fields':'_embedded.total'} #items.name, _embedded.items.type','offset':n}
     r = requests.get(url, headers=base_headers,params=payload)
     nums = r.json()['_embedded']['total'] #['items'])
-    #if nums < 20:
-    #    return sum + nums
-    #else:
-    #    k = payload['offset']+nums
-    #    #sum = nums
-    #    return nums + getNumsF(k, tok = token, folder = fol)
     return nums
 
 

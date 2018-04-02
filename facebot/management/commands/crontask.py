@@ -60,12 +60,15 @@ class Command(BaseCommand):
                 logger.info('Типы загружаемых файлов '+' '.join(filetypes))        
                 logger.info('Канал для публикации: '+chanel)
                 #print("11111111111111111111111111111111111111")
-                #Получение списка файлов для загрузки
-                listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
-                logger.info('файлы для загрузки '+' '.join(listfile))
-                links = helper.getLinkFile(folder, listfile)
-                logger.info('Полученные ссылки для загрузки файлов: '+' '.join(links))
                 
+                #Получение списка файлов для загрузки
+                #Переписать этот участок, косчяный
+                #listfile = helper.getListFle2(folder,filetypes,numsfile=nums_file_load,log=file_name_log)
+                #logger.info('файлы для загрузки '+' '.join(listfile))
+                #links = helper.getLinkFile(folder, listfile)
+                #logger.info('Полученные ссылки для загрузки файлов: '+' '.join(links))
+                #--------------------------------------------
+                result = helper.get_links(folder, filetypes, nums_file_load)
                 # добавление клавиатуры, то есть кнопок с лайками под постами
                 mykeys = []
                 keyboard = None
@@ -84,7 +87,8 @@ class Command(BaseCommand):
                 # скачивание файлов и т.д. для отправки в телеграмм
                 #start = time.time()
                 #i = 0
-                for link,filename in zip(links, listfile):
+                #for link,filename in zip(links, listfile):
+                for link, filename in result:
                     url = urlopen(link)
                     file = url.read()
                     #i = i+1

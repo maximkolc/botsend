@@ -13,6 +13,7 @@ from .src.YandexDiskException import YandexDiskException
 from .src.YandexDiskRestClient import YandexDiskRestClient
 from .src.YandexDiskRestClient import Directory
 import random
+import requests
 #import logging
 
 #token = "AQAAAAAGNdiUAASpE10gPn6ctEaLhCrjmGv4sqo"
@@ -23,6 +24,7 @@ class YandexHelp:
         self.client = YandexDiskRestClient(self.token)
         
     def getListFle2(self, folder,filetypes,numsfile,log):
+        #повесить исключение по количеству файлов
         list = self.client.get_content_of_folder(folder).get_children()  
         #print("Всего файлов в каталоге: - "+ str(len(list)))
         new_list = []
@@ -79,6 +81,33 @@ class YandexHelp:
             #sys.exit(1)
             return result
         return result
+    
+    def get_links(self,dir, filetypes, num_file):
+        base_url = "https://cloud-api.yandex.net:443/v1/disk"
+        base_headers = {
+            "Accept": "application/json",
+            "Authorization": "OAuth " + self.token,
+            "Host": "cloud-api.yandex.net"
+        }
+        url = base_url + "/resources"
+        payload = {'path': dir, 'fields':' _embedded.total'}
+        r = requests.get(url, headers=base_headers,params=payload)
+        total = r.json()['_embedded']['total']
+        links = []
+        files = [] 
+        offset = total - 1
+        i =0 
+        while i != num_file: 
+            payload = {'path': 'humor', 'fields':'_embedded.items.name, _embedded.items.file', 'offset':offset}
+            response = requests.get(url,headers = base_headers, params=payload)
+            file = response.json()
+            ext = file['_embedded']['items'][0]['name'].split('.')[1]
+            if ext.lower() in filetypes:
+                links.append(file['_embedded']['items'][0]['file'])
+                files.append(file['_embedded']['items'][0]['name'])
+            offset = offset - 1
+            i = i+1
+        return zip (links,files) 
 
 
 
