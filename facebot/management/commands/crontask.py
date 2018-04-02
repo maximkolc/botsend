@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 logger.info('Количество файлов для загрузки:'+ str(nums_file_load))
                 logger.info('Типы загружаемых файлов '+' '.join(filetypes))        
                 logger.info('Канал для публикации: '+chanel)
-                #print("11111111111111111111111111111111111111")
+                
                 
                 #Получение списка файлов для загрузки
                 #Переписать этот участок, косчяный
@@ -69,6 +69,7 @@ class Command(BaseCommand):
                 #logger.info('Полученные ссылки для загрузки файлов: '+' '.join(links))
                 #--------------------------------------------
                 result = helper.get_links(folder, filetypes, nums_file_load)
+                
                 # добавление клавиатуры, то есть кнопок с лайками под постами
                 mykeys = []
                 keyboard = None
@@ -84,9 +85,9 @@ class Command(BaseCommand):
                 if len(mytask.url.all()) <= 0:
                     logger.info('Кнопки под постом отсутствуют')
                 messages = [] #для сбора информации об отправленных файлах
+                
                 # скачивание файлов и т.д. для отправки в телеграмм
                 #start = time.time()
-                #i = 0
                 #for link,filename in zip(links, listfile):
                 for link, filename in result:
                     url = urlopen(link)
