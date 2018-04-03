@@ -17,7 +17,7 @@ from django.urls import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMP_TOKEN = '00000000'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/home/botsend/botsend/media' #os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/home/botsend/botsend/botsend/media' #os.path.join(BASE_DIR, 'media')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
