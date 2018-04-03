@@ -32,5 +32,5 @@ urlpatterns += [
 # Добавьте URL соотношения, чтобы перенаправить запросы с корневового URL, на URL приложения 
 from django.views.generic import RedirectView
 urlpatterns += [
-    url(r'^$', RedirectView.as_view(url='/facebot/', permanent=True)),
+    #url(r'^$', RedirectView.as_view(url='/facebot/', permanent=True)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
