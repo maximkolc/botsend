@@ -479,6 +479,7 @@ class OnceTaskUploadForm(forms.ModelForm):
         
     def clean(self):
         form_data = self.cleaned_data
+        print(form_data)
         if form_data['run_date'] > form_data['del_date']:
             self._errors["del_date"] = "Дата удаления раньше даты запуска"
         if form_data['run_date'].replace(tzinfo=None) < datetime.now():
