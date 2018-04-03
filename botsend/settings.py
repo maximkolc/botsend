@@ -17,7 +17,13 @@ from django.urls import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMP_TOKEN = '00000000'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/home/botsend/botsend/media' #os.path.join(BASE_DIR, 'media')
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.11/howto/static-files/
+STATIC_ROOT = '/home/botsend/static'
+STATIC_URL = '/static/'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -138,10 +144,7 @@ USE_TZ = True
 
 TOKEN_YA = '7b560b5652324f189ffe9e230b052429'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-STATIC_ROOT = '/home/botsend/static'
-STATIC_URL = '/static/'
+
 # REDIS related settings 
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
