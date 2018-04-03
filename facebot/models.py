@@ -118,7 +118,7 @@ class OnceTask(models.Model):
     del_date = models.DateTimeField("Время удаления", null=True)
     chanelforpublic = models.ManyToManyField('Chanels',  null=True, help_text ='Канал для публикации')
     bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
-    status = models.CharField("Статус", max_length=25, null=True)
+    status = models.CharField("Статус", max_length=55, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     type_file =  models.CharField('Тип файла', max_length=10, default = '')
     
