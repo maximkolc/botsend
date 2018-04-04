@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, MessageReaction
+from .models import Task, Chanels, SourcesData, Urls, MyBot,Shedule, OnceTask, MessageReaction, OnceTaskMarkdown
 from django.views import generic
 from django.contrib.auth import logout
 from django.views.generic.base import View
@@ -18,6 +18,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from datetimewidget.widgets import DateTimeWidget
 from datetime import datetime
+from markdownx.fields import MarkdownxFormField
+
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class LoginFormView(FormView):
@@ -451,6 +453,7 @@ class UserUpdate(UpdateView):
         self.object = context.save(clean) 
         return super(UserUpdate, self).form_valid(form) 
 #-------------------------------------------
+from markdownx.widgets import AdminMarkdownxWidget
 
 # Формы для работы с Разовой задачей
 class OnceTaskUploadForm(forms.ModelForm):
@@ -464,10 +467,12 @@ class OnceTaskUploadForm(forms.ModelForm):
         }
         widgets = {
             'chanelforpublic': forms.CheckboxSelectMultiple(),
+            'type_mes':forms.RadioSelect(),
             'bottoken': forms.Select(attrs={'class':'form-control'}),
             'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
             'del_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
-            'text': forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"5",'cols':'1'}) 
+            'text': forms.Textarea(attrs={"data-provide":"markdown","name":"content","rows":"5",'cols':'1'}),
+            'markd': AdminMarkdownxWidget
              }       
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -476,7 +481,9 @@ class OnceTaskUploadForm(forms.ModelForm):
         self.fields['bottoken'].queryset = MyBot.objects.filter(created_by = user)
         self.fields['del_date'].required = True
         self.fields['run_date'].required = True 
-        
+        self.fields['text'].required = False
+        self.fields['imgs'].required = False
+
     def clean(self):
         form_data = self.cleaned_data
         print(form_data)
@@ -527,3 +534,78 @@ class OnceTaskListView(LoginRequiredMixin,generic.ListView):
     def get_queryset(self):
         """Returns Chanels that belong to the current user"""
         return OnceTask.objects.filter(created_by=self.request.user)
+
+
+# Формы для работы с Разовой задачей markdown
+class OnceTaskMarkdownForm(forms.ModelForm):
+    class Meta:
+        model = OnceTaskMarkdown
+        exclude = ['created_by','status']
+        labels = {
+            'chanelforpublic': 'Канал',
+            'bottoken': 'Бот',
+        }
+        widgets = {
+            'chanelforpublic': forms.CheckboxSelectMultiple(),
+            
+            'bottoken': forms.Select(attrs={'class':'form-control'}),
+            'run_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
+            'del_date': DateTimeWidget(attrs={'class':"form-control"}, usel10n = True, bootstrap_version=3),
+            'markd': MarkdownxFormField()
+             }       
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(OnceTaskMarkdownForm, self).__init__(*args, **kwargs)
+        self.fields['chanelforpublic'].queryset = Chanels.objects.filter(created_by = user)
+        self.fields['bottoken'].queryset = MyBot.objects.filter(created_by = user)
+        self.fields['del_date'].required = True
+        self.fields['run_date'].required = True 
+        
+    def clean(self):
+        form_data = self.cleaned_data
+        print(form_data)
+        if form_data['run_date'] > form_data['del_date']:
+            self._errors["del_date"] = "Дата удаления раньше даты запуска"
+        if form_data['run_date'].replace(tzinfo=None) < datetime.now():
+            self._errors["run_date"] = "Дата уже прошла"
+        return form_data
+class OnceTaskMarkdownCreate(LoginRequiredMixin, CreateView):
+    form_class = OnceTaskMarkdownForm
+    model = OnceTaskMarkdown
+    success_url = reverse_lazy('oncetasks')
+    def get_form_kwargs(self):
+        kwargs = super(OnceTaskMarkdownCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    def form_valid(self, form):
+        instance = form.save(commit=False)      
+        instance.created_by = self.request.user
+        instance.save()
+        form.save_m2m() 
+        return HttpResponseRedirect(reverse('markdoncetasks'))
+
+class OnceTaskMarkdownUpdate(LoginRequiredMixin,UpdateView):
+    form_class = OnceTaskMarkdownForm
+    model = OnceTaskMarkdown
+    success_url = reverse_lazy('oncetasks')
+    def get_form_kwargs(self):
+        kwargs = super(OnceTaskMarkdownUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.created_by = self.request.user
+        instance.save() 
+        form.save_m2m() 
+        return HttpResponseRedirect(reverse('markdoncetasks'))
+   
+class OnceTaskMarkdownkDelete(LoginRequiredMixin,DeleteView):
+    model = OnceTaskMarkdown
+    success_url = reverse_lazy('oncetasks')
+
+class OnceTaskMarkdownListView(LoginRequiredMixin,generic.ListView):
+    #model = SourcesData
+    login_url = reverse_lazy("login")
+    def get_queryset(self):
+        """Returns Chanels that belong to the current user"""
+        return OnceTaskMarkdownForm.objects.filter(created_by=self.request.user)

@@ -14,6 +14,7 @@ import getpass
 from datetime import datetime
 from datetime import timedelta
 from .validators import validate_file_extension
+from markdownx.models import MarkdownxField
 
 #---------модель для профиля пользователя-----------------------
 class Profile(models.Model):
@@ -108,8 +109,9 @@ class Task(models.Model):
     #Send verification email
     send_mess.delay(instance.id)'''
 
-
+# модель для отправки медиафайла
 class OnceTask(models.Model):
+    MESSAGE_TYPE = (('text', ' Текст'), ('photo', 'Картинка с подписью'))
     name = models.CharField("Имя задачи", max_length=25)
     imgs = models.FileField(validators=[validate_file_extension], null = True)
     text =  models.CharField('Описание',max_length=6000, help_text = 'Описание')
@@ -121,26 +123,46 @@ class OnceTask(models.Model):
     status = models.CharField("Статус", max_length=55, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     type_file =  models.CharField('Тип файла', max_length=10, default = '')
-    
+    type_mes =  models.CharField('Тип контента',max_length=10,default = 'text', choices= MESSAGE_TYPE )
     #class Meta:
         #unique_together = ('name', 'created_by')
 
     def save(self, *args, **kwargs):
-        self.type_file = self.imgs.name.split('.')[1]
+        if self.type_mes == 'photo':
+            self.type_file = self.imgs.name.split('.')[1]
+        else:
+            self.type_file = 'txt'
         super(OnceTask, self).save(*args, **kwargs) # Call the real save() method'''
     def delete(self, *args, **kwargs):
-        # До удаления записи получаем необходимую информацию
-        storage, path = self.imgs.storage, self.imgs.path
-        # Удаляем сначала модель ( объект )
-        super(OnceTask, self).delete(*args, **kwargs)
-        # Потом удаляем сам файл
-        storage.delete(path)
+        if self.type_mes == 'photo':
+            # До удаления записи получаем необходимую информацию
+            storage, path = self.imgs.storage, self.imgs.path
+            # Удаляем сначала модель ( объект )
+            super(OnceTask, self).delete(*args, **kwargs)
+            # Потом удаляем сам файл
+            storage.delete(path)
+        else:
+            super(OnceTask, self).delete(*args, **kwargs)
 
 def oncetask_post_save(sender, instance, signal, *args, **kwargs):
     OnceTask.objects.filter(id=instance.id).update(status = "Ожидает выполнения "+ str(instance.run_date))
     send_once.apply_async([instance.id], countdown=(instance.run_date.replace(tzinfo=None) - datetime.now()).total_seconds())
 signals.post_save.connect(oncetask_post_save, sender=OnceTask)
 
+# модель для отправки текста маркдаувн
+class OnceTaskMarkdown(models.Model):
+    name = models.CharField("Имя задачи", max_length=25)
+    #imgs = models.FileField(validators=[validate_file_extension], null = True)
+    #text =  models.CharField('Описание',max_length=6000, help_text = 'Описание')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    run_date = models.DateTimeField("Время запуска", null=True)
+    del_date = models.DateTimeField("Время удаления", null=True)
+    chanelforpublic = models.ManyToManyField('Chanels',  null=True, help_text ='Канал для публикации')
+    bottoken = models.ForeignKey('MyBot', help_text = 'Бот для выполнения задачи',on_delete=models.SET_NULL, null=True)
+    status = models.CharField("Статус", max_length=55, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    markd = MarkdownxField(null = True)
+    #type_file =  models.CharField('Тип файла', max_length=10, default = '')
 
 class Chanels(models.Model):
     chanelname = models.CharField('Имя канала',max_length=25,  help_text = 'Имя канала')
@@ -328,6 +350,9 @@ def task_del_cron(sender, instance, signal, *args, **kwargs):
             logger.info("Нашли и удаляем")
             my_cron.remove(job)
             my_cron.write()
-    
+
+
+
+
 signals.m2m_changed.connect(task_add_cron, sender=Shedule.task.through)
 signals.post_delete.connect(task_del_cron, sender=Shedule)

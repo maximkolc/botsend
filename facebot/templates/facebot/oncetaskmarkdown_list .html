@@ -39,9 +39,9 @@
                                                 Нет
                                             {% endfor %}
                                         </td>
-                                        {% if oncetask.type_file == 'jpg' %}
-                                        <td><img src="{{MEDIA_URL}}{{ oncetask.imgs }}"></td>
-                                        {% endif %}
+                                        <td>
+                                                <img src="{{MEDIA_URL}}{{ oncetask.imgs }}">
+                                        </td>
                                         <td> <a href="{% url 'oncetask_update' oncetask.id %}" class="btn btn-primary">Изменить</a>   </td>
                                         <td> <a href="{% url 'oncetask_delete' oncetask.id %}" class="btn btn-danger">Удалить</a>   </td>
                                     </tr>                                 

@@ -88,7 +88,7 @@
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Новый задание</h3>
+                    <h3 class="panel-title">Новое отложенное задание</h3>
                 </div>
                 <div class="panel-body">
            <!-- imae start -->
@@ -97,6 +97,15 @@
                     {{ form.media }}
                     {% csrf_token %}
                     {% load addcss %}
+                    <div class="form-group">
+                        {% for radio in form.type_mes %}
+                        <div class="radio-inline">
+                            <label class="cr-styled" for={{ radio.id_for_label }}>
+                                {{radio.tag}}
+                                <i class="fa"></i>{{ radio.choice_label}} </label>
+                        </div>
+                        {% endfor %}
+                        </div>
                     <div class="form-group row">
                         <label class="col-md-2 control-label">{{ form.name.label_tag }} </label>
                         <div class="col-md-6">
@@ -148,15 +157,45 @@
                             {{ form.imgs|addcss:"form-control,Картинка" }} 
                         </div>                           
                     </div>	
+                    
+                      
                 </fieldset>
                 <button type="submit" class = 'btn btn-success m-b-5'>Запустить</button>
             </form>
+ 
         </div>      
     </div>
+    
     {% load static %}
     <script src="{% static 'assets/plugins/markdown/js/markdown.js' %}"></script>
     
     <script src="{% static 'assets/plugins/markdown/js/to-markdown.js' %}"></script>
     <script src="{% static 'assets/plugins/markdown/js/bootstrap-markdown.js' %}"></script>
     <script src="{% static 'assets/plugins/markdown/css/bootstrap-markdown.min.css' %}"></script>
+    <script type="text/javascript"><!--
+        function showHide (id)
+        {
+            var style = document.getElementById(id).style
+                if (style.display == "none")
+                    style.display = "block";
+                else
+                    style.display = "none";
+        } 
+        $(document).ready( function(){
+            $("#id_imgs").hide().removeAttr( "required" );
+            $("[title=Image]").show();
+            $('#id_text').attr( "required" )
+            $("#id_type_mes_0").change(function () {
+                $("#id_imgs").hide().removeAttr( "required" );
+                $("[title=Image]").show();
+                $('#id_text').attr( "required" )
+                 });
+            $("#id_type_mes_1").change(function () {
+                $("#id_imgs").show().attr( "required" );
+                $("[title=Image]").hide();
+                $('#id_text').removeAttr( "required" )
+            });
+        })
+    </script>
     {% endblock %}
+    

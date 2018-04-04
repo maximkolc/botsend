@@ -34,3 +34,9 @@ from django.views.generic import RedirectView
 urlpatterns += [
     url(r'^$', RedirectView.as_view(url='/facebot/', permanent=True)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+from django.conf.urls import url, include
+from markdownx import urls as markdownx
+
+urlpatterns += [
+    url(r'^markdownx/', include(markdownx))
+]

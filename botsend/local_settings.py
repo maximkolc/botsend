@@ -5,6 +5,7 @@ ALLOWED_HOSTS = [
      '127.0.0.1',
 ]
 STATIC_ROOT = '/home/maxim/static'
+MEDIA_ROOT = '/home/maxim/work/botsend/media'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

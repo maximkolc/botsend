@@ -24,11 +24,12 @@ def send_once(id_task):
             print(task.imgs.name + ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111')
             if task.type_file in ['gif','mp4','avi']:
                 message = tb.send_video(chanel, task.imgs,caption = task.text,timeout=15)
-                #message = tb.send_message(chanel,task.text, parse_mode='Markdown')
+            
+            elif task.type_file == 'txt':
+                message = tb.send_message(chanel,task.text, parse_mode='Markdown')
 
             elif task.type_file in ['jpeg','jpg','png']:
                 message = tb.send_photo(chanel,task.imgs,caption = task.text)
-                #message = tb.send_message(chanel,task.text, parse_mode='Markdown')
             print (message)
             time.sleep(5)
             messages.append(message)

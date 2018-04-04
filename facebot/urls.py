@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^messages/$', forms.MessageReactionListView.as_view(), name='messages'),
     url(r'^shedules/$', forms.SheduleListView.as_view(), name='shedules'),
     url(r'^oncetasks/$', forms.OnceTaskListView.as_view(), name='oncetasks'),
+    url(r'^markdoncetasks/$', forms.OnceTaskMarkdownListView.as_view(), name='markdoncetasks'),
     url(r'^urls/$', forms.UrlsListView.as_view(), name='urlss'),
     url(r'^run/(?P<id_task>\d+)/$', views.test_run, name='test_run'),
     url(r'^logs/$', views.logs),
@@ -60,6 +61,11 @@ urlpatterns += [
     url(r'^oncetask/create/$', forms.OnceTaskCreate.as_view(), name='oncetask_create'),
     url(r'^oncetask/(?P<pk>\d+)/update/$', forms.OnceTaskUpdate.as_view(), name='oncetask_update'),
     url(r'^oncetask/(?P<pk>\d+)/delete/$', forms.OnceTaskDelete.as_view(), name='oncetask_delete'),
+]
+urlpatterns += [  
+    url(r'^markdtask/create/$', forms.OnceTaskMarkdownCreate.as_view(), name='markdtask_create'),
+    url(r'^markdtask/(?P<pk>\d+)/update/$', forms.OnceTaskMarkdownUpdate.as_view(), name='markdtask_update'),
+    url(r'^markdtask/(?P<pk>\d+)/delete/$', forms.OnceTaskMarkdownkDelete.as_view(), name='markdtask_delete'),
 ]
 urlpatterns +=[
     url(r'^register/$', views.register,name='register'),
