@@ -184,7 +184,8 @@
         $(document).ready( function(){
             $("#id_imgs").hide().removeAttr( "required" );
             $("[title=Image]").show();
-            $('#id_text').attr( "required" )
+            $('#id_text').attr( "required" );
+            $('#id_text').attr("maxlength=6000");
             $("#id_type_mes_0").change(function () {
                 $("#id_imgs").hide().removeAttr( "required" );
                 $("[title=Image]").show();
@@ -192,6 +193,7 @@
                  });
             $("#id_type_mes_1").change(function () {
                 $("#id_imgs").show().attr( "required" );
+                $("#id_imgs").attr("maxlength=200");
                 $("[title=Image]").hide();
                 $('#id_text').removeAttr( "required" )
             });
