@@ -29,7 +29,7 @@ def _display_planetpy_feed():
 
 class CommandReceiveView(View):
     def post(self, request, bot_token):
-        if bot_token != settings.TELEGRAM_BOT_TOKEN:
+        if bot_token != TOKEN:
             return HttpResponseForbidden('Invalid token')
 
         commands = {
