@@ -81,24 +81,25 @@ class CommandReceiveView(View):
                     person.prev_choice = person.next_choice 
                     person.next_choice = cmd
                     person.chat_id = chat_ids
+                    person.save()
                 except Person.DoesNotExist:
                     person = Person(
                         name = payload['message']['from']['username'], 
                         prev_choice =  '',
                         next_choice = cmd,
                         chat_id = chat_ids
-                        ) 
+                        )
+                    person.save() 
                 finally:
-                    person.save()
                     text, keyboard = func(payload['message']['from']['username'])
                     TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
             else:
-                TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                 try:
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
                     person.next_choice = ''
                     person.chat_id = chat_ids
+                    person.save()
                 except Person.DoesNotExist:
                     person = Person(
                         name = payload['message']['from']['username'], 
@@ -106,8 +107,9 @@ class CommandReceiveView(View):
                         next_choice = '', 
                         chat_id = chat_ids
                         )
+                        person.save()
                 finally:
-                    person.save()
+                    TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                     text, keyboard = _display_main_menu(payload['message']['from']['username'])
                     TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
         return JsonResponse({}, status=200)
