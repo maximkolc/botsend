@@ -70,7 +70,7 @@ class CommandReceiveView(View):
         except ValueError:
             return HttpResponseBadRequest('Invalid request body')
         else: 
-            chat_id = payload['message']['chat']['id']
+            chat_ids = payload['message']['chat']['id']
             cmd = payload['message'].get('text')[1:].lower()  # command
             print(cmd+' !!!!!!!!!!!!!!')
             #func = commands.get(cmd.split()[0].lower()) #получяем имя функции
@@ -87,13 +87,13 @@ class CommandReceiveView(View):
                         name = payload['message']['from']['username'], 
                         prev_choice =  '',
                         next_choice = cmd,
-                        chat_id = chat_id
+                        chat_id = chat_ids
                         )
                     person.save()
                 text, keyboard = func(payload['message']['from']['username'])
-                TelegramBot.send_message(chat_id, text, reply_markup=keyboard)
+                TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
             else:
-                TelegramBot.send_message(chat_id, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
+                TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                 try:
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
@@ -104,10 +104,10 @@ class CommandReceiveView(View):
                         name = payload['message']['from']['username'], 
                         prev_choice = '',
                         next_choice = '', 
-                        chat_id = chat_id
+                        chat_id = chat_ids
                         )
                 text, keyboard = _display_main_menu(payload['message']['from']['username'])
-                TelegramBot.send_message(chat_id, text, reply_markup=keyboard)
+                TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
         return JsonResponse({}, status=200)
 
     @method_decorator(csrf_exempt)
