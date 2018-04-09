@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'facebot.apps.FacebotConfig',
     'datetimewidget',
-    'markdownx'
+    'markdownx',
+    'telegabot',
  ]
 
 MIDDLEWARE = [
