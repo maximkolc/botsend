@@ -93,7 +93,6 @@ class CommandReceiveView(View):
                 
                 text, keyboard = func(payload['message']['from']['username'])
                 TelegramBot.send_message(chat_id, text, reply_markup=keyboard)
-
             else:
                 TelegramBot.send_message(chat_id, 'Уважаемый {user} неверный запрос'.format(user = payload['message']['from']['username']))
                 try:
