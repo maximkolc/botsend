@@ -14,9 +14,7 @@ from .models import Person
 
 TOKEN = '576824424:AAEFxzVpwSAQ4e8J9npuXFobSQ8PpFgWOEI'
 
-knownUsers = []  # todo: save these in a file,
-userStep = {}  # so they won't reset every time the bot restarts
-#TelegramBot = telebot.TeleBot(TOKEN)
+
 TelegramBot = telebot.TeleBot(TOKEN)
 TelegramBot.set_webhook('https://botsend.ru/telegabot/bot/{bot_token}/'.format(bot_token=TOKEN))
 Bot2 = telebot.TeleBot('460229690:AAGfrgxIU1Hh6dBAv0LoYsAWd4YUF7cvLHQ')
@@ -52,9 +50,9 @@ class CommandReceiveView(View):
 
             func = commands.get(cmd.split()[0].lower())
             if func:
-                TelegramBot.sendMessage(chat_id, func(), parse_mode='Markdown')
+                TelegramBot.send_message(chat_id, func(), parse_mode='Markdown')
             else:
-                TelegramBot.sendMessage(chat_id, 'I do not understand you, Sir!')
+                TelegramBot.send_message(chat_id, 'I do not understand you, Sir!')
 
         return JsonResponse({}, status=200)
 
