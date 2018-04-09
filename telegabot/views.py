@@ -35,7 +35,8 @@ def _display_main_menu(username):
                  u'\U0001F4C8Курсы криптовалют',
                  u'\U0001F4DEКонтакты',
                  u'\U0001F4D6Условия и правила')
-    text = 'Добро пожаловать, {username}, в обменник.'.format(username = username)    return text, keyboard
+    text = 'Добро пожаловать, {username}, в обменник.'.format(username = username)    
+    return text, keyboard
 
 def _display_contacts(username):
     keyboard = types.ReplyKeyboardMarkup(row_width=2,resize_keyboard=True,one_time_keyboard=True)
@@ -86,10 +87,9 @@ class CommandReceiveView(View):
                         prev_choice =  '',
                         next_choice = cmd,
                         chat_id = chat_ids
-                        )
-                    person.save()
-                
+                        ) 
                 finally:
+                    person.save()
                     text, keyboard = func(payload['message']['from']['username'])
                     TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
             else:
@@ -98,7 +98,6 @@ class CommandReceiveView(View):
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
                     person.next_choice = ''
-                    person.save()
                 except Person.DoesNotExist:
                     person = Person(
                         name = payload['message']['from']['username'], 
@@ -107,6 +106,7 @@ class CommandReceiveView(View):
                         chat_id = chat_ids
                         )
                 finally:
+                    person.save()
                     text, keyboard = _display_main_menu(payload['message']['from']['username'])
                     TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
         return JsonResponse({}, status=200)
