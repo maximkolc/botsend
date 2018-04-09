@@ -107,7 +107,7 @@ class CommandReceiveView(View):
                         next_choice = '', 
                         chat_id = chat_ids
                         )
-                        person.save()
+                    person.save()
                 finally:
                     TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                     text, keyboard = _display_main_menu(payload['message']['from']['username'])
