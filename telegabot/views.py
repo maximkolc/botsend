@@ -35,9 +35,7 @@ def _display_main_menu(username):
                  u'\U0001F4C8Курсы криптовалют',
                  u'\U0001F4DEКонтакты',
                  u'\U0001F4D6Условия и правила')
-    text = 'Добро пожаловать, {username}, в обменник.Здесь Вы сможете менять BTC, ETH и другие валюты.'.format(username = username)
-   
-    return text, keyboard
+    text = 'Добро пожаловать, {username}, в обменник.'.format(username = username)    return text, keyboard
 
 def _display_contacts(username):
     keyboard = types.ReplyKeyboardMarkup(row_width=2,resize_keyboard=True,one_time_keyboard=True)
@@ -93,7 +91,7 @@ class CommandReceiveView(View):
                 text, keyboard = func(payload['message']['from']['username'])
                 TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
             else:
-                TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
+                #TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                 try:
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
