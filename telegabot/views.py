@@ -49,6 +49,7 @@ class CommandReceiveView(View):
             cmd = payload['message'].get('text')  # command
 
             func = commands.get(cmd.split()[0].lower())
+            Bot2.send_message('cool_chanel', func)
             if func:
                 TelegramBot.send_message(chat_id, func(), parse_mode='Markdown')
             else:
