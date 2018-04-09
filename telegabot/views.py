@@ -90,11 +90,10 @@ class CommandReceiveView(View):
                         chat_id = chat_id
                         )
                     person.save()
-                
                 text, keyboard = func(payload['message']['from']['username'])
                 TelegramBot.send_message(chat_id, text, reply_markup=keyboard)
             else:
-                TelegramBot.send_message(chat_id, 'Уважаемый {user} неверный запрос'.format(user = payload['message']['from']['username']))
+                TelegramBot.send_message(chat_id, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                 try:
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
