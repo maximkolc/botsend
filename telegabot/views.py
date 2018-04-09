@@ -88,10 +88,12 @@ class CommandReceiveView(View):
                         chat_id = chat_ids
                         )
                     person.save()
-                text, keyboard = func(payload['message']['from']['username'])
-                TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
+                
+                finally:
+                    text, keyboard = func(payload['message']['from']['username'])
+                    TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
             else:
-                #TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
+                TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
                 try:
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
@@ -104,8 +106,9 @@ class CommandReceiveView(View):
                         next_choice = '', 
                         chat_id = chat_ids
                         )
-                text, keyboard = _display_main_menu(payload['message']['from']['username'])
-                TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
+                finally:
+                    text, keyboard = _display_main_menu(payload['message']['from']['username'])
+                    TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
         return JsonResponse({}, status=200)
 
     @method_decorator(csrf_exempt)
