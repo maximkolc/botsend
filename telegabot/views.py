@@ -109,7 +109,7 @@ class CommandReceiveView(View):
                         )
                 text, keyboard = _display_main_menu(payload['message']['from']['username'])
                 TelegramBot.send_message(chat_id, text, reply_markup=keyboard)
-    return JsonResponse({}, status=200)
+        return JsonResponse({}, status=200)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
