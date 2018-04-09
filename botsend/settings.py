@@ -39,7 +39,7 @@ ALLOWED_HOSTS = [
      #'185.16.41.146',
      '46.229.213.248',
      'botsend.ru', 
-     'www.botsend.ru,'
+     'www.botsend.ru',
 ]
 
 

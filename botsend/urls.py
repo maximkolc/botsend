@@ -29,9 +29,9 @@ from django.conf.urls import include
 urlpatterns += [
     url(r'^facebot/', include('facebot.urls')),
 ]
-urlpatterns += [
-    url(r'^telegabot/', include('telegabot.urls')),
-]
+#urlpatterns += [
+#    url(r'^telegabot/', include('telegabot.urls')),
+#]
 # Добавьте URL соотношения, чтобы перенаправить запросы с корневового URL, на URL приложения 
 from django.views.generic import RedirectView
 urlpatterns += [

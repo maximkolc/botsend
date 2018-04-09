@@ -14,18 +14,41 @@ from .models import Person
 
 TOKEN = '576824424:AAEFxzVpwSAQ4e8J9npuXFobSQ8PpFgWOEI'
 
-
+knownUsers = []  # todo: save these in a file,
+userStep = {}  # so they won't reset every time the bot restarts
+#TelegramBot = telebot.TeleBot(TOKEN)
 TelegramBot = telebot.TeleBot(TOKEN)
 TelegramBot.set_webhook('https://botsend.ru/telegabot/bot/{bot_token}/'.format(bot_token=TOKEN))
 Bot2 = telebot.TeleBot('460229690:AAGfrgxIU1Hh6dBAv0LoYsAWd4YUF7cvLHQ')
 
+
 def _display_help():
-    return 'render_to_string(help.md)'
+    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)  # create the image selection keyboard
+    keyboard.add('cock', 'pussy')
+    text = 'help'
+    return text, keyboard
 
 
-def _display_planetpy_feed():
-    return 'render_to_string feed.md'
+def _display_main_menu(username):
+    keyboard = types.ReplyKeyboardMarkup(row_width=2,resize_keyboard=True,one_time_keyboard=True)
+    keyboard.add('\u2696Обмен',
+                 u'\U0001F4C8Курсы криптовалют',
+                 u'\U0001F4DEКонтакты',
+                 u'\U0001F4D6Условия и правила')
+    text = 'Добро пожаловать, {username}, в обменник.'.format(username = username)    
+    return text, keyboard
 
+def _display_contacts(username):
+    keyboard = types.ReplyKeyboardMarkup(row_width=2,resize_keyboard=True,one_time_keyboard=True)
+    keyboard.add(u'\U0001F448Назад',)
+    text = '''
+            Тут контакты Можно давать ссылки, например: @mr_rown
+            Соглашение: http://telegra.ph/13423424234-03-09
+            '''
+    return text, keyboard
+def _back_to(username):
+    prev_func = Person.objects.get(name=username)
+    return prev_func
 
 class CommandReceiveView(View):
     def post(self, request, bot_token):
@@ -33,28 +56,61 @@ class CommandReceiveView(View):
             return HttpResponseForbidden('Invalid token')
 
         commands = {
-            '/start': _display_help,
-            'help': _display_help,
-            'feed': _display_planetpy_feed,
+            '/start': _display_main_menu,
+            '/help': _display_help,
+            '/mainmenu': _display_main_menu,
+            'контакты': _display_contacts,
+            'назад': _back_to,
         }
-
-        raw = request.body.decode('utf-8')
-
+        
+        raw = request.body #.decode('utf-8')
         try:
             payload = json.loads(raw)
         except ValueError:
             return HttpResponseBadRequest('Invalid request body')
-        else:
-            chat_id = payload['message']['chat']['id']
-            cmd = payload['message'].get('text')  # command
-
-            func = commands.get(cmd.split()[0].lower())
-            Bot2.send_message('cool_chanel', func)
+        else: 
+            chat_ids = payload['message']['chat']['id']
+            cmd = payload['message'].get('text')[1:].lower()  # command
+            #func = commands.get(cmd.split()[0].lower()) #получяем имя функции
+            func = commands.get(cmd)
+            # сохранение запроса пользователя в БД
             if func:
-                TelegramBot.send_message(chat_id, func(), parse_mode='Markdown')
+                try:
+                    person = Person.objects.get(name=payload['message']['from']['username'])
+                    person.prev_choice = person.next_choice 
+                    person.next_choice = cmd
+                    person.chat_id = chat_ids
+                    person.save()
+                except Person.DoesNotExist:
+                    person = Person(
+                        name = payload['message']['from']['username'], 
+                        prev_choice =  '',
+                        next_choice = cmd,
+                        chat_id = chat_ids
+                        )
+                    person.save() 
+                finally:
+                    text, keyboard = func(payload['message']['from']['username'])
+                    TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
             else:
-                TelegramBot.send_message(chat_id, 'I do not understand you, Sir!')
-
+                try:
+                    person = Person.objects.get(name=payload['message']['from']['username'])
+                    person.prev_choice = ''
+                    person.next_choice = ''
+                    person.chat_id = chat_ids
+                    person.save()
+                except Person.DoesNotExist:
+                    person = Person(
+                        name = payload['message']['from']['username'], 
+                        prev_choice = '',
+                        next_choice = '', 
+                        chat_id = chat_ids
+                        )
+                    person.save()
+                finally:
+                    TelegramBot.send_message(chat_ids, 'Уважаемый {user} какаято херня'.format(user = payload['message']['from']['username']))
+                    text, keyboard = _display_main_menu(payload['message']['from']['username'])
+                    TelegramBot.send_message(chat_ids, text, reply_markup=keyboard)
         return JsonResponse({}, status=200)
 
     @method_decorator(csrf_exempt)
