@@ -63,7 +63,7 @@ class CommandReceiveView(View):
             'назад': _back_to,
         }
         
-        raw = request.body.decode('utf-8')
+        raw = request.body #.decode('utf-8')
         try:
             payload = json.loads(raw)
         except ValueError:
