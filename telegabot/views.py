@@ -80,7 +80,7 @@ class CommandReceiveView(View):
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = person.next_choice 
                     person.next_choice = cmd
-                    person.save()
+                    person.chat_id = chat_ids
                 except Person.DoesNotExist:
                     person = Person(
                         name = payload['message']['from']['username'], 
@@ -98,6 +98,7 @@ class CommandReceiveView(View):
                     person = Person.objects.get(name=payload['message']['from']['username'])
                     person.prev_choice = ''
                     person.next_choice = ''
+                    person.chat_id = chat_ids
                 except Person.DoesNotExist:
                     person = Person(
                         name = payload['message']['from']['username'], 
