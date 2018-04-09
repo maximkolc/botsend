@@ -18,7 +18,7 @@ knownUsers = []  # todo: save these in a file,
 userStep = {}  # so they won't reset every time the bot restarts
 #TelegramBot = telebot.TeleBot(TOKEN)
 TelegramBot = telebot.TeleBot(TOKEN)
-TelegramBot.set_webhook('https://403212ed.ngrok.io/telegabot/bot/{bot_token}/'.format(bot_token=TOKEN))
+TelegramBot.set_webhook('https://botsend.ru/telegabot/bot/{bot_token}/'.format(bot_token=TOKEN))
 
 
 
