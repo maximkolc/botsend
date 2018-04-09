@@ -73,7 +73,7 @@ class CommandReceiveView(View):
             cmd = payload['message'].get('text')[1:].lower()  # command
             #func = commands.get(cmd.split()[0].lower()) #получяем имя функции
             func = commands.get(cmd)
-            Bot2.send_message('@cool_chanel',payload)
+            Bot2.send_message('@cool_chanel',payload['message'])
             # сохранение запроса пользователя в БД
             if func:
                 try:
