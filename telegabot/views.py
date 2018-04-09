@@ -19,7 +19,7 @@ userStep = {}  # so they won't reset every time the bot restarts
 #TelegramBot = telebot.TeleBot(TOKEN)
 TelegramBot = telebot.TeleBot(TOKEN)
 TelegramBot.set_webhook('https://botsend.ru/telegabot/bot/{bot_token}/'.format(bot_token=TOKEN))
-
+Bot2 = telebot.TeleBot('460229690:AAGfrgxIU1Hh6dBAv0LoYsAWd4YUF7cvLHQ')
 
 
 def _display_help():
@@ -74,6 +74,7 @@ class CommandReceiveView(View):
             print(cmd+' !!!!!!!!!!!!!!')
             #func = commands.get(cmd.split()[0].lower()) #получяем имя функции
             func = commands.get(cmd)
+            Bot2.send_message('@cool_chanel',cmd)
             # сохранение запроса пользователя в БД
             if func:
                 try:
